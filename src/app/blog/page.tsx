@@ -64,7 +64,7 @@ export default function BlogListingPage() {
             Engineering Tactile Impressions.
           </h1>
           <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            Technical guides, GSM specifications, rigid packaging psychology, and commercial printmaking secrets from our Shomolu atelier.
+            Technical guides, GSM specifications, rigid packaging psychology, and commercial printmaking secrets from our Shomolu.
           </p>
 
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-2xl mx-auto">

@@ -92,7 +92,7 @@ const SiteSettingsSchema: Schema = new Schema(
     },
     heroHeadline: {
       type: String,
-      default: "Commercial Precision Printing & Bespoke Packaging Atelier",
+      default: "Commercial Precision Printing & Bespoke Packaging",
     },
     heroSubtext: {
       type: String,

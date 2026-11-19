@@ -427,7 +427,7 @@ At **Iceberg Creative Print Studio**, our Shomolu press house uses calibrated hi
       "Why leading Nigerian fashion houses, corporate gift curators, and tech founders are investing in magnetic rigid boxes to drive viral unboxing and customer retention.",
     category: "Bespoke Packaging",
     coverImage: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
-    author: "Iceberg Packaging Atelier",
+    author: "Iceberg Packaging",
     readTime: "5 min read",
     tags: ["Packaging", "Unboxing", "Branding", "Luxury Boxes"],
     published: true,
@@ -602,7 +602,7 @@ export const initialSiteSettings = {
   googlePlaceId: "",
   googleApiKey: "",
   deliveryPartners: ["Kwik Delivery", "Bolt Logistics", "GIG Logistics"],
-  heroHeadline: "Commercial Precision Printing & Bespoke Packaging Atelier",
+  heroHeadline: "Commercial Precision Printing & Bespoke Packaging",
   heroSubtext:
     "High-definition digital press, bespoke rigid boxes, and luxury brand collateral produced in Shomolu, Lagos. Delivered nationwide across Nigeria.",
   heroPrimaryCtaText: "Explore Products",

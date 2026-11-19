@@ -11,7 +11,7 @@ export function Hero() {
 
   const headline =
     settings?.heroHeadline ||
-    "Commercial Precision Printing & Bespoke Packaging Atelier";
+    "Commercial Precision Printing & Bespoke Packaging";
   const subtext =
     settings?.heroSubtext ||
     "High-definition digital press, bespoke rigid boxes, and luxury brand collateral produced in Shomolu, Lagos. Delivered nationwide across Nigeria.";
@@ -28,7 +28,7 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <div className="lg:col-span-5 space-y-6">
             <span className="text-xs font-bold tracking-widest uppercase text-primary block">
-              Commercial Printing Press & Packaging Atelier
+              Commercial Printing Press & Packaging
             </span>
 
             <h1 className="font-display font-black text-3xl sm:text-5xl md:text-6xl text-ink tracking-[-0.04em] leading-[1.08]">
