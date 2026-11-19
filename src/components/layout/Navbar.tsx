@@ -18,6 +18,7 @@ import {
   CreditCard,
   Menu,
   X,
+  ArrowRight,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/lib/constants";
@@ -138,14 +139,14 @@ export function Navbar() {
               {isDropdownOpen && (
                 <div
                   onMouseLeave={() => setIsDropdownOpen(false)}
-                  className="absolute top-full -left-20 w-[640px] bg-card rounded-card shadow-elevation border border-border/80 p-6 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200 z-50"
+                  className="absolute top-full -left-20 w-[640px] max-w-[calc(100vw-2rem)] bg-card rounded-card shadow-elevation border border-border/80 p-6 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200 z-50"
                 >
-                  <div className="col-span-2 pb-3 border-b border-border/60 flex items-center justify-between">
+                  <div className="col-span-2 pb-3.5 border-b border-border/60 flex items-start justify-between gap-6">
                     <div>
                       <h4 className="font-display font-bold text-sm text-ink">
                         Commercial Print Categories
                       </h4>
-                      <p className="text-xs text-ink-muted">
+                      <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
                         Select a category to view bespoke specifications, volume
                         pricing, and delivery times
                       </p>
@@ -153,9 +154,10 @@ export function Navbar() {
                     <Link
                       href="/categories"
                       onClick={() => setIsDropdownOpen(false)}
-                      className="text-xs font-semibold text-primary hover:underline"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0 whitespace-nowrap mt-0.5"
                     >
-                      View All Categories →
+                      <span>View All Categories</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
 
