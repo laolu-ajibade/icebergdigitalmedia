@@ -57,9 +57,6 @@ export default function BlogListingPage() {
     <div className="bg-canvas min-h-screen py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <span className="text-xs font-bold tracking-widest uppercase text-primary block">
-            Iceberg Print Journal & Technical Archive
-          </span>
           <h1 className="font-display font-black text-3xl sm:text-5xl text-ink tracking-tight">
             Engineering Tactile Impressions.
           </h1>

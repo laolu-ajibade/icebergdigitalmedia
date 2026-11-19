@@ -3,7 +3,7 @@
 import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Clock, User, MessageSquare, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, User, MessageSquare } from "lucide-react";
 import { getWhatsAppLink } from "@/lib/constants";
 
 export default function BlogPostReaderPage({

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { AdminFilterBar } from "@/components/admin/AdminFilterBar";
 import { useToast } from "@/context/ToastContext";
 
 const PAGE_SIZE = 6;
@@ -20,6 +21,8 @@ export default function AdminCategoriesPage() {
   const { showError, showSuccess, showPopup } = useToast();
   const [categories, setCategories] = useState<any[]>([]);
   const [dbTags, setDbTags] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tagFilter, setTagFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<any | null>(null);
@@ -142,7 +145,21 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const paginatedCategories = categories.slice(
+  const query = searchQuery.trim().toLowerCase();
+  const filteredCategories = categories.filter((cat) => {
+    const matchesSearch =
+      !query ||
+      cat.name?.toLowerCase().includes(query) ||
+      cat.description?.toLowerCase().includes(query);
+
+    const catTags: string[] =
+      Array.isArray(cat.tags) && cat.tags.length > 0 ? cat.tags : ["Print"];
+    const matchesTag = tagFilter === "all" || catTags.includes(tagFilter);
+
+    return matchesSearch && matchesTag;
+  });
+
+  const paginatedCategories = filteredCategories.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
@@ -188,6 +205,32 @@ export default function AdminCategoriesPage() {
         </div>
       </div>
 
+      <AdminFilterBar
+        searchQuery={searchQuery}
+        onSearchChange={(val) => {
+          setSearchQuery(val);
+          setCurrentPage(1);
+        }}
+        searchPlaceholder="Search categories by name or description..."
+        filters={[
+          {
+            key: "tag",
+            value: tagFilter,
+            onChange: (val) => {
+              setTagFilter(val);
+              setCurrentPage(1);
+            },
+            options: dbTags.map((t) => ({
+              value: t.name,
+              label: t.name,
+            })),
+            allLabel: "All Tags",
+            icon: TagIcon,
+            ariaLabel: "Filter categories by tag",
+          },
+        ]}
+      />
+
       <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden p-4 sm:p-6 space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
@@ -202,7 +245,14 @@ export default function AdminCategoriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {paginatedCategories.map((cat, i) => (
+              {paginatedCategories.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-ink-muted">
+                    No categories match your current search or tag filter.
+                  </td>
+                </tr>
+              ) : (
+                paginatedCategories.map((cat, i) => (
                 <tr key={cat._id || cat.slug} className="hover:bg-canvas-soft/50">
                   <td className="p-4 font-mono font-bold text-ink-muted">
                     {(currentPage - 1) * PAGE_SIZE + i + 1}
@@ -261,14 +311,15 @@ export default function AdminCategoriesPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         <Pagination
           currentPage={currentPage}
-          totalItems={categories.length}
+          totalItems={filteredCategories.length}
           pageSize={PAGE_SIZE}
           onPageChange={setCurrentPage}
         />

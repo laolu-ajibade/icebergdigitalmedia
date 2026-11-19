@@ -9,10 +9,13 @@ import {
   ChevronDown,
   Loader2,
   X,
+  SlidersHorizontal,
+  Tag as TagIcon,
 } from "lucide-react";
 import { R2_IMAGES } from "@/lib/constants";
 import { R2MultiImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { AdminFilterBar } from "@/components/admin/AdminFilterBar";
 import { useToast } from "@/context/ToastContext";
 
 interface TierItem {
@@ -27,6 +30,10 @@ export default function AdminProductsPage() {
   const { showError, showSuccess, showPopup } = useToast();
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [dbTags, setDbTags] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
@@ -53,12 +60,14 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const [pRes, cRes] = await Promise.all([
+      const [pRes, cRes, tRes] = await Promise.all([
         fetch("/api/products"),
         fetch("/api/categories"),
+        fetch("/api/tags"),
       ]);
       const pData = await pRes.json();
       const cData = await cRes.json();
+      const tData = await tRes.json();
       if (pData.products) setProducts(pData.products);
       if (cData.categories) {
         setCategories(cData.categories);
@@ -66,6 +75,7 @@ export default function AdminProductsPage() {
           setCategorySlug(cData.categories[0].slug);
         }
       }
+      if (tData.tags) setDbTags(tData.tags);
     } catch (e) {
       console.error(e);
     }
@@ -226,7 +236,32 @@ export default function AdminProductsPage() {
     }
   };
 
-  const paginatedProducts = products.slice(
+  const categoryTagsMap = new Map<string, string[]>(
+    categories.map((c) => [
+      c.slug,
+      Array.isArray(c.tags) && c.tags.length > 0 ? c.tags : ["Print"],
+    ])
+  );
+
+  const query = searchQuery.trim().toLowerCase();
+  const filteredProducts = products.filter((prod) => {
+    const matchesSearch =
+      !query ||
+      prod.title?.toLowerCase().includes(query) ||
+      prod.categoryName?.toLowerCase().includes(query) ||
+      prod.description?.toLowerCase().includes(query);
+
+    const matchesCategory =
+      categoryFilter === "all" || prod.categorySlug === categoryFilter;
+
+    const prodCatTags = categoryTagsMap.get(prod.categorySlug) || ["Print"];
+    const matchesTag =
+      tagFilter === "all" || prodCatTags.includes(tagFilter);
+
+    return matchesSearch && matchesCategory && matchesTag;
+  });
+
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
@@ -252,6 +287,47 @@ export default function AdminProductsPage() {
         </button>
       </div>
 
+      <AdminFilterBar
+        searchQuery={searchQuery}
+        onSearchChange={(val) => {
+          setSearchQuery(val);
+          setCurrentPage(1);
+        }}
+        searchPlaceholder="Search products, category, description..."
+        filters={[
+          {
+            key: "category",
+            value: categoryFilter,
+            onChange: (val) => {
+              setCategoryFilter(val);
+              setCurrentPage(1);
+            },
+            options: categories.map((c) => ({
+              value: c.slug,
+              label: c.name,
+            })),
+            allLabel: "All Categories",
+            icon: SlidersHorizontal,
+            ariaLabel: "Filter products by category",
+          },
+          {
+            key: "tag",
+            value: tagFilter,
+            onChange: (val) => {
+              setTagFilter(val);
+              setCurrentPage(1);
+            },
+            options: dbTags.map((t) => ({
+              value: t.name,
+              label: t.name,
+            })),
+            allLabel: "All Tags",
+            icon: TagIcon,
+            ariaLabel: "Filter products by tag",
+          },
+        ]}
+      />
+
       {/* Table */}
       <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden p-4 sm:p-6 space-y-4">
         <div className="overflow-x-auto">
@@ -268,7 +344,14 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {paginatedProducts.map((prod) => (
+              {paginatedProducts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="p-8 text-center text-ink-muted">
+                    No products match your current search or filters.
+                  </td>
+                </tr>
+              ) : (
+                paginatedProducts.map((prod) => (
                 <tr key={prod.slug} className="hover:bg-canvas-soft/50">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -321,14 +404,15 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                   </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         <Pagination
           currentPage={currentPage}
-          totalItems={products.length}
+          totalItems={filteredProducts.length}
           pageSize={PAGE_SIZE}
           onPageChange={setCurrentPage}
         />

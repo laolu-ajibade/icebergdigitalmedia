@@ -9,16 +9,29 @@ import {
   ExternalLink,
   ChevronDown,
   X,
+  SlidersHorizontal,
 } from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { AdminFilterBar } from "@/components/admin/AdminFilterBar";
 import { useToast } from "@/context/ToastContext";
 
 const PAGE_SIZE = 6;
+const BLOG_CATEGORIES = [
+  "Print Engineering",
+  "Bespoke Packaging",
+  "Print",
+  "Design",
+  "Packaging",
+  "Apparel",
+  "Branding",
+];
 
 export default function AdminBlogsPage() {
   const { showError, showSuccess, showPopup } = useToast();
   const [blogs, setBlogs] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<any | null>(null);
@@ -130,7 +143,25 @@ export default function AdminBlogsPage() {
     }
   };
 
-  const paginatedBlogs = blogs.slice(
+  const availableCategories = Array.from(
+    new Set([...BLOG_CATEGORIES, ...blogs.map((b) => b.category).filter(Boolean)])
+  );
+
+  const query = searchQuery.trim().toLowerCase();
+  const filteredBlogs = blogs.filter((b) => {
+    const matchesSearch =
+      !query ||
+      b.title?.toLowerCase().includes(query) ||
+      b.category?.toLowerCase().includes(query) ||
+      b.excerpt?.toLowerCase().includes(query);
+
+    const matchesCategory =
+      categoryFilter === "all" || b.category === categoryFilter;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  const paginatedBlogs = filteredBlogs.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
@@ -156,6 +187,32 @@ export default function AdminBlogsPage() {
         </button>
       </div>
 
+      <AdminFilterBar
+        searchQuery={searchQuery}
+        onSearchChange={(val) => {
+          setSearchQuery(val);
+          setCurrentPage(1);
+        }}
+        searchPlaceholder="Search articles, category, excerpt..."
+        filters={[
+          {
+            key: "category",
+            value: categoryFilter,
+            onChange: (val) => {
+              setCategoryFilter(val);
+              setCurrentPage(1);
+            },
+            options: availableCategories.map((cat) => ({
+              value: cat,
+              label: cat,
+            })),
+            allLabel: "All Categories",
+            icon: SlidersHorizontal,
+            ariaLabel: "Filter articles by category",
+          },
+        ]}
+      />
+
       <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden p-4 sm:p-6 space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
@@ -169,7 +226,14 @@ export default function AdminBlogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {paginatedBlogs.map((b) => (
+              {paginatedBlogs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-ink-muted">
+                    No articles match your current search.
+                  </td>
+                </tr>
+              ) : (
+                paginatedBlogs.map((b) => (
                 <tr key={b._id || b.slug} className="hover:bg-canvas-soft/50">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -223,14 +287,15 @@ export default function AdminBlogsPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         <Pagination
           currentPage={currentPage}
-          totalItems={blogs.length}
+          totalItems={filteredBlogs.length}
           pageSize={PAGE_SIZE}
           onPageChange={setCurrentPage}
         />
@@ -279,13 +344,11 @@ export default function AdminBlogsPage() {
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-ink font-semibold cursor-pointer focus:outline-none focus:border-primary"
                     >
-                      <option value="Print Engineering">Print Engineering</option>
-                      <option value="Bespoke Packaging">Bespoke Packaging</option>
-                      <option value="Print">Print</option>
-                      <option value="Design">Design</option>
-                      <option value="Packaging">Packaging</option>
-                      <option value="Apparel">Apparel</option>
-                      <option value="Branding">Branding</option>
+                      {BLOG_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
                     </select>
                     <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>

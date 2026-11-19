@@ -23,7 +23,7 @@ export function BlogPreview() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
           <div>
             <span className="text-xs font-bold tracking-widest uppercase text-primary block mb-2">
-              Print Journal & Engineering Insights
+              Blogs
             </span>
             <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight">
               Mastering Print Collateral in Nigeria
@@ -37,7 +37,7 @@ export function BlogPreview() {
             href="/blog"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
           >
-            <span>Visit Print Journal</span>
+            <span>Visit Blogs</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

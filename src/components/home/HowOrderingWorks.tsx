@@ -17,9 +17,6 @@ export function HowOrderingWorks() {
     <section className="py-14 sm:py-16 md:py-24 bg-canvas border-b border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-16">
-          <span className="text-xs font-bold tracking-widest uppercase text-primary block mb-2">
-            Process Transparency
-          </span>
           <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight">
             How Ordering Works at Iceberg Studio
           </h2>

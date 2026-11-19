@@ -60,7 +60,7 @@ export function CategoryGrid() {
             href="/categories"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
           >
-            <span>Browse Full Directory (10+ Categories)</span>
+            <span>View Categories</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  TrendingUp,
   Package,
   Layers,
   ShoppingBag,
@@ -11,7 +10,6 @@ import {
   Eye,
   Plus,
   Settings,
-  ExternalLink,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -24,7 +22,6 @@ export default function AdminDashboardPage() {
     totalOrders: 0,
     recentOrders: [] as any[],
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -52,8 +49,6 @@ export default function AdminDashboardPage() {
         });
       } catch (err) {
         console.error(err);
-      } finally {
-        setLoading(false);
       }
     }
 

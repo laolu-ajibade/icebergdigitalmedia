@@ -17,6 +17,8 @@ import {
   Trash2,
   Loader2,
   ChevronDown,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
@@ -214,6 +216,11 @@ export default function AdminSettingsPage() {
   const [slugKey, setSlugKey] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    next: false,
+    confirm: false,
+  });
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState({ text: "", isError: false });
 
@@ -442,7 +449,7 @@ export default function AdminSettingsPage() {
                   </label>
                   <div className="relative">
                     <select
-                      value={settings.defaultTheme || "wise"}
+                      value={settings.defaultTheme || "iceberg"}
                       onChange={e => {
                         const chosen = e.target.value as "wise" | "iceberg";
                         setSettings({ ...settings, defaultTheme: chosen });
@@ -655,7 +662,7 @@ export default function AdminSettingsPage() {
             <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-4">
               <div>
                 <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
-                  Social Media Profiles & Channels
+                  Social Media
                 </h2>
                 <p className="text-[11px] text-ink-muted mt-2">
                   Enter only your username/handle for each platform (the base
@@ -1542,13 +1549,36 @@ export default function AdminSettingsPage() {
                   <label className="block font-bold text-ink mb-1.5">
                     Current Password
                   </label>
-                  <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={e => setCurrentPassword(e.target.value)}
-                    placeholder="Enter current password"
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswords.current ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={e => setCurrentPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      className="w-full px-3 py-2 pr-10 bg-canvas-soft border border-border rounded-button text-ink"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPasswords(prev => ({
+                          ...prev,
+                          current: !prev.current,
+                        }))
+                      }
+                      aria-label={
+                        showPasswords.current
+                          ? "Hide current password"
+                          : "Show current password"
+                      }
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
+                    >
+                      {showPasswords.current ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
@@ -1566,25 +1596,71 @@ export default function AdminSettingsPage() {
                   <label className="block font-bold text-ink mb-1.5">
                     New Password
                   </label>
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                    placeholder="Min 6 characters"
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswords.next ? "text" : "password"}
+                      value={newPassword}
+                      onChange={e => setNewPassword(e.target.value)}
+                      placeholder="Min 6 characters"
+                      className="w-full px-3 py-2 pr-10 bg-canvas-soft border border-border rounded-button text-ink"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPasswords(prev => ({
+                          ...prev,
+                          next: !prev.next,
+                        }))
+                      }
+                      aria-label={
+                        showPasswords.next
+                          ? "Hide new password"
+                          : "Show new password"
+                      }
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
+                    >
+                      {showPasswords.next ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
                     Confirm New Password
                   </label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    placeholder="Re-type new password"
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPasswords.confirm ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="Re-type new password"
+                      className="w-full px-3 py-2 pr-10 bg-canvas-soft border border-border rounded-button text-ink"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPasswords(prev => ({
+                          ...prev,
+                          confirm: !prev.confirm,
+                        }))
+                      }
+                      aria-label={
+                        showPasswords.confirm
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-ink-muted hover:text-ink transition-colors cursor-pointer"
+                    >
+                      {showPasswords.confirm ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
 
