@@ -150,8 +150,7 @@ export default function AdminLayout({
             "Unauthorized access: Please sign in to access the Admin Control Center.";
           setAuthStatus("unauthenticated");
           setAuthError(errMsg);
-          showError(errMsg, "Authentication Required");
-          const target = `/admin/login?error=unauthorized&redirect=${encodeURIComponent(
+          const target = `/admin/login?redirect=${encodeURIComponent(
             pathname
           )}`;
           router.replace(target);

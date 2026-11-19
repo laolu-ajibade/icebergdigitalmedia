@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, Suspense, useRef } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Mail, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useToast } from "@/context/ToastContext";
 
 function AdminLoginForm() {
@@ -14,24 +15,6 @@ function AdminLoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const hasShownRedirectAlert = useRef(false);
-
-  useEffect(() => {
-    const errParam = searchParams.get("error");
-    if (errParam === "unauthorized" && !hasShownRedirectAlert.current) {
-      hasShownRedirectAlert.current = true;
-      const redirectTarget = searchParams.get("redirect") || "/admin";
-      const msg = `Unauthorized access to "${redirectTarget}". You must sign in with valid administrator credentials to access the Admin Control Center.`;
-      setError(msg);
-      showError(msg, "Authentication Required");
-      showPopup({
-        type: "error",
-        title: "Authentication Required",
-        message: msg,
-        actionLabel: "Proceed to Sign In",
-      });
-    }
-  }, [searchParams, showError, showPopup]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,14 +132,14 @@ function AdminLoginForm() {
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-ink-muted absolute left-3 top-3.5" />
-              <input
-                type="password"
+              <Lock className="w-4 h-4 text-ink-muted absolute left-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none" />
+              <PasswordInput
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
+                toggleLabel="password"
+                className="pl-9 py-2.5 text-xs focus:outline-none focus:border-primary"
               />
             </div>
           </div>

@@ -33,6 +33,8 @@ export async function connectDB(): Promise<typeof mongoose> {
     cached!.promise = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
       dbName: process.env.MONGODB_DB_NAME || "iceberg_print_studio",
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
     });
   }
 

@@ -398,7 +398,7 @@ export function LivePrintCanvas() {
             Customize &amp; Preview Your Brand Live
           </h2>
           <p className="text-xs text-ink-body mt-0.5 leading-relaxed">
-            Edit the text, upload your logo, or pick colors below — the product updates instantly.
+            Edit the text, upload your logo, or pick colors below the product updates instantly.
           </p>
         </div>
       </div>
