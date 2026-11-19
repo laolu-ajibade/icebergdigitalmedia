@@ -650,7 +650,7 @@ export const initialSiteSettings = {
     {
       question: "What file formats do you accept for artwork?",
       answer:
-        "We accept high-resolution PDF (print-ready with 3mm bleed and CMYK color space), Adobe Illustrator (.AI), Photoshop (.PSD), and CorelDraw (.CDR). If you only have a draft idea, our in-house prepress design team can refine it.",
+        "We accept high-resolution PDF (print ready with 3mm bleed and CMYK color space), Adobe Illustrator (.AI), Photoshop (.PSD), and CorelDraw (.CDR). If you only have a draft idea, our in-house prepress design team can refine it.",
     },
     {
       question: "What is your minimum order quantity (MOQ)?",
@@ -669,13 +669,13 @@ export const initialSiteSettings = {
       stepNumber: "02",
       title: "Review Digital Proof",
       description:
-        "Upload your print-ready artwork or let our studio design team format it with full bleed and CMYK checks.",
+        "Upload your print ready artwork or let our studio design team format it with full bleed and CMYK checks.",
     },
     {
       stepNumber: "03",
       title: "Press & Delivery",
       description:
-        "Your order is precision-printed in Shomolu and dispatched across Lagos and nationwide within 24-48 hours.",
+        "Your order is precision printed in Shomolu and dispatched across Lagos and nationwide within 24-48 hours.",
     },
   ],
   studioItems: [

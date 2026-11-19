@@ -21,7 +21,7 @@ export function HowOrderingWorks() {
             How Ordering Works at Iceberg Studio
           </h2>
           <p className="text-xs sm:text-sm md:text-base text-ink-muted mt-3">
-            One-frictionless commercial ordering flow: design calibration to factory dispatch proofing.
+            One frictionless commercial ordering flow: design calibration to factory dispatch proofing.
           </p>
         </div>
 

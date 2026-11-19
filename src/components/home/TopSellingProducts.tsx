@@ -31,10 +31,10 @@ export function TopSellingProducts({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
           <div>
             <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight">
-              Top Selling Commercial Prints
+              Top Selling Products
             </h2>
             <p className="text-sm md:text-base text-ink-muted mt-2 max-w-xl">
-              Our most requested print runs by corporate brands, creative
+              Our most requested products and print runs by corporate brands, creative
               agencies, and luxury retailers across Nigeria.
             </p>
           </div>
@@ -42,7 +42,7 @@ export function TopSellingProducts({
             href="/categories"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
           >
-            <span>View All Print Products</span>
+            <span>View All Products</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
