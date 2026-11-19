@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { X, Trash2, ShoppingBag, Send, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export function CartDrawer() {
+  const pathname = usePathname();
   const {
     items,
     isCartOpen,
@@ -24,7 +26,7 @@ export function CartDrawer() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  if (!isCartOpen) return null;
+  if (!isCartOpen || pathname?.startsWith("/admin")) return null;
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();

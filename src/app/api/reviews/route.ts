@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       id: r._id.toString(),
       authorName: r.authorName,
       authorImage: r.authorImage || "",
+      authorPhoto: r.authorImage || "",
       rating: r.rating || 5,
       reviewDate: r.reviewDate || "Recently",
       relativeTimeDescription: r.reviewDate || "Recently",
@@ -43,8 +44,18 @@ export async function GET(request: Request) {
       source: r.source || "google",
     }));
 
+    const avgRating =
+      formattedReviews.length > 0
+        ? Number(
+            (
+              formattedReviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) /
+              formattedReviews.length
+            ).toFixed(1)
+          )
+        : 5.0;
+
     return NextResponse.json({
-      rating: 5.0,
+      rating: avgRating,
       totalReviews: formattedReviews.length,
       reviews: formattedReviews,
       isLive: false,

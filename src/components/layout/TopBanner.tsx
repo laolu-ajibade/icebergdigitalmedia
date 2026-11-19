@@ -1,19 +1,30 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { Phone, Clock, MessageSquare } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
 export function TopBanner() {
+  const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const settings = useSiteSettings();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const phone = settings?.phone || CONTACT_PHONE;
   const whatsapp =
     (settings?.whatsappRouting || "").replace(/[^0-9]/g, "") || WHATSAPP_NUMBER;
   const hoursWeekday = settings?.workingHoursWeekday || "09:00 - 18:00";
+  const topBarHoursText =
+    settings?.topBarHoursText || `Mon - Sat: ${hoursWeekday} (Shomolu, Lagos)`;
+  const topBarTagline =
+    settings?.topBarTagline ||
+    "Commercial Grade Print Press & Packaging Studio";
 
   return (
     <div className="bg-ink text-canvas-soft border-b border-border/10 text-xs py-2 px-4 transition-colors">
@@ -28,12 +39,16 @@ export function TopBanner() {
           </a>
           <div className="hidden sm:flex items-center gap-1.5 opacity-80">
             <Clock className="w-3.5 h-3.5" />
-            <span>Mon - Sat: {hoursWeekday} (Shomolu, Lagos)</span>
+            <span>{topBarHoursText}</span>
           </div>
-          <span className="hidden md:inline text-white/40">•</span>
-          <span className="hidden md:inline text-white/80">
-            Commercial Grade Print Press & Packaging Studio
-          </span>
+          {topBarTagline && (
+            <>
+              <span className="hidden md:inline text-white/40">•</span>
+              <span className="hidden md:inline text-white/80">
+                {topBarTagline}
+              </span>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -42,7 +57,9 @@ export function TopBanner() {
             className="flex items-center px-2.5 py-1 rounded-button bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer text-[11px]"
             title="Toggle between Wise Canvas and Iceberg Brand design systems"
           >
-            <span>Theme: {theme === "wise" ? "Wise Canvas" : "Iceberg Studio"}</span>
+            <span>
+              Theme: {theme === "wise" ? "Wise Canvas" : "Iceberg Studio"}
+            </span>
           </button>
 
           <a

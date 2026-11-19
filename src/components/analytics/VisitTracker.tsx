@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export function VisitTracker() {
+  const pathname = usePathname();
+
   useEffect(() => {
-    // Only track once per browser session
+    if (pathname?.startsWith("/admin")) return;
+
     const hasTracked = sessionStorage.getItem("iceberg_visit_logged");
     if (!hasTracked) {
       fetch("/api/analytics/visits", { method: "POST" })
@@ -13,7 +17,7 @@ export function VisitTracker() {
         })
         .catch(() => {});
     }
-  }, []);
+  }, [pathname]);
 
   return null;
 }

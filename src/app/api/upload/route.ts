@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { uploadToR2, isR2Configured, getR2Config } from "@/lib/r2";
+import { getAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,13 @@ export async function POST(request: Request) {
       const formData = await request.formData();
       const file = formData.get("file") as File | null;
       const folder = (formData.get("folder") as string) || "uploads";
+
+      if (folder !== "client-logos") {
+        const session = await getAdminSession();
+        if (!session) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+      }
 
       if (!file) {
         return NextResponse.json({ error: "No file provided in form data." }, { status: 400 });

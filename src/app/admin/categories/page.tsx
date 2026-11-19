@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { useToast } from "@/context/ToastContext";
 
 const PAGE_SIZE = 6;
 
 export default function AdminCategoriesPage() {
+  const { showError, showSuccess, showPopup } = useToast();
   const [categories, setCategories] = useState<any[]>([]);
   const [dbTags, setDbTags] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,32 +89,57 @@ export default function AdminCategoriesPage() {
     e.preventDefault();
     const finalSlug = slug || name.toLowerCase().replace(/[^a-z0-9]/g, "-");
 
-    await fetch("/api/categories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        _id: editingCategory?._id,
-        name,
-        slug: finalSlug,
-        description,
-        iconName,
-        image,
-        tags: selectedTags.length > 0 ? selectedTags : ["Print"],
-        order: editingCategory ? editingCategory.order : categories.length + 1,
-        featured: true,
-      }),
-    });
+    try {
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          _id: editingCategory?._id,
+          name,
+          slug: finalSlug,
+          description,
+          iconName,
+          image,
+          tags: selectedTags.length > 0 ? selectedTags : ["Print"],
+          order: editingCategory ? editingCategory.order : categories.length + 1,
+          featured: true,
+        }),
+      });
 
-    setIsModalOpen(false);
-    fetchData();
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save category");
+      }
+
+      showSuccess(`Category "${name}" saved.`, "Category Saved");
+      setIsModalOpen(false);
+      fetchData();
+    } catch (err: any) {
+      const msg = err.message || "Failed to save category";
+      showError(msg, "Category Error");
+      showPopup({
+        type: "error",
+        title: "Failed to Save Category",
+        message: msg,
+      });
+    }
   };
 
   const handleDeleteCategory = async (cat: any) => {
     if (!confirm(`Are you sure you want to delete "${cat.name}"?`)) return;
-    await fetch(`/api/categories?slug=${encodeURIComponent(cat.slug)}`, {
-      method: "DELETE",
-    });
-    fetchData();
+    try {
+      const res = await fetch(
+        `/api/categories?slug=${encodeURIComponent(cat.slug)}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!res.ok) throw new Error("Failed to delete category");
+      showSuccess(`Category "${cat.name}" deleted.`, "Deleted");
+      fetchData();
+    } catch (err: any) {
+      showError(err.message || "Failed to delete category.", "Delete Failed");
+    }
   };
 
   const paginatedCategories = categories.slice(

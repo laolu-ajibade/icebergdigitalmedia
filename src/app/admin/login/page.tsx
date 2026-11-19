@@ -1,19 +1,47 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Lock, Mail, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { useToast } from "@/context/ToastContext";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@icebergprints.com");
-  const [password, setPassword] = useState("admin123");
+  const searchParams = useSearchParams();
+  const { showError, showSuccess, showPopup } = useToast();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const hasShownRedirectAlert = useRef(false);
+
+  useEffect(() => {
+    const errParam = searchParams.get("error");
+    if (errParam === "unauthorized" && !hasShownRedirectAlert.current) {
+      hasShownRedirectAlert.current = true;
+      const redirectTarget = searchParams.get("redirect") || "/admin";
+      const msg = `Unauthorized access to "${redirectTarget}". You must sign in with valid administrator credentials to access the Admin Control Center.`;
+      setError(msg);
+      showError(msg, "Authentication Required");
+      showPopup({
+        type: "error",
+        title: "Authentication Required",
+        message: msg,
+        actionLabel: "Proceed to Sign In",
+      });
+    }
+  }, [searchParams, showError, showPopup]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      const msg = "Please enter both your administrator email and password.";
+      setError(msg);
+      showError(msg, "Missing Credentials");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -26,13 +54,43 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        router.push("/admin");
+        showSuccess(
+          "Welcome back to the Iceberg Admin Control Center.",
+          "Authentication Successful"
+        );
+        const redirectPath = searchParams.get("redirect");
+        const destination =
+          redirectPath &&
+          redirectPath.startsWith("/admin") &&
+          redirectPath !== "/admin/login"
+            ? redirectPath
+            : "/admin";
+        router.replace(destination);
         router.refresh();
       } else {
-        setError(data.error || "Invalid administrator credentials");
+        const errMessage =
+          data.error ||
+          "Invalid administrator email or password. Please verify your credentials and try again.";
+        setError(errMessage);
+        showError(errMessage, "Sign-In Failed");
+        showPopup({
+          type: "error",
+          title: "Authentication Failed",
+          message: errMessage,
+          actionLabel: "Try Again",
+        });
       }
     } catch {
-      setError("An unexpected network error occurred.");
+      const netMsg =
+        "Unable to reach the authentication server. Please check your connection and try again.";
+      setError(netMsg);
+      showError(netMsg, "Network Error");
+      showPopup({
+        type: "error",
+        title: "Connection Error",
+        message: netMsg,
+        actionLabel: "Retry",
+      });
     } finally {
       setLoading(false);
     }
@@ -59,8 +117,12 @@ export default function AdminLoginPage() {
         </div>
 
         {error && (
-          <div className="p-3 rounded-theme bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
-            {error}
+          <div
+            role="alert"
+            className="p-3.5 rounded-theme bg-red-50 border border-red-200 text-xs text-red-700 font-medium flex items-start gap-2.5"
+          >
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -70,14 +132,14 @@ export default function AdminLoginPage() {
               Admin Email
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
+              <Mail className="w-4 h-4 text-ink-muted absolute left-3 top-3.5" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@icebergprints.com"
-                className="w-full pl-9 pr-3 py-2.5 rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
+                className="w-full pl-9 pr-3 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -87,31 +149,48 @@ export default function AdminLoginPage() {
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-ink-muted absolute left-3 top-3" />
+              <Lock className="w-4 h-4 text-ink-muted absolute left-3 top-3.5" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-3 py-2.5 rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
+                className="w-full pl-9 pr-3 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
               />
             </div>
-            <p className="text-[11px] text-ink-muted mt-1.5">
-              Default credentials: <code className="bg-canvas-muted px-1.5 py-0.5 rounded text-ink font-semibold">admin@icebergprints.com</code> / <code className="bg-canvas-muted px-1.5 py-0.5 rounded text-ink font-semibold">admin123</code>
-            </p>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 rounded-button bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-soft disabled:opacity-50"
+            className="w-full py-3 px-4 min-h-[44px] rounded-button bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-soft disabled:opacity-50"
           >
-            <ShieldCheck className="w-4 h-4" />
-            <span>{loading ? "Authenticating..." : "Sign In to Admin Portal"}</span>
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <ShieldCheck className="w-4 h-4" />
+            )}
+            <span>
+              {loading ? "Authenticating..." : "Sign In to Admin Portal"}
+            </span>
           </button>
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-canvas-soft flex items-center justify-center p-4">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <AdminLoginForm />
+    </Suspense>
   );
 }

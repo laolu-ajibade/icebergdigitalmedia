@@ -17,13 +17,11 @@ export async function GET() {
     if (!obj.googlePlaceId && process.env.GOOGLE_PLACE_ID) {
       obj.googlePlaceId = process.env.GOOGLE_PLACE_ID;
     }
-    if (!obj.googleApiKey && process.env.GOOGLE_API_KEY) {
-      obj.googleApiKey = process.env.GOOGLE_API_KEY;
-    }
-    if (process.env.NEXT_PUBLIC_CONTACT_PHONE) {
+    obj.googleApiKey = "••••••••••••••••••••••••••••••••••••";
+    if (!obj.phone && process.env.NEXT_PUBLIC_CONTACT_PHONE) {
       obj.phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
     }
-    if (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) {
+    if (!obj.whatsappRouting && process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) {
       obj.whatsappRouting = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
     }
 
@@ -41,6 +39,8 @@ export async function PUT(request: Request) {
     }
 
     const data = await request.json();
+    delete data.googlePlaceId;
+    delete data.googleApiKey;
     await connectDB();
 
     const updated = await SiteSettings.findOneAndUpdate({}, data, {

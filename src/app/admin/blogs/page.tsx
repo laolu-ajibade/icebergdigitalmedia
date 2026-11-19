@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { useToast } from "@/context/ToastContext";
 
 const PAGE_SIZE = 6;
 
 export default function AdminBlogsPage() {
+  const { showError, showSuccess, showPopup } = useToast();
   const [blogs, setBlogs] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,28 +86,48 @@ export default function AdminBlogsPage() {
       publishedAt: editingBlog?.publishedAt || new Date(),
     };
 
-    if (editingBlog) {
-      await fetch(`/api/blogs/${editingBlog._id || editingBlog.slug}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      await fetch("/api/blogs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+    try {
+      const res = editingBlog
+        ? await fetch(`/api/blogs/${editingBlog._id || editingBlog.slug}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+        : await fetch("/api/blogs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save article");
+      }
+
+      showSuccess(`Article "${title}" published.`, "Article Saved");
+      setIsModalOpen(false);
+      fetchBlogs();
+    } catch (err: any) {
+      const msg = err.message || "Failed to save article";
+      showError(msg, "Article Error");
+      showPopup({
+        type: "error",
+        title: "Failed to Save Article",
+        message: msg,
       });
     }
-
-    setIsModalOpen(false);
-    fetchBlogs();
   };
 
   const handleDeleteBlog = async (blogSlug: string) => {
     if (!confirm("Are you sure you want to delete this article?")) return;
-    await fetch(`/api/blogs/${blogSlug}`, { method: "DELETE" });
-    fetchBlogs();
+    try {
+      const res = await fetch(`/api/blogs/${blogSlug}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete article");
+      showSuccess("Article deleted from Print Journal.", "Deleted");
+      fetchBlogs();
+    } catch (err: any) {
+      showError(err.message || "Failed to delete article.", "Delete Failed");
+    }
   };
 
   const paginatedBlogs = blogs.slice(

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   MapPin,
   Phone,
@@ -20,7 +21,12 @@ import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
 export function Footer() {
+  const pathname = usePathname();
   const settings = useSiteSettings();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const companyName = settings?.companyName || "Iceberg Studio";
   const tagline = settings?.tagline || "Creative Print Press";

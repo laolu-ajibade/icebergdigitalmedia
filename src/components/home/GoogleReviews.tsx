@@ -8,8 +8,12 @@ import {
   ExternalLink,
   CheckCircle,
 } from "lucide-react";
+import { Pagination } from "@/components/ui/Pagination";
+
+const PAGE_SIZE = 6;
 
 export function GoogleReviews() {
+  const [currentPage, setCurrentPage] = useState(1);
   const [reviewsData, setReviewsData] = useState<any>({
     rating: 5.0,
     totalReviews: 0,
@@ -115,85 +119,84 @@ export function GoogleReviews() {
 
         {/* Top Verified Reviews Cards */}
         {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reviewsData.reviews.slice(0, 6).map((rev: any, index: number) => (
-              <div
-                key={index}
-                className="bg-card rounded-card border border-border/80 p-6 shadow-soft antigravity-card flex flex-col justify-between"
-              >
-                <div>
-                  {/* Rating & Timestamp */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex text-amber-400">
-                      {[...Array(rev.rating || 5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="w-4 h-4 fill-amber-400 text-amber-400"
-                        />
-                      ))}
-                    </div>
-                    <span className="text-[11px] text-ink-muted">
-                      {rev.relativeTimeDescription}
-                    </span>
-                  </div>
-
-                  {/* Review Text */}
-                  <p className="text-xs text-ink-body leading-relaxed italic">
-                    &ldquo;{rev.text}&rdquo;
-                  </p>
-                </div>
-
-                {/* Author Info */}
-                <div className="mt-6 pt-4 border-t border-border/50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {rev.authorPhoto ? (
-                        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-border/40 shrink-0">
-                          <Image
-                            src={rev.authorPhoto}
-                            alt={rev.authorName}
-                            fill
-                            className="object-cover"
-                          />
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {reviewsData.reviews
+                .slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+                .map((rev: any, index: number) => (
+                  <div
+                    key={rev._id || index}
+                    className="bg-card rounded-card border border-border/80 p-6 shadow-soft antigravity-card flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Rating & Timestamp */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex text-amber-400">
+                          {[...Array(rev.rating || 5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className="w-4 h-4 fill-amber-400 text-amber-400"
+                            />
+                          ))}
                         </div>
-                      ) : (
-                        <div className="w-9 h-9 rounded-full bg-primary-pale text-primary font-bold text-xs flex items-center justify-center shrink-0">
-                          {rev.authorName.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <h4 className="font-display font-bold text-xs text-ink">
-                          {rev.authorName}
-                        </h4>
-                        <span className="text-[10px] text-ink-muted block">
-                          Verified Google Customer
+                        <span className="text-[11px] text-ink-muted">
+                          {rev.relativeTimeDescription}
                         </span>
                       </div>
-                    </div>
 
-                    <div
-                      className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold"
-                      title="Verified Review"
-                    >
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      <span>Verified</span>
-                    </div>
-                  </div>
-
-                  {/* Owner Response if present */}
-                  {rev.ownerResponse && (
-                    <div className="mt-3.5 pt-3 border-t border-border/30 bg-canvas-soft/70 rounded-theme p-3 text-[11px] text-ink-muted">
-                      <span className="font-bold text-ink text-[11px] block mb-1">
-                        Response from Iceberg Studio:
-                      </span>
-                      <p className="italic leading-relaxed text-ink-body">
-                        &ldquo;{rev.ownerResponse}&rdquo;
+                      {/* Review Text */}
+                      <p className="text-xs text-ink-body leading-relaxed italic">
+                        &ldquo;{rev.text}&rdquo;
                       </p>
                     </div>
-                  )}
-                </div>
-              </div>
-            ))}
+
+                    {/* Author Info */}
+                    <div className="mt-6 pt-4 border-t border-border/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {rev.authorImage || rev.authorPhoto ? (
+                            <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-border/40 shrink-0">
+                              <Image
+                                src={rev.authorImage || rev.authorPhoto}
+                                alt={rev.authorName}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-primary-pale text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                              {rev.authorName.charAt(0)}
+                            </div>
+                          )}
+                          <div>
+                            <h4 className="font-display font-bold text-xs text-ink">
+                              {rev.authorName}
+                            </h4>
+                            <span className="text-[10px] text-ink-muted block">
+                              Verified Google Customer
+                            </span>
+                          </div>
+                        </div>
+
+                        <div
+                          className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold"
+                          title="Verified Review"
+                        >
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          <span>Verified</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalItems={reviewsData.reviews.length}
+              pageSize={PAGE_SIZE}
+              onPageChange={setCurrentPage}
+            />
           </div>
         ) : (
           <div className="bg-card rounded-card border border-border/80 p-8 text-center max-w-xl mx-auto shadow-soft space-y-3">

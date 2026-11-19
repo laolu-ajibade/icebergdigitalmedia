@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { VisitLog } from "@/models/VisitLog";
+import { getAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectDB();
     const currentMonthKey = new Date().toISOString().slice(0, 7);
     const logs = await VisitLog.find().sort({ monthKey: -1 }).limit(12);

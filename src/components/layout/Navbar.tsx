@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   ChevronDown,
   ShoppingBag,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/lib/constants";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
 const categoryIconMap: Record<string, React.ElementType> = {
   Package,
@@ -36,6 +38,8 @@ const categoryIconMap: Record<string, React.ElementType> = {
 };
 
 export function Navbar() {
+  const pathname = usePathname();
+  const settings = useSiteSettings();
   const [categories, setCategories] = useState<any[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -47,13 +51,14 @@ export function Navbar() {
   );
 
   useEffect(() => {
+    if (pathname?.startsWith("/admin")) return;
     fetch("/api/categories")
       .then(res => res.json())
       .then(data => {
         if (data.categories) setCategories(data.categories);
       })
       .catch(() => {});
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -67,6 +72,10 @@ export function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-border transition-colors">
@@ -93,7 +102,7 @@ export function Navbar() {
                 </span>
               </div>
               <span className="text-[10px] text-ink-muted hidden sm:block italic font-serif">
-                Turning Ideas Into Impressions....
+                {settings?.tagline || "Turning Ideas Into Impressions...."}
               </span>
             </div>
           </Link>

@@ -107,7 +107,7 @@ export default function AdminDashboardPage() {
               {metrics.monthlyVisits.toLocaleString()}
             </div>
             <div className="text-[11px] text-ink-muted mt-1 flex items-center gap-1">
-              <span className="text-emerald-600 font-bold">● Active</span>
+              <span className="text-emerald-600 font-bold">Active</span>
               <span>Month ({metrics.monthKey})</span>
             </div>
           </div>
@@ -198,21 +198,21 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Quick Setup Notice for Google Business Reviews */}
+      {/* Quick Link to Customer Reviews CMS */}
       <div className="p-6 rounded-card bg-primary-pale/40 border border-primary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="font-display font-bold text-sm text-ink">
-            Google Business Reviews Live Integration
+            Customer Reviews & Proof Studio
           </h3>
           <p className="text-xs text-ink-muted mt-1">
-            To fetch real-time 5-star customer reviews from Google Maps, enter your Google Place ID and API Key in Studio Settings. (Currently running in verified studio review fallback mode).
+            Curate verified Google customer reviews, star ratings, and reviewer profile images displayed on the homepage.
           </p>
         </div>
         <Link
-          href="/admin/settings"
+          href="/admin/reviews"
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-button bg-card border border-border text-xs font-bold text-ink shrink-0 hover:bg-canvas"
         >
-          <span>Configure Google API</span>
+          <span>Manage Reviews</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

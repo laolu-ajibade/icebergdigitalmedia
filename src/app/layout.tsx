@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CartProvider } from "@/context/CartContext";
+import { ToastProvider } from "@/context/ToastContext";
 import { TopBanner } from "@/components/layout/TopBanner";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -48,14 +49,16 @@ export default function RootLayout({
     >
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
         <ThemeProvider>
-          <CartProvider>
-            <VisitTracker />
-            <TopBanner />
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <CartDrawer />
-            <Footer />
-          </CartProvider>
+          <ToastProvider>
+            <CartProvider>
+              <VisitTracker />
+              <TopBanner />
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <CartDrawer />
+              <Footer />
+            </CartProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

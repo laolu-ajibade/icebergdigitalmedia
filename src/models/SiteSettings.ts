@@ -3,6 +3,9 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface ISiteSettings extends Document {
   companyName: string;
   tagline: string;
+  defaultTheme: "wise" | "iceberg";
+  topBarHoursText: string;
+  topBarTagline: string;
   address: string;
   phone: string;
   whatsappRouting: string;
@@ -49,6 +52,15 @@ const SiteSettingsSchema: Schema = new Schema(
   {
     companyName: { type: String, default: "Iceberg Creative Print Studio" },
     tagline: { type: String, default: "Turning Ideas Into Impressions...." },
+    defaultTheme: { type: String, enum: ["wise", "iceberg"], default: "wise" },
+    topBarHoursText: {
+      type: String,
+      default: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
+    },
+    topBarTagline: {
+      type: String,
+      default: "Commercial Grade Print Press & Packaging Studio",
+    },
     address: {
       type: String,
       default: "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria",

@@ -16,10 +16,13 @@ import {
   KeyRound,
   Trash2,
   Loader2,
+  ChevronDown,
 } from "lucide-react";
 import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { clearSiteSettingsCache } from "@/lib/useSiteSettings";
+import { useTheme } from "@/context/ThemeContext";
+import { useToast } from "@/context/ToastContext";
 
 type TabKey =
   | "contact"
@@ -32,10 +35,15 @@ type TabKey =
   | "security";
 
 export default function AdminSettingsPage() {
+  const { setTheme } = useTheme();
+  const { showError, showSuccess, showPopup } = useToast();
   const [activeTab, setActiveTab] = useState<TabKey>("contact");
   const [settings, setSettings] = useState<any>({
     companyName: "",
     tagline: "",
+    defaultTheme: "wise",
+    topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
+    topBarTagline: "Commercial Grade Print Press & Packaging Studio",
     address: "",
     phone: CONTACT_PHONE,
     whatsappRouting: `+${WHATSAPP_NUMBER}`,
@@ -111,13 +119,33 @@ export default function AdminSettingsPage() {
 
       if (res.ok) {
         clearSiteSettingsCache();
+        if (
+          settings.defaultTheme === "wise" ||
+          settings.defaultTheme === "iceberg"
+        ) {
+          setTheme(settings.defaultTheme);
+        }
         setSuccess(true);
+        showSuccess("All studio settings have been saved to the database.", "Settings Saved");
         setTimeout(() => setSuccess(false), 4000);
       } else {
-        alert("Failed to save settings");
+        const errData = await res.json().catch(() => ({}));
+        const errMsg = errData.error || "Failed to save studio settings.";
+        showError(errMsg, "Save Failed");
+        showPopup({
+          type: "error",
+          title: "Failed to Save Settings",
+          message: errMsg,
+        });
       }
     } catch {
-      alert("Error connecting to server");
+      const netMsg = "Network error while saving settings.";
+      showError(netMsg, "Connection Error");
+      showPopup({
+        type: "error",
+        title: "Connection Error",
+        message: netMsg,
+      });
     } finally {
       setSaving(false);
     }
@@ -243,6 +271,95 @@ export default function AdminSettingsPage() {
       <form onSubmit={handleSubmit} className="space-y-6 text-xs">
         {activeTab === "contact" && (
           <div className="space-y-6">
+            <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-4">
+              <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
+                Default Storefront Theme & Top Announcement Bar
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Default Storefront Theme
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={settings.defaultTheme || "wise"}
+                      onChange={e => {
+                        const chosen = e.target.value as "wise" | "iceberg";
+                        setSettings({ ...settings, defaultTheme: chosen });
+                        setTheme(chosen);
+                      }}
+                      className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink cursor-pointer focus:outline-none focus:border-primary"
+                    >
+                      <option value="wise">
+                        Wise Canvas (Editorial Light & Lime)
+                      </option>
+                      <option value="iceberg">
+                        Iceberg Studio (Deep Navy & Cyan)
+                      </option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Top Banner & Support Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.phone || ""}
+                    onChange={e =>
+                      setSettings({ ...settings, phone: e.target.value })
+                    }
+                    placeholder="+234 802 309 3704"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Top Banner Hours & Location Summary
+                  </label>
+                  <input
+                    type="text"
+                    value={
+                      settings.topBarHoursText ??
+                      "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)"
+                    }
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        topBarHoursText: e.target.value,
+                      })
+                    }
+                    placeholder="Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Top Banner Studio Descriptor
+                  </label>
+                  <input
+                    type="text"
+                    value={
+                      settings.topBarTagline ??
+                      "Commercial Grade Print Press & Packaging Studio"
+                    }
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        topBarTagline: e.target.value,
+                      })
+                    }
+                    placeholder="Commercial Grade Print Press & Packaging Studio"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-4">
               <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
                 Studio Identity & Working Hours
@@ -1134,33 +1251,26 @@ export default function AdminSettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
-                    Google Place ID
+                    Google Place ID (Read-Only)
                   </label>
                   <input
                     type="text"
-                    value={settings.googlePlaceId || ""}
-                    onChange={e =>
-                      setSettings({
-                        ...settings,
-                        googlePlaceId: e.target.value,
-                      })
-                    }
-                    placeholder="ChIJ..."
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                    readOnly
+                    disabled
+                    value={settings.googlePlaceId || "ChIJvQSY9_iNOxARaGAAOwEgnZA"}
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink-muted cursor-not-allowed select-none opacity-80"
                   />
                 </div>
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
-                    Google Places API Key
+                    Google Places API Key (Read-Only)
                   </label>
                   <input
                     type="password"
-                    value={settings.googleApiKey || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, googleApiKey: e.target.value })
-                    }
-                    placeholder="AIzaSy..."
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink font-mono"
+                    readOnly
+                    disabled
+                    value={settings.googleApiKey || "••••••••••••••••••••••••••••••••••••"}
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink-muted font-mono cursor-not-allowed select-none opacity-80"
                   />
                 </div>
               </div>

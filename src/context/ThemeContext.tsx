@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
 type Theme = "iceberg" | "wise";
 
@@ -13,7 +14,9 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const settings = useSiteSettings();
   const [theme, setThemeState] = useState<Theme>("wise");
+  const [userOverrode, setUserOverrode] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,13 +25,25 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(saved);
       document.documentElement.setAttribute("data-theme", saved);
     } else {
-      setThemeState("wise");
       document.documentElement.setAttribute("data-theme", "wise");
     }
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (
+      !userOverrode &&
+      (settings?.defaultTheme === "wise" || settings?.defaultTheme === "iceberg")
+    ) {
+      const dbTheme = settings.defaultTheme as Theme;
+      setThemeState(dbTheme);
+      localStorage.setItem("iceberg-theme", dbTheme);
+      document.documentElement.setAttribute("data-theme", dbTheme);
+    }
+  }, [settings?.defaultTheme, userOverrode]);
+
   const setTheme = (newTheme: Theme) => {
+    setUserOverrode(true);
     setThemeState(newTheme);
     localStorage.setItem("iceberg-theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);

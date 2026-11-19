@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Star,
@@ -10,11 +10,12 @@ import {
   Search,
   CheckCircle,
   ChevronDown,
-  UploadCloud,
   X,
   Loader2,
 } from "lucide-react";
+import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { useToast } from "@/context/ToastContext";
 
 interface ReviewItem {
   _id?: string;
@@ -36,6 +37,7 @@ interface ReviewItem {
 const PAGE_SIZE = 6;
 
 export default function AdminReviewsPage() {
+  const { showError, showSuccess, showPopup } = useToast();
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,8 +46,6 @@ export default function AdminReviewsPage() {
   const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [uploadingPhotos, setUploadingPhotos] = useState(false);
-  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<ReviewItem>({
     authorName: "",
@@ -117,48 +117,10 @@ export default function AdminReviewsPage() {
     setIsModalOpen(true);
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setUploadingPhotos(true);
-    try {
-      const urls: string[] = [];
-      for (const file of Array.from(files)) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("folder", "reviews");
-        const res = await fetch("/api/upload", { method: "POST", body: fd });
-        const data = await res.json();
-        if (res.ok && data.url) {
-          urls.push(data.url);
-        }
-      }
-      if (urls.length > 0) {
-        setFormData((prev) => ({
-          ...prev,
-          photos: [...(prev.photos || []), ...urls],
-        }));
-      }
-    } catch (err) {
-      console.error("Failed uploading review photo:", err);
-    } finally {
-      setUploadingPhotos(false);
-      if (photoInputRef.current) photoInputRef.current.value = "";
-    }
-  };
-
-  const removePhotoFromForm = (idx: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      photos: (prev.photos || []).filter((_, i) => i !== idx),
-    }));
-  };
-
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.authorName || !formData.text) {
-      alert("Please provide the author name and review text.");
+      showError("Please provide the author name and review text.", "Validation Error");
       return;
     }
 
@@ -171,19 +133,33 @@ export default function AdminReviewsPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
-        if (!res.ok) throw new Error("Failed to update review");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to update review");
+        }
+        showSuccess("Customer review updated.", "Review Saved");
       } else {
         const res = await fetch("/api/reviews", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
-        if (!res.ok) throw new Error("Failed to create review");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to create review");
+        }
+        showSuccess("New customer review added.", "Review Created");
       }
       setIsModalOpen(false);
       fetchReviews();
     } catch (err: any) {
-      alert(err.message || "Failed to save review");
+      const msg = err.message || "Failed to save review";
+      showError(msg, "Review Error");
+      showPopup({
+        type: "error",
+        title: "Failed to Save Review",
+        message: msg,
+      });
     } finally {
       setSaving(false);
     }
@@ -197,11 +173,12 @@ export default function AdminReviewsPage() {
       const res = await fetch(`/api/reviews/${id}`, { method: "DELETE" });
       if (res.ok) {
         setReviews((prev) => prev.filter((r) => (r._id || r.id) !== id));
+        showSuccess("Review deleted from database.", "Deleted");
       } else {
-        alert("Failed to delete review");
+        showError("Failed to delete review.", "Delete Failed");
       }
     } catch {
-      alert("Error deleting review");
+      showError("Network error while deleting review.", "Connection Error");
     }
   };
 
@@ -340,48 +317,35 @@ export default function AdminReviewsPage() {
                     <p className="text-xs text-ink-body leading-relaxed italic line-clamp-4">
                       &ldquo;{rev.text}&rdquo;
                     </p>
-
-                    {rev.photos && rev.photos.length > 0 && (
-                      <div className="mt-3.5 flex gap-2 overflow-x-auto pb-1">
-                        {rev.photos.map((photo, pIdx) => (
-                          <div
-                            key={pIdx}
-                            className="relative w-14 h-14 rounded-theme overflow-hidden border border-border shrink-0 bg-canvas-soft"
-                          >
-                            <Image
-                              src={photo}
-                              alt="Evidence"
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {rev.responseFromOwner && (
-                      <div className="mt-3.5 p-3 rounded-theme bg-canvas-soft border border-border/50 text-[11px]">
-                        <span className="font-bold text-ink block mb-0.5">
-                          Response from Studio:
-                        </span>
-                        <p className="text-ink-body italic line-clamp-2">
-                          &ldquo;{rev.responseFromOwner}&rdquo;
-                        </p>
-                      </div>
-                    )}
                   </div>
 
                   <div className="pt-4 border-t border-border flex items-center justify-between">
-                    <div>
-                      <h4 className="font-display font-bold text-xs text-ink">
-                        {rev.authorName}
-                      </h4>
-                      <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
-                        <CheckCircle className="w-3 h-3" />
-                        <span>
-                          {rev.featured ? "Active on Home" : "Hidden from Home"}
+                    <div className="flex items-center gap-3">
+                      {rev.authorImage ? (
+                        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-border/50 shrink-0">
+                          <Image
+                            src={rev.authorImage}
+                            alt={rev.authorName}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-primary-pale text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                          {rev.authorName.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-display font-bold text-xs text-ink">
+                          {rev.authorName}
+                        </h4>
+                        <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+                          <CheckCircle className="w-3 h-3" />
+                          <span>
+                            {rev.featured ? "Active on Home" : "Hidden from Home"}
+                          </span>
                         </span>
-                      </span>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-1.5">
@@ -524,82 +488,14 @@ export default function AdminReviewsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-ink mb-1.5">
-                  Studio Owner Response (Optional)
-                </label>
-                <textarea
-                  rows={3}
-                  value={formData.responseFromOwner}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      responseFromOwner: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. Thank you for trusting Iceberg! We're glad the trifold is making product communication easier..."
-                  className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-xs text-ink focus:outline-none focus:border-primary leading-relaxed"
-                />
-              </div>
-
-              {/* Clean Photo Upload & Delete Grid */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-ink">
-                    Customer Print Photos
-                  </label>
-                  <input
-                    ref={photoInputRef}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handlePhotoUpload}
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    disabled={uploadingPhotos}
-                    onClick={() => photoInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-button bg-canvas-soft border border-border hover:border-primary text-ink font-bold text-xs transition-colors cursor-pointer"
-                  >
-                    {uploadingPhotos ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                    ) : (
-                      <UploadCloud className="w-3.5 h-3.5 text-primary" />
-                    )}
-                    <span>
-                      {uploadingPhotos ? "Uploading..." : "Upload Photos"}
-                    </span>
-                  </button>
-                </div>
-
-                {formData.photos && formData.photos.length > 0 && (
-                  <div className="flex flex-wrap gap-3 pt-1">
-                    {formData.photos.map((p, idx) => (
-                      <div
-                        key={idx}
-                        className="relative w-20 h-20 rounded-theme overflow-hidden border border-border bg-canvas-soft"
-                      >
-                        <Image
-                          src={p}
-                          alt="Customer Print Photo"
-                          fill
-                          className="object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removePhotoFromForm(idx)}
-                          title="Delete Photo"
-                          aria-label="Delete Photo"
-                          className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-button p-1 shadow-soft transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <R2ImageUpload
+                label="Reviewer Profile Image"
+                folder="reviews"
+                value={formData.authorImage || ""}
+                onChange={(authorImage) =>
+                  setFormData({ ...formData, authorImage })
+                }
+              />
 
               <div className="flex items-center gap-3 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-ink">

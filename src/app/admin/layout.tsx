@@ -16,7 +16,10 @@ import {
   ExternalLink,
   Menu,
   X,
+  Loader2,
+  ShieldAlert,
 } from "lucide-react";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminLayout({
   children,
@@ -25,16 +28,101 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { showError, showSuccess } = useToast();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [authStatus, setAuthStatus] = useState<
+    "checking" | "authenticated" | "unauthenticated"
+  >("checking");
+  const [authError, setAuthError] = useState("");
+
+  useEffect(() => {
+    if (pathname === "/admin/login") {
+      return;
+    }
+
+    let isMounted = true;
+    const verifySession = async () => {
+      try {
+        const res = await fetch("/api/admin/auth", { cache: "no-store" });
+        const data = await res.json();
+
+        if (!res.ok || !data.authenticated) {
+          throw new Error(
+            "Unauthorized access: Please sign in to access the Admin Control Center."
+          );
+        }
+
+        if (isMounted) {
+          setAuthStatus("authenticated");
+          setAuthError("");
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          const errMsg =
+            err.message ||
+            "Unauthorized access: Please sign in to access the Admin Control Center.";
+          setAuthStatus("unauthenticated");
+          setAuthError(errMsg);
+          showError(errMsg, "Authentication Required");
+          const target = `/admin/login?error=unauthorized&redirect=${encodeURIComponent(
+            pathname
+          )}`;
+          router.replace(target);
+        }
+      }
+    };
+
+    verifySession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [pathname, router, showError]);
 
   // If on login page, render children directly without admin shell
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
 
+  // Block protected content while verifying or when unauthenticated
+  if (authStatus === "checking") {
+    return (
+      <div className="min-h-screen bg-canvas-soft flex flex-col items-center justify-center p-6 text-ink-muted space-y-3">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-xs font-semibold">
+          Verifying administrator session...
+        </p>
+      </div>
+    );
+  }
+
+  if (authStatus === "unauthenticated") {
+    return (
+      <div className="min-h-screen bg-canvas-soft flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-card rounded-card border border-red-200 p-8 shadow-elevation text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+            <ShieldAlert className="w-6 h-6" />
+          </div>
+          <h2 className="font-display font-black text-lg text-ink">
+            Authentication Required
+          </h2>
+          <p className="text-xs text-red-600 font-medium leading-relaxed">
+            {authError ||
+              "Unauthorized access: You must be signed in to view the Admin Control Center."}
+          </p>
+          <p className="text-[11px] text-ink-muted">
+            Redirecting to Admin Sign In...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const handleLogout = async () => {
     await fetch("/api/admin/auth", { method: "DELETE" });
-    router.push("/admin/login");
+    setAuthStatus("unauthenticated");
+    showSuccess("You have been safely signed out.", "Signed Out");
+    router.replace("/admin/login");
     router.refresh();
   };
 
@@ -104,7 +192,7 @@ export default function AdminLayout({
           </Link>
 
           <nav className="space-y-1 pt-2">
-            {navItems.map(item => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
               return (

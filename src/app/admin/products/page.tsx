@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Plus,
   Trash2,
   Edit3,
-  UploadCloud,
   ChevronDown,
   Loader2,
   X,
 } from "lucide-react";
 import { R2_IMAGES } from "@/lib/constants";
+import { R2MultiImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
+import { useToast } from "@/context/ToastContext";
 
 interface TierItem {
   quantity: number;
@@ -23,6 +24,7 @@ interface TierItem {
 const PAGE_SIZE = 6;
 
 export default function AdminProductsPage() {
+  const { showError, showSuccess, showPopup } = useToast();
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +40,6 @@ export default function AdminProductsPage() {
   const [minQuantity, setMinQuantity] = useState(100);
   const [turnaroundDays, setTurnaroundDays] = useState("24-48 Hours");
   const [gallery, setGallery] = useState<string[]>([]);
-  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
   const [description, setDescription] = useState("");
   const [isTopSelling, setIsTopSelling] = useState(false);
@@ -49,8 +50,6 @@ export default function AdminProductsPage() {
   const [newPaperStock, setNewPaperStock] = useState("");
   const [finishes, setFinishes] = useState<string[]>([]);
   const [newFinish, setNewFinish] = useState("");
-
-  const multiFileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProducts = async () => {
     try {
@@ -149,46 +148,6 @@ export default function AdminProductsPage() {
     setIsModalOpen(true);
   };
 
-  const handleMultiFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setIsUploadingImages(true);
-    try {
-      const uploadedUrls: string[] = [];
-      for (const file of Array.from(files)) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("folder", "products");
-        const res = await fetch("/api/upload", { method: "POST", body: formData });
-        const data = await res.json();
-        if (res.ok && data.url) {
-          uploadedUrls.push(data.url);
-        }
-      }
-      if (uploadedUrls.length > 0) {
-        setGallery((prev) => [...prev, ...uploadedUrls]);
-      }
-    } catch (err) {
-      console.error("Failed uploading product images:", err);
-    } finally {
-      setIsUploadingImages(false);
-      if (multiFileInputRef.current) multiFileInputRef.current.value = "";
-    }
-  };
-
-  const setPrimaryImage = (idx: number) => {
-    setGallery((prev) => {
-      const selected = prev[idx];
-      const rest = prev.filter((_, i) => i !== idx);
-      return [selected, ...rest];
-    });
-  };
-
-  const removeGalleryImage = (idx: number) => {
-    setGallery((prev) => prev.filter((_, i) => i !== idx));
-  };
-
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -216,22 +175,39 @@ export default function AdminProductsPage() {
         finishes,
       };
 
-      if (editingProduct) {
-        await fetch(`/api/products/${editingProduct._id || editingProduct.slug}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        await fetch("/api/products", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      const res = editingProduct
+        ? await fetch(`/api/products/${editingProduct._id || editingProduct.slug}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+        : await fetch("/api/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save product");
       }
 
+      showSuccess(
+        editingProduct
+          ? `"${title}" updated in catalog.`
+          : `"${title}" added to catalog.`,
+        "Product Saved"
+      );
       setIsModalOpen(false);
       fetchProducts();
+    } catch (err: any) {
+      const msg = err.message || "Failed to save product";
+      showError(msg, "Product Error");
+      showPopup({
+        type: "error",
+        title: "Failed to Save Product",
+        message: msg,
+      });
     } finally {
       setSaving(false);
     }
@@ -240,8 +216,14 @@ export default function AdminProductsPage() {
   const handleDeleteProduct = async (prodSlug: string) => {
     if (!confirm("Are you sure you want to delete this commercial print product?"))
       return;
-    await fetch(`/api/products/${prodSlug}`, { method: "DELETE" });
-    fetchProducts();
+    try {
+      const res = await fetch(`/api/products/${prodSlug}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete product");
+      showSuccess("Product removed from catalog.", "Deleted");
+      fetchProducts();
+    } catch (err: any) {
+      showError(err.message || "Failed to delete product.", "Delete Failed");
+    }
   };
 
   const paginatedProducts = products.slice(
@@ -455,81 +437,14 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              {/* Clean Multi-Image Upload & Delete Grid */}
-              <div className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <label className="block font-bold text-ink">
-                    Product Images ({gallery.length})
-                  </label>
-
-                  <div>
-                    <input
-                      ref={multiFileInputRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleMultiFileUpload}
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      disabled={isUploadingImages}
-                      onClick={() => multiFileInputRef.current?.click()}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-button bg-card border border-border hover:border-primary text-ink font-bold text-xs transition-colors cursor-pointer"
-                    >
-                      {isUploadingImages ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                      ) : (
-                        <UploadCloud className="w-3.5 h-3.5 text-primary" />
-                      )}
-                      <span>
-                        {isUploadingImages ? "Uploading..." : "Upload Images"}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {gallery.length > 0 && (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-1">
-                    {gallery.map((imgUrl, idx) => (
-                      <div
-                        key={idx}
-                        className={`relative h-24 rounded-theme overflow-hidden border-2 bg-card group ${
-                          idx === 0 ? "border-primary" : "border-border"
-                        }`}
-                      >
-                        <Image
-                          src={imgUrl}
-                          alt={`Product image ${idx + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                        {idx === 0 ? (
-                          <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[9px] font-bold">
-                            Primary
-                          </span>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => setPrimaryImage(idx)}
-                            className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink/80 text-white text-[9px] font-semibold cursor-pointer"
-                          >
-                            Set Primary
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => removeGalleryImage(idx)}
-                          className="absolute top-1.5 right-1.5 p-1.5 rounded-button bg-red-600 hover:bg-red-700 text-white shadow-soft transition-colors cursor-pointer"
-                          title="Delete Image"
-                          aria-label="Delete Image"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div className="p-4 rounded-theme bg-canvas-soft border border-border">
+                <R2MultiImageUpload
+                  label="Product Images"
+                  folder="products"
+                  values={gallery}
+                  onChange={setGallery}
+                  showPrimaryBadge={true}
+                />
               </div>
 
               {/* Dynamic Quantity Tiers & Volume Pricing Editor */}
