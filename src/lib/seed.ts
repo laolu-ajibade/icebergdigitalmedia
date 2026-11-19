@@ -9,9 +9,6 @@ import { SiteSettings } from "@/models/SiteSettings";
 import { VisitLog } from "@/models/VisitLog";
 import { AdminUser } from "@/models/AdminUser";
 
-export const R2_STORAGE_BASE =
-  "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg";
-
 export const initialTags = [
   { name: "Print", slug: "print", order: 1 },
   { name: "Design", slug: "design", order: 2 },
@@ -27,7 +24,7 @@ export const initialCategories = [
     description:
       "Bespoke magnetic gift boxes, rigid product packaging, and courier mailers.",
     iconName: "Package",
-    image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg",
     order: 1,
     featured: true,
     tags: ["Print", "Design", "Packaging"],
@@ -38,7 +35,7 @@ export const initialCategories = [
     description:
       "Heavyweight hoodies, corporate polo shirts, screen-printed & embroidered streetwear.",
     iconName: "Shirt",
-    image: `${R2_STORAGE_BASE}/images/products/clothes.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/clothes.jpg",
     order: 2,
     featured: true,
     tags: ["Print", "Design", "Apparel"],
@@ -49,7 +46,7 @@ export const initialCategories = [
     description:
       "Full-color sublimation ceramic mugs, insulated tumblers, and corporate drinkware.",
     iconName: "Coffee",
-    image: `${R2_STORAGE_BASE}/images/products/cups.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/cups.jpg",
     order: 3,
     featured: true,
     tags: ["Print", "Drinkware"],
@@ -60,7 +57,7 @@ export const initialCategories = [
     description:
       "Executive gift boxes, branded umbrellas, metallic pens, customized tech gift sets.",
     iconName: "Gift",
-    image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg",
     order: 4,
     featured: true,
     tags: ["Print", "Design", "Gifts"],
@@ -71,7 +68,7 @@ export const initialCategories = [
     description:
       "Retractable roll-up banners, backdrop stands, teardrop flags, vinyl vehicle branding.",
     iconName: "Flag",
-    image: `${R2_STORAGE_BASE}/images/products/banner.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/banner.jpg",
     order: 5,
     featured: true,
     tags: ["Print", "Signage"],
@@ -82,7 +79,7 @@ export const initialCategories = [
     description:
       "Curved-edge business cards, gold foil letterheads, embossed presentation folders.",
     iconName: "Briefcase",
-    image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg",
     order: 6,
     featured: true,
     tags: ["Print", "Design", "Stationery"],
@@ -93,7 +90,7 @@ export const initialCategories = [
     description:
       "A4, A5, and DL commercial flyers, tri-fold brochures, sales brochures, magazines.",
     iconName: "FileText",
-    image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg",
     order: 7,
     featured: true,
     tags: ["Print", "Marketing"],
@@ -104,7 +101,7 @@ export const initialCategories = [
     description:
       "Waterproof vinyl roll labels, die-cut custom stickers, foil seals, jar labels.",
     iconName: "Tag",
-    image: `${R2_STORAGE_BASE}/images/products/cups.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/cups.jpg",
     order: 8,
     featured: true,
     tags: ["Print", "Labels"],
@@ -115,7 +112,7 @@ export const initialCategories = [
     description:
       "Smart RFID cards, frosted PVC employee badges, branded satin lanyards.",
     iconName: "CreditCard",
-    image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg",
     order: 9,
     featured: true,
     tags: ["Print", "ID Cards"],
@@ -126,7 +123,7 @@ export const initialCategories = [
     description:
       "Desktop flip calendars, wall calendars, luxury matte laminated retail paper shopping bags.",
     iconName: "ShoppingBag",
-    image: `${R2_STORAGE_BASE}/images/products/bags.jpg`,
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/bags.jpg",
     order: 10,
     featured: true,
     tags: ["Print", "Packaging"],
@@ -144,8 +141,8 @@ export const initialProducts = [
     basePrice: 5000,
     minQuantity: 100,
     deliveryDays: "24-48 Hours",
-    image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/business-cards.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg"],
     paperStocks: [
       "600gsm Cotton Cardstock",
       "350gsm Matte Artboard",
@@ -182,8 +179,8 @@ export const initialProducts = [
     basePrice: 18500,
     minQuantity: 5,
     deliveryDays: "3-4 Days",
-    image: `${R2_STORAGE_BASE}/images/products/clothes.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/clothes.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/clothes.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/clothes.jpg"],
     paperStocks: [
       "420gsm Brushed Fleece Cotton",
       "350gsm French Terry",
@@ -219,8 +216,8 @@ export const initialProducts = [
     basePrice: 3000,
     minQuantity: 12,
     deliveryDays: "24-48 Hours",
-    image: `${R2_STORAGE_BASE}/images/products/cups.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/cups.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/cups.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/cups.jpg"],
     paperStocks: [
       "Grade AAA Glazed Ceramic",
       "Matte Ceramic",
@@ -255,8 +252,8 @@ export const initialProducts = [
     basePrice: 25000,
     minQuantity: 25,
     deliveryDays: "4-5 Days",
-    image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/boxes.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg"],
     paperStocks: [
       "1200gsm Heavy Greyboard",
       "1500gsm Extra Stiff Board",
@@ -291,8 +288,8 @@ export const initialProducts = [
     basePrice: 55000,
     minQuantity: 1,
     deliveryDays: "24 Hours",
-    image: `${R2_STORAGE_BASE}/images/products/banner.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/banner.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/banner.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/banner.jpg"],
     paperStocks: [
       "Anti-Curl Grey-Back PET Film",
       "Heavy 440gsm Vinyl Banner",
@@ -323,8 +320,8 @@ export const initialProducts = [
     basePrice: 16000,
     minQuantity: 200,
     deliveryDays: "24 Hours",
-    image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/business-cards.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg"],
     paperStocks: [
       "170gsm Silk Art Paper",
       "250gsm Gloss Board",
@@ -359,8 +356,8 @@ export const initialProducts = [
     basePrice: 12500,
     minQuantity: 50,
     deliveryDays: "3-5 Days",
-    image: `${R2_STORAGE_BASE}/images/products/bags.jpg`,
-    gallery: [`${R2_STORAGE_BASE}/images/products/bags.jpg`],
+    image: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/bags.jpg",
+    gallery: ["https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/bags.jpg"],
     paperStocks: [
       "250gsm Coated Art Paper",
       "200gsm Natural Kraft Paper",
@@ -395,7 +392,7 @@ export const initialBlogs = [
     excerpt:
       "Navigating GSM ratings, tactile lamination choices, and coating techniques so your business stationery and marketing collateral convey true luxury in Lagos.",
     category: "Print Engineering",
-    coverImage: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
+    coverImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/business-cards.jpg",
     author: "Iceberg Master Printmakers",
     readTime: "6 min read",
     tags: ["Paper Stocks", "Finishes", "Business Cards", "Print Guide"],
@@ -426,7 +423,7 @@ At **Iceberg Creative Print Studio**, our Shomolu press house uses calibrated hi
     excerpt:
       "Why leading Nigerian fashion houses, corporate gift curators, and tech founders are investing in magnetic rigid boxes to drive viral unboxing and customer retention.",
     category: "Bespoke Packaging",
-    coverImage: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    coverImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg",
     author: "Iceberg Packaging",
     readTime: "5 min read",
     tags: ["Packaging", "Unboxing", "Branding", "Luxury Boxes"],
@@ -452,7 +449,7 @@ Ready to engineer custom packaging that turns your customers into brand evangeli
 export const initialReviews = [
   {
     authorName: "Oloyede Godliness",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/oloyede-godliness-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/oloyede-godliness-avatar.png",
     rating: 5,
     reviewDate: "a week ago",
     text: "The trifold is such a business saver, save me a lot of explanation to customers on how to use our products. I shared my raw idea and design with Iceberg and it was redesigned and printed as such a beautiful trifold. You should get one for your business. Contact them today and you will not be disappointed.",
@@ -466,7 +463,7 @@ export const initialReviews = [
   },
   {
     authorName: "Simi Agbana",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/simi-agbana-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/simi-agbana-avatar.png",
     rating: 5,
     reviewDate: "a week ago",
     text: "I had an excellent experience with Iceberg Creative Print Studio! Their service was nothing short of exceptional timely, efficient, and delivered with impressive attention to detail. He was professional, responsive, and committed to delivering high quality print work.",
@@ -480,7 +477,7 @@ export const initialReviews = [
   },
   {
     authorName: "Ada Amaka",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/ada-amaka-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/ada-amaka-avatar.png",
     rating: 5,
     reviewDate: "3 weeks ago",
     text: "They did an amazing soul sanctifying job for me. This is my evidence as seen. I recommend them. And I rate them 1000 over 1000.",
@@ -494,7 +491,7 @@ export const initialReviews = [
   },
   {
     authorName: "Rasheed Ishola",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/rasheed-ishola-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/rasheed-ishola-avatar.png",
     rating: 5,
     reviewDate: "a month ago",
     text: "Excellent service! I'm really happy with the quality of my stickers. The design came out beautiful, and the service was fast and professional. I definitely recommend them. Thank you so much! 🙏",
@@ -508,7 +505,7 @@ export const initialReviews = [
   },
   {
     authorName: "Tina Fingesi-Johnson",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/tina-fingesi-johnson-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/tina-fingesi-johnson-avatar.png",
     rating: 5,
     reviewDate: "2 months ago",
     text: "I've used Iceberg Digital Media for customized mugs, and I honestly couldn't have been more pleased with the outcome. I had several mugs made around 2021, and the quality was impressive!",
@@ -522,7 +519,7 @@ export const initialReviews = [
   },
   {
     authorName: "Tofunmi Ariyo",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/tofunmi-ariyo-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/tofunmi-ariyo-avatar.png",
     rating: 5,
     reviewDate: "2 months ago",
     text: "Excellent service from start to finish! The quality of their printing and branding is top-notch, and they delivered exactly what I needed. Professional, creative, and reliable. Highly recommended!",
@@ -536,7 +533,7 @@ export const initialReviews = [
   },
   {
     authorName: "Oyibo Franca 17",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/oyibo-franca-17-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/oyibo-franca-17-avatar.png",
     rating: 5,
     reviewDate: "2 months ago",
     text: "Really happy with the design service. The process was smooth, communication was easy, and they actually took the time to understand what I was going for instead of just throwing something together. The final design came out really clean and honestly better than I expected.",
@@ -550,7 +547,7 @@ export const initialReviews = [
   },
   {
     authorName: "Mezie Okeke",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/mezie-okeke-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/mezie-okeke-avatar.png",
     rating: 5,
     reviewDate: "a month ago",
     text: "Great brand with quality products and excellent customer service. Smooth experience from start to finish. Highly recommended!",
@@ -564,7 +561,7 @@ export const initialReviews = [
   },
   {
     authorName: "Grace Leonard",
-    authorImage: `${R2_STORAGE_BASE}/images/reviews/grace-leonard-avatar.png`,
+    authorImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/reviews/grace-leonard-avatar.png",
     rating: 5,
     reviewDate: "4 months ago",
     text: "The experience I had with this company was so amazing!!! Quality branded items and delivery was swift! Highly recommended!",
@@ -633,7 +630,7 @@ export const initialSiteSettings = {
     "Strict CMYK color gamut calibration and delta-E controls",
     "Same-day Lagos dispatch via Bolt, Kwik, and GIG Logistics",
   ],
-  aboutImage: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+  aboutImage: "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg",
   faqs: [
     {
       question: "How fast can I get my print order delivered in Lagos?",
