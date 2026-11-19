@@ -207,7 +207,7 @@ export function Footer() {
                   href="/blog"
                   className="hover:text-primary transition-colors block py-0.5"
                 >
-                  Print Journal
+                  Blog
                 </Link>
               </li>
               <li>

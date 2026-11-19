@@ -85,7 +85,7 @@ export function GoogleReviews() {
             </div>
 
             <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight leading-tight">
-              Trusted by {reviewsData.trustedCount || "500+"} Lagos Brands & Designers
+              Trusted by {reviewsData.trustedCount || "500+"} Brands & Designers
             </h2>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-0.5">

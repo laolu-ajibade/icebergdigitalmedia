@@ -24,25 +24,26 @@ export default function BlogListingPage() {
 
   useEffect(() => {
     fetch("/api/blogs")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.blogs) setBlogs(data.blogs);
       })
-      .catch((err) => console.error("Error fetching blogs:", err))
+      .catch(err => console.error("Error fetching blogs:", err))
       .finally(() => setLoading(false));
   }, []);
 
   const categories = [
     "All",
-    ...Array.from(new Set(blogs.map((b) => b.category).filter(Boolean))),
+    ...Array.from(new Set(blogs.map(b => b.category).filter(Boolean))),
   ];
 
-  const filteredBlogs = blogs.filter((b) => {
+  const filteredBlogs = blogs.filter(b => {
     const matchesCategory =
       selectedCategory === "All" || b.category === selectedCategory;
     const matchesSearch =
       b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (b.excerpt && b.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
+      (b.excerpt &&
+        b.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -50,7 +51,7 @@ export default function BlogListingPage() {
   const gridPosts = filteredBlogs.slice(1);
   const paginatedGridPosts = gridPosts.slice(
     (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
+    currentPage * PAGE_SIZE,
   );
 
   return (
@@ -61,7 +62,8 @@ export default function BlogListingPage() {
             Engineering Tactile Impressions.
           </h1>
           <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            Technical guides, GSM specifications, rigid packaging psychology, and commercial printmaking secrets from our Shomolu.
+            Technical guides, GSM specifications, rigid packaging psychology,
+            and commercial printmaking secrets from our Shomolu.
           </p>
 
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-2xl mx-auto">
@@ -70,7 +72,7 @@ export default function BlogListingPage() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search articles, paper stocks, packaging..."
                 className="w-full pl-10 pr-4 py-3 min-h-[44px] bg-card border border-border rounded-button text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:border-primary shadow-soft"
               />
@@ -79,13 +81,13 @@ export default function BlogListingPage() {
             <div className="relative w-full sm:w-60 shrink-0">
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={e => setSelectedCategory(e.target.value)}
                 aria-label="Filter articles by category"
                 className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none bg-card border border-border rounded-button text-xs font-bold text-ink shadow-soft cursor-pointer focus:outline-none focus:border-primary"
               >
-                {categories.map((cat) => (
+                {categories.map(cat => (
                   <option key={cat} value={cat}>
-                    {cat === "All" ? "All Journal Categories" : cat}
+                    {cat === "All" ? "All Categories" : cat}
                   </option>
                 ))}
               </select>
@@ -97,7 +99,9 @@ export default function BlogListingPage() {
         {loading ? (
           <div className="py-24 flex flex-col items-center justify-center text-ink-muted space-y-3">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="text-xs font-semibold">Loading technical journal...</span>
+            <span className="text-xs font-semibold">
+              Loading technical Blog...
+            </span>
           </div>
         ) : filteredBlogs.length === 0 ? (
           <div className="py-16 text-center bg-card rounded-card border border-border max-w-md mx-auto p-8 space-y-3">
@@ -168,7 +172,7 @@ export default function BlogListingPage() {
             {gridPosts.length > 0 && (
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {paginatedGridPosts.map((post) => (
+                  {paginatedGridPosts.map(post => (
                     <article
                       key={post.slug}
                       className="bg-card rounded-card border border-border overflow-hidden shadow-soft antigravity-card flex flex-col justify-between group hover:border-primary/50 transition-colors"
@@ -188,7 +192,9 @@ export default function BlogListingPage() {
                             <span className="text-primary font-bold uppercase tracking-wider">
                               {post.category}
                             </span>
-                            <span className="text-ink-muted">{post.readTime}</span>
+                            <span className="text-ink-muted">
+                              {post.readTime}
+                            </span>
                           </div>
 
                           <Link href={`/blog/${post.slug}`}>

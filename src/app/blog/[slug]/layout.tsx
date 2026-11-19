@@ -15,7 +15,7 @@ export async function generateMetadata({
     const blog: any = await Blog.findOne({ slug }).lean();
     if (!blog) {
       return {
-        title: "Print Journal Article",
+        title: "Blog Article",
         alternates: { canonical: `/blog/${slug}` },
       };
     }
@@ -38,7 +38,7 @@ export async function generateMetadata({
     };
   } catch {
     return {
-      title: "Print Journal Article",
+      title: "Blog Article",
       alternates: { canonical: `/blog/${slug}` },
     };
   }
@@ -105,7 +105,7 @@ export default async function BlogSlugLayout({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Print Journal",
+            name: "Blog",
             item: `${SITE_URL}/blog`,
           },
           {

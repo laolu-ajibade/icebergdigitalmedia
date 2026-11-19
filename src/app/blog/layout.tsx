@@ -6,14 +6,14 @@ import { SITE_URL } from "@/lib/constants";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Print Journal & Technical Archive",
+  title: "Blog & Technical Archive",
   description:
     "Technical guides on paper weights (GSM), foil finishes, rigid packaging, and commercial digital printing in Lagos from Iceberg Creative Print Studio.",
   alternates: {
     canonical: "/blog",
   },
   openGraph: {
-    title: "Print Journal & Technical Archive | Iceberg Creative Print Studio",
+    title: "Blog & Technical Archive | Iceberg Creative Print Studio",
     description:
       "Commercial printing specifications, GSM paper guides, and packaging insights from our Shomolu, Lagos studio.",
     url: `${SITE_URL}/blog`,
@@ -31,7 +31,7 @@ export default async function BlogLayout({
     await connectDB();
     const blogs: any[] = await Blog.find(
       { published: { $ne: false } },
-      { title: 1, slug: 1 }
+      { title: 1, slug: 1 },
     )
       .sort({ publishedAt: -1 })
       .lean();
@@ -40,7 +40,7 @@ export default async function BlogLayout({
       itemListJsonLd = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        name: "Iceberg Print Journal",
+        name: "Iceberg Blog",
         url: `${SITE_URL}/blog`,
         mainEntity: {
           "@type": "ItemList",

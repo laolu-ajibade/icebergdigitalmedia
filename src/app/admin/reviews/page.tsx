@@ -293,7 +293,7 @@ export default function AdminReviewsPage() {
               Homepage Reviews Header & Score Configuration
             </h2>
             <p className="text-[11px] text-ink-muted">
-              Configure the dynamic brand count (&ldquo;Trusted by {trustedCount || "500+"} Lagos Brands &amp; Designers&rdquo;) and overall rating score ({customRating ? Number(customRating).toFixed(1) : calculatedRating.toFixed(1)} / 5.0).
+              Configure the dynamic brand count (&ldquo;Trusted by {trustedCount || "500+"} Brands &amp; Designers&rdquo;) and overall rating score ({customRating ? Number(customRating).toFixed(1) : calculatedRating.toFixed(1)} / 5.0).
             </p>
           </div>
           <button

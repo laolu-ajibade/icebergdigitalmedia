@@ -23,6 +23,7 @@ import {
   RotateCcw,
   Eye,
   EyeOff,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/lib/constants";
@@ -387,14 +388,19 @@ export function LivePrintCanvas() {
 
   return (
     <div className="bg-card rounded-card border border-card-border shadow-elevation overflow-hidden antigravity-card">
-      {/* Simple Studio Header */}
-      <div className="px-4 sm:px-5 pt-4 pb-3 border-b border-border/60">
-        <h2 className="font-display font-bold text-sm text-ink">
-          Customize Your Print Mockup
-        </h2>
-        <p className="text-xs text-ink-muted mt-0.5">
-          Type your brand name, upload your logo, and switch colors to preview your order live.
-        </p>
+      {/* Clear Interactive Studio Header */}
+      <div className="px-4 sm:px-5 py-3.5 bg-primary-pale/55 border-b border-primary/20 flex items-start sm:items-center gap-3">
+        <div className="w-9 h-9 rounded-theme bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-soft mt-0.5 sm:mt-0">
+          <SlidersHorizontal className="w-4 h-4" />
+        </div>
+        <div>
+          <h2 className="font-display font-extrabold text-sm sm:text-base text-ink leading-snug">
+            Customize &amp; Preview Your Brand Live
+          </h2>
+          <p className="text-xs text-ink-body mt-0.5 leading-relaxed">
+            Edit the text, upload your logo, or pick colors below — the product updates instantly.
+          </p>
+        </div>
       </div>
 
       {/* Product Category Tabs */}

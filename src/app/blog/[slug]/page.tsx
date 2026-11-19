@@ -40,7 +40,7 @@ export default function BlogPostReaderPage({
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline mb-8"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Print Journal</span>
+          <span>Back to Blog</span>
         </Link>
 
         {/* Header */}

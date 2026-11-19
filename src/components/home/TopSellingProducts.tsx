@@ -103,7 +103,7 @@ export function TopSellingProducts({
                     className="w-full py-2.5 px-4 min-h-[44px] rounded-button bg-canvas-soft hover:bg-primary hover:text-primary-foreground text-ink font-bold text-xs border border-border/80 transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>Configure & Order</span>
+                    <span>Order</span>
                   </Link>
                 </div>
               </div>

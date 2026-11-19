@@ -136,7 +136,7 @@ export default function AdminBlogsPage() {
     try {
       const res = await fetch(`/api/blogs/${blogSlug}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete article");
-      showSuccess("Article deleted from Print Journal.", "Deleted");
+      showSuccess("Article deleted from Blog.", "Deleted");
       fetchBlogs();
     } catch (err: any) {
       showError(err.message || "Failed to delete article.", "Delete Failed");
@@ -144,11 +144,14 @@ export default function AdminBlogsPage() {
   };
 
   const availableCategories = Array.from(
-    new Set([...BLOG_CATEGORIES, ...blogs.map((b) => b.category).filter(Boolean)])
+    new Set([
+      ...BLOG_CATEGORIES,
+      ...blogs.map(b => b.category).filter(Boolean),
+    ]),
   );
 
   const query = searchQuery.trim().toLowerCase();
-  const filteredBlogs = blogs.filter((b) => {
+  const filteredBlogs = blogs.filter(b => {
     const matchesSearch =
       !query ||
       b.title?.toLowerCase().includes(query) ||
@@ -163,7 +166,7 @@ export default function AdminBlogsPage() {
 
   const paginatedBlogs = filteredBlogs.slice(
     (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
+    currentPage * PAGE_SIZE,
   );
 
   return (
@@ -174,7 +177,8 @@ export default function AdminBlogsPage() {
             Blogs ({blogs.length})
           </h1>
           <p className="text-xs text-ink-muted mt-1">
-            Author and publish educational printing guides, paper stock analyses, and brand case studies.
+            Author and publish educational printing guides, paper stock
+            analyses, and brand case studies.
           </p>
         </div>
 
@@ -183,13 +187,13 @@ export default function AdminBlogsPage() {
           className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>New Journal Post</span>
+          <span>New Blog Post</span>
         </button>
       </div>
 
       <AdminFilterBar
         searchQuery={searchQuery}
-        onSearchChange={(val) => {
+        onSearchChange={val => {
           setSearchQuery(val);
           setCurrentPage(1);
         }}
@@ -198,11 +202,11 @@ export default function AdminBlogsPage() {
           {
             key: "category",
             value: categoryFilter,
-            onChange: (val) => {
+            onChange: val => {
               setCategoryFilter(val);
               setCurrentPage(1);
             },
-            options: availableCategories.map((cat) => ({
+            options: availableCategories.map(cat => ({
               value: cat,
               label: cat,
             })),
@@ -233,60 +237,62 @@ export default function AdminBlogsPage() {
                   </td>
                 </tr>
               ) : (
-                paginatedBlogs.map((b) => (
-                <tr key={b._id || b.slug} className="hover:bg-canvas-soft/50">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      {b.coverImage && (
-                        <div className="relative w-12 h-10 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
-                          <Image
-                            src={b.coverImage}
-                            alt={b.title}
-                            fill
-                            className="object-cover"
-                          />
+                paginatedBlogs.map(b => (
+                  <tr key={b._id || b.slug} className="hover:bg-canvas-soft/50">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        {b.coverImage && (
+                          <div className="relative w-12 h-10 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
+                            <Image
+                              src={b.coverImage}
+                              alt={b.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <span className="font-bold text-ink block line-clamp-1 max-w-md">
+                            {b.title}
+                          </span>
                         </div>
-                      )}
-                      <div>
-                        <span className="font-bold text-ink block line-clamp-1 max-w-md">
-                          {b.title}
-                        </span>
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-4">{b.category}</td>
-                  <td className="p-4 text-ink-muted">{b.readTime}</td>
-                  <td className="p-4">
-                    <span className="font-bold text-emerald-600">Published</span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <div className="inline-flex items-center gap-1.5">
-                      <a
-                        href={`/blog/${b.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors"
-                        title="View Article"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                      <button
-                        onClick={() => openEditModal(b)}
-                        className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors cursor-pointer"
-                        title="Edit Article"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBlog(b.slug)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-button transition-colors cursor-pointer"
-                        title="Delete Article"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="p-4">{b.category}</td>
+                    <td className="p-4 text-ink-muted">{b.readTime}</td>
+                    <td className="p-4">
+                      <span className="font-bold text-emerald-600">
+                        Published
+                      </span>
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="inline-flex items-center gap-1.5">
+                        <a
+                          href={`/blog/${b.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors"
+                          title="View Article"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                        <button
+                          onClick={() => openEditModal(b)}
+                          className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors cursor-pointer"
+                          title="Edit Article"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBlog(b.slug)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-button transition-colors cursor-pointer"
+                          title="Delete Article"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))
               )}
             </tbody>
@@ -308,7 +314,7 @@ export default function AdminBlogsPage() {
               <h3 className="font-display font-bold text-base text-ink">
                 {editingBlog
                   ? `Edit Article: ${editingBlog.title}`
-                  : "Author Print Journal Article"}
+                  : "Author Blog Article"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -328,7 +334,7 @@ export default function AdminBlogsPage() {
                   required
                   placeholder="e.g. Master Guide to Specialty Foil Stamping in Lagos"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
@@ -341,10 +347,10 @@ export default function AdminBlogsPage() {
                   <div className="relative">
                     <select
                       value={category}
-                      onChange={(e) => setCategory(e.target.value)}
+                      onChange={e => setCategory(e.target.value)}
                       className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-ink font-semibold cursor-pointer focus:outline-none focus:border-primary"
                     >
-                      {BLOG_CATEGORIES.map((cat) => (
+                      {BLOG_CATEGORIES.map(cat => (
                         <option key={cat} value={cat}>
                           {cat}
                         </option>
@@ -360,7 +366,7 @@ export default function AdminBlogsPage() {
                   <input
                     type="text"
                     value={readTime}
-                    onChange={(e) => setReadTime(e.target.value)}
+                    onChange={e => setReadTime(e.target.value)}
                     className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
                   />
                 </div>
@@ -381,7 +387,7 @@ export default function AdminBlogsPage() {
                   required
                   rows={2}
                   value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
+                  onChange={e => setExcerpt(e.target.value)}
                   placeholder="Brief preview displayed on the blog card..."
                   className="w-full px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border text-ink"
                 />
@@ -395,7 +401,7 @@ export default function AdminBlogsPage() {
                   required
                   rows={6}
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={e => setContent(e.target.value)}
                   placeholder="Write technical print guide here. Use ### for subheadings..."
                   className="w-full px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border text-ink font-mono text-[11px]"
                 />
