@@ -387,6 +387,16 @@ export function LivePrintCanvas() {
 
   return (
     <div className="bg-card rounded-card border border-card-border shadow-elevation overflow-hidden antigravity-card">
+      {/* Simple Studio Header */}
+      <div className="px-4 sm:px-5 pt-4 pb-3 border-b border-border/60">
+        <h2 className="font-display font-bold text-sm text-ink">
+          Customize Your Print Mockup
+        </h2>
+        <p className="text-xs text-ink-muted mt-0.5">
+          Type your brand name, upload your logo, and switch colors to preview your order live.
+        </p>
+      </div>
+
       {/* Product Category Tabs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-border/60 bg-canvas-soft/70 p-1.5 gap-1.5">
         {dynamicProducts.map((p) => {

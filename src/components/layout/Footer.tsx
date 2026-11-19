@@ -226,14 +226,6 @@ export function Footer() {
                   Contact & FAQ
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/admin"
-                  className="hover:text-primary transition-colors block py-0.5"
-                >
-                  Admin Portal
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -372,8 +364,18 @@ export function Footer() {
         {/* Bottom Copyright & Action Bar */}
         <div className="pt-6 sm:pt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
           <p className="text-center sm:text-left leading-relaxed">
-            Copyright © 2019 - 2026 Hazken Digital / {companyName}. All Rights
-            Reserved.
+            Copyright © 2019 - 2026 {companyName}. All Rights Reserved.{" "}
+            <span className="text-white/35">
+              · By{" "}
+              <a
+                href="https://www.linkedin.com/in/olaoluwa-ajibade"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/50 hover:text-white/80 transition-colors underline decoration-white/20 underline-offset-2"
+              >
+                D&apos;Maker Inc
+              </a>
+            </span>
           </p>
           <a
             href={buildWaLink("Hello Iceberg Studio, I need assistance.")}

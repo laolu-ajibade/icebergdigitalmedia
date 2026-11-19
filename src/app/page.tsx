@@ -51,10 +51,12 @@ export default async function HomePage() {
       : [];
 
     const socialLinks = [
-      settings?.instagram,
-      settings?.facebook,
-      settings?.twitter,
-      settings?.linkedin,
+      settings?.instagramUrl,
+      settings?.facebookUrl,
+      settings?.twitterUrl,
+      settings?.linkedinUrl,
+      settings?.youtubeUrl,
+      settings?.tiktokUrl,
     ].filter((u) => typeof u === "string" && u.startsWith("http"));
 
     const reviewCount = reviews?.length || 9;
