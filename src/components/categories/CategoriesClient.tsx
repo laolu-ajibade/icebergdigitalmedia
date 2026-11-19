@@ -104,7 +104,7 @@ export default function CategoriesClient({
               Commercial Print & Design Categories
             </h1>
             <p className="text-sm sm:text-base text-ink-body mt-3 leading-relaxed">
-              Browse all categories across Print, Design, Packaging, Apparel, and Branding. Filter by tag or select a category to configure your order.
+              Browse all categories across Print, Design, Packaging, Apparel, and Branding.
             </p>
           </div>
 
@@ -124,7 +124,7 @@ export default function CategoriesClient({
               >
                 {tagOptions.map((tag) => (
                   <option key={tag} value={tag}>
-                    {tag === "All" ? "All Print & Design Tags" : tag}
+                    {tag === "All" ? "All Tags" : tag}
                   </option>
                 ))}
               </select>

@@ -64,11 +64,11 @@ export default function BlogListingClient({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <h1 className="font-display font-black text-3xl sm:text-5xl text-ink tracking-tight">
-            Engineering Tactile Impressions.
+            Print &amp; Design Guides
           </h1>
           <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            Technical guides, GSM specifications, rigid packaging psychology,
-            and commercial printmaking secrets from our Shomolu.
+            Practical guides on paper weights, packaging design, brand
+            finishes, and preparing artwork for commercial print.
           </p>
 
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-2xl mx-auto">
