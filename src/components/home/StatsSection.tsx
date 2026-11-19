@@ -1,30 +1,13 @@
 "use client";
 
 import React from "react";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
 export function StatsSection() {
-  const stats = [
-    {
-      value: "500,000+",
-      label: "Prints Completed",
-      subtext: "Corporate & retail runs produced",
-    },
-    {
-      value: "99.4%",
-      label: "On-Time SLA Delivery",
-      subtext: "Strict factory dispatch guarantee",
-    },
-    {
-      value: "4.9 / 5.0",
-      label: "Verified Client Rating",
-      subtext: "120+ verified Google business reviews",
-    },
-    {
-      value: "36 States",
-      label: "Nationwide Delivery",
-      subtext: "Kwik, Bolt & GIG Logistics network",
-    },
-  ];
+  const settings = useSiteSettings();
+  const stats: Array<{ value: string; label: string }> = settings?.stats || [];
+
+  if (stats.length === 0) return null;
 
   return (
     <section className="py-12 bg-canvas-soft border-b border-border/40">
@@ -33,17 +16,12 @@ export function StatsSection() {
           {stats.map((s, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-card bg-card border border-border/70 shadow-soft text-center"
+              className="p-6 rounded-card bg-card border border-border/70 shadow-soft text-center antigravity-card"
             >
               <div className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight">
                 {s.value}
               </div>
-              <div className="text-xs font-bold text-ink mt-1">
-                {s.label}
-              </div>
-              <div className="text-[11px] text-ink-muted mt-0.5">
-                {s.subtext}
-              </div>
+              <div className="text-xs font-bold text-ink mt-1">{s.label}</div>
             </div>
           ))}
         </div>

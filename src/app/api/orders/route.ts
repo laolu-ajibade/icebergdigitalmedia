@@ -1,40 +1,41 @@
 import { NextResponse } from "next/server";
-import { connectDB, memoryStore } from "@/lib/db";
+import { connectDB } from "@/lib/db";
 import { Order } from "@/models/Order";
-import { ensureSeeded } from "@/lib/seed";
 import { getAdminSession } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    await ensureSeeded();
     const session = await getAdminSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const db = await connectDB();
-    if (db) {
-      const orders = await Order.find().sort({ createdAt: -1 });
-      return NextResponse.json({ orders });
-    }
-
-    return NextResponse.json({ orders: memoryStore.orders });
+    await connectDB();
+    const orders = await Order.find().sort({ createdAt: -1 });
+    return NextResponse.json({ orders });
   } catch (error: any) {
-    return NextResponse.json({ orders: memoryStore.orders, error: error.message });
+    return NextResponse.json({ orders: [], error: error.message }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    await ensureSeeded();
     const data = await request.json();
-
     if (!data.customerName || !data.customerPhone || !data.items || data.items.length === 0) {
-      return NextResponse.json({ error: "Name, phone, and items are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Name, phone, and items are required" },
+        { status: 400 }
+      );
     }
 
-    const orderNumber = `ICE-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newOrderData = {
+    const orderNumber = `ICE-${new Date().getFullYear()}-${Math.floor(
+      1000 + Math.random() * 9000
+    )}`;
+
+    await connectDB();
+    const saved = await Order.create({
       orderNumber,
       customerName: data.customerName,
       customerPhone: data.customerPhone,
@@ -43,16 +44,7 @@ export async function POST(request: Request) {
       totalAmount: data.totalAmount || 0,
       status: "Pending WhatsApp",
       notes: data.notes || "",
-      createdAt: new Date(),
-    };
-
-    const db = await connectDB();
-    let saved: any = newOrderData;
-    if (db) {
-      saved = await Order.create(newOrderData);
-    }
-
-    memoryStore.orders.unshift(saved);
+    });
 
     return NextResponse.json({ success: true, order: saved }, { status: 201 });
   } catch (error: any) {

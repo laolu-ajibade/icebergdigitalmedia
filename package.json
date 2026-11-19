@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "r2:sync": "node scripts/sync-images-to-r2.mjs",
-    "r2:migrate": "node scripts/migrate-mongo-to-r2.mjs"
+    "r2:sync": "node scripts/sync-images-to-r2.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1172.0",

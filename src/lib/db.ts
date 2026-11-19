@@ -30,49 +30,15 @@ export async function connectDB(): Promise<typeof mongoose> {
   }
 
   if (!cached?.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached!.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      return mongooseInstance;
-    });
+    cached!.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false });
   }
 
   try {
     cached!.conn = await cached!.promise;
   } catch (err: any) {
     cached!.promise = null;
-    throw new Error(`Failed to connect to MongoDB with compulsory MONGODB_URI: ${err.message}`);
+    throw new Error(`Failed to connect to MongoDB: ${err.message}`);
   }
 
   return cached!.conn;
 }
-
-// In-Memory Hybrid Fallback Store
-export interface MemoryStore {
-  products: any[];
-  categories: any[];
-  blogs: any[];
-  orders: any[];
-  settings: any;
-  monthlyVisits: Record<string, number>;
-  adminUser: any;
-}
-
-declare global {
-  // eslint-disable-next-line no-var
-  var memoryStoreGlobal: MemoryStore | undefined;
-}
-
-export const memoryStore: MemoryStore =
-  global.memoryStoreGlobal ||
-  (global.memoryStoreGlobal = {
-    products: [],
-    categories: [],
-    blogs: [],
-    orders: [],
-    settings: null,
-    monthlyVisits: {},
-    adminUser: null,
-  });

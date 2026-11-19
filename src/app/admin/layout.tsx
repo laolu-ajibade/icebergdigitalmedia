@@ -11,13 +11,18 @@ import {
   FileText,
   ShoppingBag,
   Settings,
+  Star,
   LogOut,
   ExternalLink,
   Menu,
   X,
 } from "lucide-react";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -38,6 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Product Catalog", href: "/admin/products", icon: Package },
     { label: "Categories (10+)", href: "/admin/categories", icon: Layers },
     { label: "Print Journal (Blogs)", href: "/admin/blogs", icon: FileText },
+    { label: "Customer Reviews", href: "/admin/reviews", icon: Star },
     { label: "WhatsApp Orders", href: "/admin/orders", icon: ShoppingBag },
     { label: "Settings & Google API", href: "/admin/settings", icon: Settings },
   ];
@@ -48,15 +54,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="md:hidden bg-card border-b border-border p-4 flex items-center justify-between">
         <Link href="/admin" className="flex items-center gap-2.5">
           <div className="relative w-8 h-8 rounded-theme overflow-hidden bg-white p-0.5 border border-border/50">
-            <Image src="/logo-icon.jpg" alt="Iceberg" fill className="object-contain" />
+            <Image
+              src="/logo-icon.jpg"
+              alt="Iceberg"
+              fill
+              className="object-contain"
+            />
           </div>
-          <span className="font-display font-bold text-sm text-ink">Iceberg Admin</span>
+          <span className="font-display font-bold text-sm text-ink">
+            Iceberg Admin
+          </span>
         </Link>
         <button
           onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
           className="p-2 rounded-button bg-canvas-soft text-ink"
         >
-          {isMobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {isMobileNavOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <Menu className="w-5 h-5" />
+          )}
         </button>
       </div>
 
@@ -69,7 +86,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="space-y-6">
           <Link href="/admin" className="hidden md:flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-theme overflow-hidden bg-white shadow-soft p-0.5 border border-border/50">
-              <Image src="/logo-icon.jpg" alt="Iceberg" fill className="object-contain" />
+              <Image
+                src="/logo-icon.jpg"
+                alt="Iceberg"
+                fill
+                className="object-contain"
+              />
             </div>
             <div>
               <span className="font-display font-bold text-sm text-ink block">
@@ -82,7 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
 
           <nav className="space-y-1 pt-2">
-            {navItems.map((item) => {
+            {navItems.map(item => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
               return (
@@ -124,7 +146,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Admin Content Canvas */}
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto max-w-6xl">{children}</main>
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto max-w-6xl">
+        {children}
+      </main>
     </div>
   );
 }

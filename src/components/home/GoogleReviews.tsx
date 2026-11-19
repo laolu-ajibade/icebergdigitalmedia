@@ -2,30 +2,27 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Star, MessageSquarePlus, ExternalLink, CheckCircle } from "lucide-react";
+import {
+  Star,
+  MessageSquarePlus,
+  ExternalLink,
+  CheckCircle,
+} from "lucide-react";
 
 export function GoogleReviews() {
   const [reviewsData, setReviewsData] = useState<any>({
-    rating: 4.9,
-    totalReviews: 128,
+    rating: 5.0,
+    totalReviews: 0,
     reviews: [],
     googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
-    googleMapsUrl: "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA",
+    googleMapsUrl:
+      "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA",
   });
 
   useEffect(() => {
     fetch("/api/reviews")
       .then((res) => res.json())
       .then((data) => {
-        console.log("%c[Google Business Reviews Data Received]:", "color: #4285F4; font-weight: bold; font-size: 13px;", data);
-        if (data.isLive) {
-          console.log("%c✓ Live Google Reviews Loaded Successfully!", "color: #34A853; font-weight: bold;", data.reviews);
-        } else {
-          console.warn(
-            "[Google Reviews] Currently displaying verified fallback because live Google API returned:",
-            data.googleApiResponse || data.error || "No live reviews returned"
-          );
-        }
         if (data.reviews) setReviewsData(data);
       })
       .catch((err) => {
@@ -71,7 +68,10 @@ export function GoogleReviews() {
             <div className="flex items-center gap-3 mt-3">
               <div className="flex text-amber-400">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                  <Star
+                    key={i}
+                    className="w-5 h-5 fill-amber-400 text-amber-400"
+                  />
                 ))}
               </div>
               <span className="font-display font-black text-lg text-ink">
@@ -86,7 +86,10 @@ export function GoogleReviews() {
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href={reviewsData.googleReviewUrl || "https://g.page/r/CWhgADsBIJ2QEBM/review"}
+              href={
+                reviewsData.googleReviewUrl ||
+                "https://g.page/r/CWhgADsBIJ2QEBM/review"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
@@ -96,7 +99,10 @@ export function GoogleReviews() {
             </a>
 
             <a
-              href={reviewsData.googleMapsUrl || "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA"}
+              href={
+                reviewsData.googleMapsUrl ||
+                "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-button bg-card border border-border text-ink font-semibold text-xs hover:bg-canvas transition-colors"
@@ -107,69 +113,113 @@ export function GoogleReviews() {
           </div>
         </div>
 
-        {/* Top 5 Verified Reviews Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reviewsData.reviews?.slice(0, 5).map((rev: any, index: number) => (
-            <div
-              key={index}
-              className="bg-card rounded-card border border-border/80 p-6 shadow-soft antigravity-card flex flex-col justify-between"
-            >
-              <div>
-                {/* Rating & Timestamp */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex text-amber-400">
-                    {[...Array(rev.rating || 5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
+        {/* Top Verified Reviews Cards */}
+        {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviewsData.reviews.slice(0, 6).map((rev: any, index: number) => (
+              <div
+                key={index}
+                className="bg-card rounded-card border border-border/80 p-6 shadow-soft antigravity-card flex flex-col justify-between"
+              >
+                <div>
+                  {/* Rating & Timestamp */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex text-amber-400">
+                      {[...Array(rev.rating || 5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 fill-amber-400 text-amber-400"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11px] text-ink-muted">
+                      {rev.relativeTimeDescription}
+                    </span>
                   </div>
-                  <span className="text-[11px] text-ink-muted">
-                    {rev.relativeTimeDescription}
-                  </span>
+
+                  {/* Review Text */}
+                  <p className="text-xs text-ink-body leading-relaxed italic">
+                    &ldquo;{rev.text}&rdquo;
+                  </p>
                 </div>
 
-                {/* Review Text */}
-                <p className="text-xs text-ink-body leading-relaxed italic">
-                  &ldquo;{rev.text}&rdquo;
-                </p>
-              </div>
-
-              {/* Author Info */}
-              <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {rev.authorPhoto ? (
-                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-border/40 shrink-0">
-                      <Image
-                        src={rev.authorPhoto}
-                        alt={rev.authorName}
-                        fill
-                        className="object-cover"
-                      />
+                {/* Author Info */}
+                <div className="mt-6 pt-4 border-t border-border/50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {rev.authorPhoto ? (
+                        <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-border/40 shrink-0">
+                          <Image
+                            src={rev.authorPhoto}
+                            alt={rev.authorName}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-primary-pale text-primary font-bold text-xs flex items-center justify-center shrink-0">
+                          {rev.authorName.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-display font-bold text-xs text-ink">
+                          {rev.authorName}
+                        </h4>
+                        <span className="text-[10px] text-ink-muted block">
+                          Verified Google Customer
+                        </span>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-primary-pale text-primary font-bold text-xs flex items-center justify-center shrink-0">
-                      {rev.authorName.charAt(0)}
+
+                    <div
+                      className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold"
+                      title="Verified Review"
+                    >
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      <span>Verified</span>
+                    </div>
+                  </div>
+
+                  {/* Owner Response if present */}
+                  {rev.ownerResponse && (
+                    <div className="mt-3.5 pt-3 border-t border-border/30 bg-canvas-soft/70 rounded-theme p-3 text-[11px] text-ink-muted">
+                      <span className="font-bold text-ink text-[11px] block mb-1">
+                        Response from Iceberg Studio:
+                      </span>
+                      <p className="italic leading-relaxed text-ink-body">
+                        &ldquo;{rev.ownerResponse}&rdquo;
+                      </p>
                     </div>
                   )}
-                  <div>
-                    <h4 className="font-display font-bold text-xs text-ink">
-                      {rev.authorName}
-                    </h4>
-                    {rev.company && (
-                      <span className="text-[10px] text-ink-muted block">
-                        {rev.company}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 text-[11px] text-emerald-600 font-semibold" title="Verified Review">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>Verified</span>
                 </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-card rounded-card border border-border/80 p-8 text-center max-w-xl mx-auto shadow-soft space-y-3">
+            <h3 className="font-display font-bold text-base text-ink">
+              Have you printed with Iceberg Creative Print Studio?
+            </h3>
+            <p className="text-xs text-ink-muted max-w-md mx-auto">
+              Share your experience and print quality feedback with our Shomolu,
+              Lagos production house on Google.
+            </p>
+            <div className="pt-2">
+              <a
+                href={
+                  reviewsData.googleReviewUrl ||
+                  "https://g.page/r/CWhgADsBIJ2QEBM/review"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
+              >
+                <MessageSquarePlus className="w-4 h-4" />
+                <span>Leave a Review on Google</span>
+              </a>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

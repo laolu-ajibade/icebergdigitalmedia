@@ -10,8 +10,8 @@ export function BlogPreview() {
 
   useEffect(() => {
     fetch("/api/blogs")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.blogs) setBlogs(data.blogs);
       })
       .catch(() => {});
@@ -29,7 +29,8 @@ export function BlogPreview() {
               Mastering Print Collateral in Nigeria
             </h2>
             <p className="text-sm md:text-base text-ink-muted mt-2 max-w-xl">
-              Practical guides on paper selection, foil techniques, packaging psychology, and commercial print best practices.
+              Practical guides on paper selection, foil techniques, packaging
+              psychology, and commercial print best practices.
             </p>
           </div>
           <Link
@@ -42,7 +43,7 @@ export function BlogPreview() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {blogs.slice(0, 2).map((post) => (
+          {blogs.slice(0, 2).map(post => (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
@@ -58,7 +59,9 @@ export function BlogPreview() {
               </div>
 
               <div className="flex items-center gap-4 text-xs text-ink-muted mb-2">
-                <span className="font-semibold text-primary">{post.category}</span>
+                <span className="font-semibold text-primary">
+                  {post.category}
+                </span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
                   {post.readTime}

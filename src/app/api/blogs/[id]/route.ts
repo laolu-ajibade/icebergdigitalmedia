@@ -1,25 +1,27 @@
 import { NextResponse } from "next/server";
-import { connectDB, memoryStore } from "@/lib/db";
+import mongoose from "mongoose";
+import { connectDB } from "@/lib/db";
 import { Blog } from "@/models/Blog";
 import { getAdminSession } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
+const byIdOrSlug = (id: string) =>
+  mongoose.isValidObjectId(id) ? { $or: [{ _id: id }, { slug: id }] } : { slug: id };
+
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const db = await connectDB();
-    if (db) {
-      const blog = await Blog.findOne({ $or: [{ _id: id }, { slug: id }] });
-      if (blog) return NextResponse.json({ blog });
-    }
+    await connectDB();
 
-    const item = memoryStore.blogs.find((b) => b.slug === id || b._id === id);
-    if (!item) {
+    const blog = await Blog.findOne(byIdOrSlug(id));
+    if (!blog) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
-    return NextResponse.json({ blog: item });
+    return NextResponse.json({ blog });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -37,31 +39,20 @@ export async function PUT(
 
     const { id } = await params;
     const data = await request.json();
+    await connectDB();
 
-    const db = await connectDB();
-    if (db) {
-      const updated = await Blog.findOneAndUpdate(
-        { $or: [{ _id: id }, { slug: id }] },
-        data,
-        { new: true }
-      );
-      if (updated) return NextResponse.json({ blog: updated });
+    const updated = await Blog.findOneAndUpdate(byIdOrSlug(id), data, { new: true });
+    if (!updated) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
-
-    const index = memoryStore.blogs.findIndex((b) => b.slug === id || b._id === id);
-    if (index >= 0) {
-      memoryStore.blogs[index] = { ...memoryStore.blogs[index], ...data };
-      return NextResponse.json({ blog: memoryStore.blogs[index] });
-    }
-
-    return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    return NextResponse.json({ blog: updated });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -71,12 +62,9 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    const db = await connectDB();
-    if (db) {
-      await Blog.findOneAndDelete({ $or: [{ _id: id }, { slug: id }] });
-    }
+    await connectDB();
+    await Blog.findOneAndDelete(byIdOrSlug(id));
 
-    memoryStore.blogs = memoryStore.blogs.filter((b) => b.slug !== id && b._id !== id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

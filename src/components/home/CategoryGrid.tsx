@@ -36,8 +36,8 @@ export function CategoryGrid() {
 
   useEffect(() => {
     fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.categories) setCategories(data.categories);
       })
       .catch(() => {});
@@ -52,7 +52,8 @@ export function CategoryGrid() {
               Shop by Commercial Print Category
             </h2>
             <p className="text-sm md:text-base text-ink-muted mt-2 max-w-xl">
-              From bespoke packaging and luxury apparel to executive stationery and wide-format displays.
+              From bespoke packaging and luxury apparel to executive stationery
+              and wide-format displays.
             </p>
           </div>
           <Link
@@ -66,7 +67,7 @@ export function CategoryGrid() {
 
         {/* Categories Grid with Antigravity Elevation */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-          {categories.slice(0, 10).map((cat) => {
+          {categories.slice(0, 10).map(cat => {
             const Icon = categoryIconMap[cat.iconName] || Package;
             return (
               <Link

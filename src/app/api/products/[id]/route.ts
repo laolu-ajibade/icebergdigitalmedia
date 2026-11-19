@@ -1,25 +1,27 @@
 import { NextResponse } from "next/server";
-import { connectDB, memoryStore } from "@/lib/db";
+import mongoose from "mongoose";
+import { connectDB } from "@/lib/db";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
+const byIdOrSlug = (id: string) =>
+  mongoose.isValidObjectId(id) ? { $or: [{ _id: id }, { slug: id }] } : { slug: id };
+
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const db = await connectDB();
-    if (db) {
-      const product = await Product.findOne({ $or: [{ _id: id }, { slug: id }] });
-      if (product) return NextResponse.json({ product });
-    }
+    await connectDB();
 
-    const item = memoryStore.products.find((p) => p.slug === id || p._id === id);
-    if (!item) {
+    const product = await Product.findOne(byIdOrSlug(id));
+    if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    return NextResponse.json({ product: item });
+    return NextResponse.json({ product });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -37,31 +39,20 @@ export async function PUT(
 
     const { id } = await params;
     const data = await request.json();
+    await connectDB();
 
-    const db = await connectDB();
-    if (db) {
-      const updated = await Product.findOneAndUpdate(
-        { $or: [{ _id: id }, { slug: id }] },
-        data,
-        { new: true }
-      );
-      if (updated) return NextResponse.json({ product: updated });
+    const updated = await Product.findOneAndUpdate(byIdOrSlug(id), data, { new: true });
+    if (!updated) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-
-    const index = memoryStore.products.findIndex((p) => p.slug === id || p._id === id);
-    if (index >= 0) {
-      memoryStore.products[index] = { ...memoryStore.products[index], ...data };
-      return NextResponse.json({ product: memoryStore.products[index] });
-    }
-
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    return NextResponse.json({ product: updated });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -71,12 +62,9 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    const db = await connectDB();
-    if (db) {
-      await Product.findOneAndDelete({ $or: [{ _id: id }, { slug: id }] });
-    }
+    await connectDB();
+    await Product.findOneAndDelete(byIdOrSlug(id));
 
-    memoryStore.products = memoryStore.products.filter((p) => p.slug !== id && p._id !== id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

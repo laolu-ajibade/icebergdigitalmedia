@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { connectDB, memoryStore } from "@/lib/db";
+import { connectDB } from "@/lib/db";
 import { AdminUser } from "@/models/AdminUser";
-import { ensureSeeded } from "@/lib/seed";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ slugKey: string }> }
 ) {
   try {
-    await ensureSeeded();
     const { slugKey } = await params;
-    const ENV_SLUG_KEY = process.env.ADMIN_PASSWORD_SLUG_KEY || "iceberg-secure-slug-key-2026";
+    const ENV_SLUG_KEY =
+      process.env.ADMIN_PASSWORD_SLUG_KEY || "iceberg-secure-slug-key-2026";
 
     if (!slugKey || slugKey !== ENV_SLUG_KEY) {
       return NextResponse.json(
@@ -30,22 +29,18 @@ export async function POST(
       );
     }
 
+    await connectDB();
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    memoryStore.adminUser.passwordHash = newPasswordHash;
-
-    const db = await connectDB();
-    if (db) {
-      await AdminUser.findOneAndUpdate(
-        { email: memoryStore.adminUser.email },
-        { passwordHash: newPasswordHash },
-        { upsert: true, new: true }
-      );
-    }
+    const updated = await AdminUser.findOneAndUpdate(
+      {},
+      { passwordHash: newPasswordHash },
+      { new: true }
+    );
 
     return NextResponse.json({
       success: true,
       message: "Admin password successfully reset via slug key.",
-      email: memoryStore.adminUser.email,
+      email: updated?.email || "admin@icebergprints.com",
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -53,11 +48,12 @@ export async function POST(
 }
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ slugKey: string }> }
 ) {
   const { slugKey } = await params;
-  const ENV_SLUG_KEY = process.env.ADMIN_PASSWORD_SLUG_KEY || "iceberg-secure-slug-key-2026";
+  const ENV_SLUG_KEY =
+    process.env.ADMIN_PASSWORD_SLUG_KEY || "iceberg-secure-slug-key-2026";
 
   if (!slugKey || slugKey !== ENV_SLUG_KEY) {
     return NextResponse.json({ valid: false, error: "Invalid slug key" }, { status: 403 });
@@ -65,6 +61,7 @@ export async function GET(
 
   return NextResponse.json({
     valid: true,
-    message: "Slug key is valid. Send a POST request with { newPassword: '...' } to update admin password.",
+    message:
+      "Slug key is valid. Send a POST request with { newPassword: '...' } to update admin password.",
   });
 }

@@ -1,16 +1,23 @@
 "use client";
 
 import React from "react";
-import { Check, MessageSquare, ArrowRight } from "lucide-react";
-import { CONTACT_PHONE, WHATSAPP_NUMBER, getWhatsAppLink } from "@/lib/constants";
+import { Check, MessageSquare } from "lucide-react";
+import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
 export function CorporateBanner() {
-  const perks = [
-    "Dedicated Pre-Press Project Manager",
-    "Physical Sample Proofs Dispatched in Lagos",
-    "Consolidated Regional Shipping via GIG Logistics",
-    "Flexible Corporate Invoicing & Purchase Orders",
-  ];
+  const settings = useSiteSettings();
+
+  const headline =
+    settings?.corporateHeadline ||
+    "Big Order or a Full Brand Rollout Across Nigeria?";
+  const subtext =
+    settings?.corporateSubtext ||
+    "Send us your quantities and specifications for souvenirs, annual corporate gifts, branch signage, packaging boxes, or national event branding. Our Shomolu central factory serves the entire commercial scope with contractual SLA terms.";
+  const perks: string[] = settings?.corporatePerks || [];
+  const phone = settings?.phone || CONTACT_PHONE;
+  const whatsapp =
+    (settings?.whatsappRouting || "").replace(/[^0-9]/g, "") || WHATSAPP_NUMBER;
 
   return (
     <section className="py-12 bg-canvas">
@@ -22,15 +29,17 @@ export function CorporateBanner() {
                 B2B & Enterprise Print Procurement
               </span>
               <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-white tracking-tight leading-tight">
-                Big Order or a Full Brand Rollout Across Nigeria?
+                {headline}
               </h2>
               <p className="text-xs sm:text-sm text-canvas-soft/80 mt-3 leading-relaxed">
-                Send us your quantities and specifications for souvenirs, annual corporate gifts, branch signage, packaging boxes, or national event branding. Our Shomolu central factory serves the entire commercial scope with contractual SLA terms.
+                {subtext}
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mt-6">
                 <a
-                  href={getWhatsAppLink("Hello Iceberg Studio, I would like to discuss a corporate brand rollout or bulk order.")}
+                  href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(
+                    "Hello Iceberg Studio, I would like to discuss a corporate brand rollout or bulk order."
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
@@ -40,27 +49,29 @@ export function CorporateBanner() {
                 </a>
 
                 <a
-                  href={`tel:${WHATSAPP_NUMBER}`}
+                  href={`tel:${whatsapp}`}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-button bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition-colors"
                 >
-                  <span>Direct Desk: {CONTACT_PHONE}</span>
+                  <span>Direct Desk: {phone}</span>
                 </a>
               </div>
             </div>
 
-            <div className="bg-white/5 rounded-theme p-6 border border-white/10 space-y-3.5">
-              <h3 className="font-display font-bold text-sm text-white border-b border-white/10 pb-3">
-                Corporate Contract Benefits
-              </h3>
-              {perks.map((perk, i) => (
-                <div key={i} className="flex items-center gap-3 text-xs text-canvas-soft/90">
-                  <div className="w-5 h-5 rounded-theme bg-primary/20 text-primary flex items-center justify-center shrink-0">
-                    <Check className="w-3.5 h-3.5" />
+            {perks.length > 0 && (
+              <div className="bg-white/5 rounded-theme p-6 border border-white/10 space-y-3.5">
+                <h3 className="font-display font-bold text-sm text-white border-b border-white/10 pb-3">
+                  Corporate Contract Benefits
+                </h3>
+                {perks.map((perk, i) => (
+                  <div key={i} className="flex items-center gap-3 text-xs text-canvas-soft/90">
+                    <div className="w-5 h-5 rounded-theme bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5" />
+                    </div>
+                    <span>{perk}</span>
                   </div>
-                  <span>{perk}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

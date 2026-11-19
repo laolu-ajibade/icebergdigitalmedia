@@ -16,8 +16,8 @@ export function TopSellingProducts() {
 
   useEffect(() => {
     fetch("/api/products?topSelling=true")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.products) setProducts(data.products);
       })
       .catch(() => {});
@@ -34,7 +34,9 @@ export function TopSellingProducts() {
     const tier = selectedProduct.quantityTiers?.[selectedTierIdx] || {
       quantity: selectedProduct.minQuantity,
       totalPrice: selectedProduct.basePrice,
-      pricePerUnit: Math.round(selectedProduct.basePrice / selectedProduct.minQuantity),
+      pricePerUnit: Math.round(
+        selectedProduct.basePrice / selectedProduct.minQuantity,
+      ),
     };
 
     addItem({
@@ -78,7 +80,8 @@ export function TopSellingProducts() {
               Top Selling Commercial Prints
             </h2>
             <p className="text-sm md:text-base text-ink-muted mt-2 max-w-xl">
-              Our most requested print runs by corporate brands, creative agencies, and luxury retailers across Nigeria.
+              Our most requested print runs by corporate brands, creative
+              agencies, and luxury retailers across Nigeria.
             </p>
           </div>
           <Link
@@ -92,7 +95,7 @@ export function TopSellingProducts() {
 
         {/* Product Cards Grid with Antigravity Elevation */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {products.slice(0, 6).map((prod) => (
+          {products.slice(0, 6).map(prod => (
             <div
               key={prod.slug}
               className="bg-card rounded-card border border-border/70 overflow-hidden shadow-soft antigravity-card flex flex-col justify-between group"
@@ -125,7 +128,9 @@ export function TopSellingProducts() {
 
                   <div className="mt-4 pt-3 border-t border-border/50 flex items-baseline justify-between">
                     <div>
-                      <span className="text-[11px] text-ink-muted block">Starting From</span>
+                      <span className="text-[11px] text-ink-muted block">
+                        Starting From
+                      </span>
                       <span className="font-display font-black text-xl text-ink">
                         ₦{prod.basePrice.toLocaleString()}
                       </span>
@@ -191,8 +196,12 @@ export function TopSellingProducts() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs">{t.quantity.toLocaleString()} pcs</span>
-                      {selectedTierIdx === idx && <Check className="w-3.5 h-3.5 text-primary" />}
+                      <span className="font-bold text-xs">
+                        {t.quantity.toLocaleString()} pcs
+                      </span>
+                      {selectedTierIdx === idx && (
+                        <Check className="w-3.5 h-3.5 text-primary" />
+                      )}
                     </div>
                     <div className="text-xs font-black text-ink mt-1">
                       ₦{t.totalPrice.toLocaleString()}
@@ -203,30 +212,33 @@ export function TopSellingProducts() {
             </div>
 
             {/* Finishes */}
-            {selectedProduct.finishes && selectedProduct.finishes.length > 0 && (
-              <div>
-                <label className="block text-xs font-bold text-ink mb-2">
-                  Select Finish / Coating
-                </label>
-                <div className="space-y-1.5">
-                  {selectedProduct.finishes.map((f: string) => (
-                    <button
-                      key={f}
-                      type="button"
-                      onClick={() => setSelectedFinish(f)}
-                      className={`w-full p-2.5 rounded-button text-xs font-medium text-left border flex items-center justify-between cursor-pointer transition-all ${
-                        selectedFinish === f
-                          ? "bg-primary-pale border-primary text-ink"
-                          : "bg-canvas-soft border-border text-ink-body hover:border-ink/40"
-                      }`}
-                    >
-                      <span>{f}</span>
-                      {selectedFinish === f && <Check className="w-3.5 h-3.5 text-primary" />}
-                    </button>
-                  ))}
+            {selectedProduct.finishes &&
+              selectedProduct.finishes.length > 0 && (
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-2">
+                    Select Finish / Coating
+                  </label>
+                  <div className="space-y-1.5">
+                    {selectedProduct.finishes.map((f: string) => (
+                      <button
+                        key={f}
+                        type="button"
+                        onClick={() => setSelectedFinish(f)}
+                        className={`w-full p-2.5 rounded-button text-xs font-medium text-left border flex items-center justify-between cursor-pointer transition-all ${
+                          selectedFinish === f
+                            ? "bg-primary-pale border-primary text-ink"
+                            : "bg-canvas-soft border-border text-ink-body hover:border-ink/40"
+                        }`}
+                      >
+                        <span>{f}</span>
+                        {selectedFinish === f && (
+                          <Check className="w-3.5 h-3.5 text-primary" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Modal Actions */}
             <div className="pt-4 border-t border-border/60 flex items-center gap-3">

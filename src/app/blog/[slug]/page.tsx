@@ -16,8 +16,8 @@ export default function BlogPostReaderPage({
 
   useEffect(() => {
     fetch(`/api/blogs/${slug}`)
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.blog) setBlog(data.blog);
       })
       .catch(() => {});
@@ -126,11 +126,14 @@ export default function BlogPostReaderPage({
                 Bring Your Ideas to Life with Iceberg Studio
               </h4>
               <p className="text-xs text-ink-muted mt-1 max-w-md">
-                Consult with our master printmakers in Shomolu, Lagos on paper stocks, foil stamping, and bespoke packaging dielines.
+                Consult with our master printmakers in Shomolu, Lagos on paper
+                stocks, foil stamping, and bespoke packaging dielines.
               </p>
             </div>
             <a
-              href={getWhatsAppLink("Hello Iceberg Studio, I read your print article and would like to discuss a project.")}
+              href={getWhatsAppLink(
+                "Hello Iceberg Studio, I read your print article and would like to discuss a project.",
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-button bg-[#25D366] text-white font-bold text-xs shrink-0 shadow-soft"

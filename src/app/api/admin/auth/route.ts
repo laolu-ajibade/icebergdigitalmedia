@@ -2,20 +2,22 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { createAdminToken, getAdminSession } from "@/lib/auth";
-import { ensureSeeded } from "@/lib/seed";
-import { memoryStore } from "@/lib/db";
+import { connectDB } from "@/lib/db";
+import { AdminUser } from "@/models/AdminUser";
 
 export async function POST(request: Request) {
   try {
-    await ensureSeeded();
     const { email, password } = await request.json();
-
     if (!email || !password) {
-      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email and password are required" },
+        { status: 400 }
+      );
     }
 
-    const admin = memoryStore.adminUser;
-    if (!admin || admin.email.toLowerCase() !== email.toLowerCase()) {
+    await connectDB();
+    const admin = await AdminUser.findOne({ email: email.toLowerCase().trim() });
+    if (!admin) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
@@ -25,17 +27,19 @@ export async function POST(request: Request) {
     }
 
     const token = await createAdminToken({ email: admin.email, role: admin.role });
-
     const cookieStore = await cookies();
     cookieStore.set("iceberg_admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
 
-    return NextResponse.json({ success: true, user: { email: admin.email, role: admin.role } });
+    return NextResponse.json({
+      success: true,
+      user: { email: admin.email, role: admin.role },
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
