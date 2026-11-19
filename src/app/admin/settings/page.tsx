@@ -87,8 +87,8 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     fetch("/api/settings")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.settings) {
           setSettings((prev: any) => ({ ...prev, ...data.settings }));
         }
@@ -129,7 +129,10 @@ export default function AdminSettingsPage() {
       return;
     }
     if (newPassword.length < 6) {
-      setPasswordMsg({ text: "Password must be at least 6 characters.", isError: true });
+      setPasswordMsg({
+        text: "Password must be at least 6 characters.",
+        isError: true,
+      });
       return;
     }
 
@@ -149,13 +152,19 @@ export default function AdminSettingsPage() {
 
       const data = await res.json();
       if (res.ok) {
-        setPasswordMsg({ text: "Password updated successfully!", isError: false });
+        setPasswordMsg({
+          text: "Password updated successfully!",
+          isError: false,
+        });
         setCurrentPassword("");
         setSlugKey("");
         setNewPassword("");
         setConfirmPassword("");
       } else {
-        setPasswordMsg({ text: data.error || "Password change failed.", isError: true });
+        setPasswordMsg({
+          text: data.error || "Password change failed.",
+          isError: true,
+        });
       }
     } catch (err: any) {
       setPasswordMsg({ text: err.message || "Network error.", isError: true });
@@ -183,7 +192,8 @@ export default function AdminSettingsPage() {
             Studio CMS & Storefront Settings
           </h1>
           <p className="text-xs sm:text-sm text-ink-muted mt-1">
-            Centrally manage all dynamic homepage sections, headlines, FAQs, studio contacts, and social routing.
+            Centrally manage all dynamic homepage sections, headlines, FAQs,
+            studio contacts, and social routing.
           </p>
         </div>
         <button
@@ -191,7 +201,11 @@ export default function AdminSettingsPage() {
           disabled={saving}
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft shrink-0"
         >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {saving ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
           <span>{saving ? "Saving Changes..." : "Save All Settings"}</span>
         </button>
       </div>
@@ -204,7 +218,7 @@ export default function AdminSettingsPage() {
       )}
 
       <div className="flex flex-wrap gap-2 border-b border-border pb-3">
-        {tabs.map((tab) => {
+        {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.key;
           return (
@@ -234,50 +248,72 @@ export default function AdminSettingsPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Company / Studio Name</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Company / Studio Name
+                  </label>
                   <input
                     type="text"
                     value={settings.companyName || ""}
-                    onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">Tagline / Motto</label>
-                  <input
-                    type="text"
-                    value={settings.tagline || ""}
-                    onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block font-bold text-ink mb-1.5">Physical Studio Address</label>
-                  <input
-                    type="text"
-                    value={settings.address || ""}
-                    onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">Weekday Hours</label>
-                  <input
-                    type="text"
-                    value={settings.workingHoursWeekday || ""}
-                    onChange={(e) =>
-                      setSettings({ ...settings, workingHoursWeekday: e.target.value })
+                    onChange={e =>
+                      setSettings({ ...settings, companyName: e.target.value })
                     }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Saturday Hours</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Tagline / Motto
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.tagline || ""}
+                    onChange={e =>
+                      setSettings({ ...settings, tagline: e.target.value })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Physical Studio Address
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.address || ""}
+                    onChange={e =>
+                      setSettings({ ...settings, address: e.target.value })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Weekday Hours
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.workingHoursWeekday || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        workingHoursWeekday: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Saturday Hours
+                  </label>
                   <input
                     type="text"
                     value={settings.workingHoursSaturday || ""}
-                    onChange={(e) =>
-                      setSettings({ ...settings, workingHoursSaturday: e.target.value })
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        workingHoursSaturday: e.target.value,
+                      })
                     }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
@@ -298,7 +334,12 @@ export default function AdminSettingsPage() {
                     type="text"
                     required
                     value={settings.whatsappRouting || ""}
-                    onChange={(e) => setSettings({ ...settings, whatsappRouting: e.target.value })}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        whatsappRouting: e.target.value,
+                      })
+                    }
                     placeholder={`+${WHATSAPP_NUMBER}`}
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
@@ -310,17 +351,23 @@ export default function AdminSettingsPage() {
                   <input
                     type="text"
                     value={settings.phone || ""}
-                    onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, phone: e.target.value })
+                    }
                     placeholder={CONTACT_PHONE}
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block font-bold text-ink mb-1.5">Official Support Email</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Official Support Email
+                  </label>
                   <input
                     type="email"
                     value={settings.email || ""}
-                    onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, email: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
@@ -333,56 +380,80 @@ export default function AdminSettingsPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Instagram URL</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Instagram URL
+                  </label>
                   <input
                     type="text"
                     value={settings.instagramUrl || ""}
-                    onChange={(e) => setSettings({ ...settings, instagramUrl: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, instagramUrl: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Facebook Page URL</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Facebook Page URL
+                  </label>
                   <input
                     type="text"
                     value={settings.facebookUrl || ""}
-                    onChange={(e) => setSettings({ ...settings, facebookUrl: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, facebookUrl: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Twitter / X Profile URL</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Twitter / X Profile URL
+                  </label>
                   <input
                     type="text"
                     value={settings.twitterUrl || ""}
-                    onChange={(e) => setSettings({ ...settings, twitterUrl: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, twitterUrl: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">LinkedIn Profile URL</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    LinkedIn Profile URL
+                  </label>
                   <input
                     type="text"
                     value={settings.linkedinUrl || ""}
-                    onChange={(e) => setSettings({ ...settings, linkedinUrl: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, linkedinUrl: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">TikTok Profile URL</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    TikTok Profile URL
+                  </label>
                   <input
                     type="text"
                     value={settings.tiktokUrl || ""}
-                    onChange={(e) => setSettings({ ...settings, tiktokUrl: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, tiktokUrl: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">YouTube Channel URL</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    YouTube Channel URL
+                  </label>
                   <input
                     type="text"
                     value={settings.youtubeUrl || ""}
-                    onChange={(e) => setSettings({ ...settings, youtubeUrl: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, youtubeUrl: e.target.value })
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
@@ -397,63 +468,95 @@ export default function AdminSettingsPage() {
               Homepage Hero Section
             </h2>
             <div>
-              <label className="block font-bold text-ink mb-1.5">Hero Headline *</label>
+              <label className="block font-bold text-ink mb-1.5">
+                Hero Headline *
+              </label>
               <input
                 type="text"
                 required
                 value={settings.heroHeadline || ""}
-                onChange={(e) => setSettings({ ...settings, heroHeadline: e.target.value })}
+                onChange={e =>
+                  setSettings({ ...settings, heroHeadline: e.target.value })
+                }
                 className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink font-semibold"
               />
             </div>
             <div>
-              <label className="block font-bold text-ink mb-1.5">Hero Subtitle / Description *</label>
+              <label className="block font-bold text-ink mb-1.5">
+                Hero Subtitle / Description *
+              </label>
               <textarea
                 rows={3}
                 required
                 value={settings.heroSubtext || ""}
-                onChange={(e) => setSettings({ ...settings, heroSubtext: e.target.value })}
+                onChange={e =>
+                  setSettings({ ...settings, heroSubtext: e.target.value })
+                }
                 className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink leading-relaxed"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div>
-                <label className="block font-bold text-ink mb-1.5">Primary CTA Button Label</label>
+                <label className="block font-bold text-ink mb-1.5">
+                  Primary CTA Button Label
+                </label>
                 <input
                   type="text"
                   value={settings.heroPrimaryCtaText || ""}
-                  onChange={(e) => setSettings({ ...settings, heroPrimaryCtaText: e.target.value })}
-                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-ink mb-1.5">Primary CTA Button Link</label>
-                <input
-                  type="text"
-                  value={settings.heroPrimaryCtaLink || ""}
-                  onChange={(e) => setSettings({ ...settings, heroPrimaryCtaLink: e.target.value })}
-                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-ink mb-1.5">Secondary CTA Button Label</label>
-                <input
-                  type="text"
-                  value={settings.heroSecondaryCtaText || ""}
-                  onChange={(e) =>
-                    setSettings({ ...settings, heroSecondaryCtaText: e.target.value })
+                  onChange={e =>
+                    setSettings({
+                      ...settings,
+                      heroPrimaryCtaText: e.target.value,
+                    })
                   }
                   className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                 />
               </div>
               <div>
-                <label className="block font-bold text-ink mb-1.5">Secondary CTA Button Link</label>
+                <label className="block font-bold text-ink mb-1.5">
+                  Primary CTA Button Link
+                </label>
+                <input
+                  type="text"
+                  value={settings.heroPrimaryCtaLink || ""}
+                  onChange={e =>
+                    setSettings({
+                      ...settings,
+                      heroPrimaryCtaLink: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-ink mb-1.5">
+                  Secondary CTA Button Label
+                </label>
+                <input
+                  type="text"
+                  value={settings.heroSecondaryCtaText || ""}
+                  onChange={e =>
+                    setSettings({
+                      ...settings,
+                      heroSecondaryCtaText: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-ink mb-1.5">
+                  Secondary CTA Button Link
+                </label>
                 <input
                   type="text"
                   value={settings.heroSecondaryCtaLink || ""}
-                  onChange={(e) =>
-                    setSettings({ ...settings, heroSecondaryCtaLink: e.target.value })
+                  onChange={e =>
+                    setSettings({
+                      ...settings,
+                      heroSecondaryCtaLink: e.target.value,
+                    })
                   }
                   className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                 />
@@ -469,29 +572,44 @@ export default function AdminSettingsPage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {(settings.stats || []).map((st: any, idx: number) => (
-                <div key={idx} className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3">
-                  <span className="font-bold text-primary block">Metric 0{idx + 1}</span>
+                <div
+                  key={idx}
+                  className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3"
+                >
+                  <span className="font-bold text-primary block">
+                    Metric 0{idx + 1}
+                  </span>
                   <div>
-                    <label className="block font-bold text-ink mb-1">Figure / Value</label>
+                    <label className="block font-bold text-ink mb-1">
+                      Figure / Value
+                    </label>
                     <input
                       type="text"
                       value={st.value || ""}
-                      onChange={(e) => {
+                      onChange={e => {
                         const newStats = [...settings.stats];
-                        newStats[idx] = { ...newStats[idx], value: e.target.value };
+                        newStats[idx] = {
+                          ...newStats[idx],
+                          value: e.target.value,
+                        };
                         setSettings({ ...settings, stats: newStats });
                       }}
                       className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-bold"
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-ink mb-1">Descriptive Label</label>
+                    <label className="block font-bold text-ink mb-1">
+                      Descriptive Label
+                    </label>
                     <input
                       type="text"
                       value={st.label || ""}
-                      onChange={(e) => {
+                      onChange={e => {
                         const newStats = [...settings.stats];
-                        newStats[idx] = { ...newStats[idx], label: e.target.value };
+                        newStats[idx] = {
+                          ...newStats[idx],
+                          label: e.target.value,
+                        };
                         setSettings({ ...settings, stats: newStats });
                       }}
                       className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
@@ -509,60 +627,81 @@ export default function AdminSettingsPage() {
               Corporate Accounts & Enterprise Printing Banner
             </h2>
             <div>
-              <label className="block font-bold text-ink mb-1.5">Headline</label>
+              <label className="block font-bold text-ink mb-1.5">
+                Headline
+              </label>
               <input
                 type="text"
                 value={settings.corporateHeadline || ""}
-                onChange={(e) => setSettings({ ...settings, corporateHeadline: e.target.value })}
+                onChange={e =>
+                  setSettings({
+                    ...settings,
+                    corporateHeadline: e.target.value,
+                  })
+                }
                 className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink font-semibold"
               />
             </div>
             <div>
-              <label className="block font-bold text-ink mb-1.5">Description Statement</label>
+              <label className="block font-bold text-ink mb-1.5">
+                Description Statement
+              </label>
               <textarea
                 rows={3}
                 value={settings.corporateSubtext || ""}
-                onChange={(e) => setSettings({ ...settings, corporateSubtext: e.target.value })}
+                onChange={e =>
+                  setSettings({ ...settings, corporateSubtext: e.target.value })
+                }
                 className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink leading-relaxed"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-ink mb-2">Corporate Contract Perks</label>
+              <label className="block font-bold text-ink mb-2">
+                Corporate Contract Perks
+              </label>
               <div className="space-y-2 mb-3">
-                {(settings.corporatePerks || []).map((perk: string, idx: number) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={perk}
-                      onChange={(e) => {
-                        const newPerks = [...settings.corporatePerks];
-                        newPerks[idx] = e.target.value;
-                        setSettings({ ...settings, corporatePerks: newPerks });
-                      }}
-                      className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newPerks = settings.corporatePerks.filter(
-                          (_: any, i: number) => i !== idx
-                        );
-                        setSettings({ ...settings, corporatePerks: newPerks });
-                      }}
-                      className="p-2 text-ink-muted hover:text-red-600 rounded-button"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                {(settings.corporatePerks || []).map(
+                  (perk: string, idx: number) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={perk}
+                        onChange={e => {
+                          const newPerks = [...settings.corporatePerks];
+                          newPerks[idx] = e.target.value;
+                          setSettings({
+                            ...settings,
+                            corporatePerks: newPerks,
+                          });
+                        }}
+                        className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newPerks = settings.corporatePerks.filter(
+                            (_: any, i: number) => i !== idx,
+                          );
+                          setSettings({
+                            ...settings,
+                            corporatePerks: newPerks,
+                          });
+                        }}
+                        className="p-2 text-ink-muted hover:text-red-600 rounded-button"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ),
+                )}
               </div>
 
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={newPerk}
-                  onChange={(e) => setNewPerk(e.target.value)}
+                  onChange={e => setNewPerk(e.target.value)}
                   placeholder="Add a new perk bullet point..."
                   className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                 />
@@ -572,7 +711,10 @@ export default function AdminSettingsPage() {
                     if (!newPerk.trim()) return;
                     setSettings({
                       ...settings,
-                      corporatePerks: [...(settings.corporatePerks || []), newPerk.trim()],
+                      corporatePerks: [
+                        ...(settings.corporatePerks || []),
+                        newPerk.trim(),
+                      ],
                     });
                     setNewPerk("");
                   }}
@@ -591,70 +733,84 @@ export default function AdminSettingsPage() {
               About Studio Story & Workshop Image
             </h2>
             <div>
-              <label className="block font-bold text-ink mb-1.5">Headline</label>
+              <label className="block font-bold text-ink mb-1.5">
+                Headline
+              </label>
               <input
                 type="text"
                 value={settings.aboutHeadline || ""}
-                onChange={(e) => setSettings({ ...settings, aboutHeadline: e.target.value })}
+                onChange={e =>
+                  setSettings({ ...settings, aboutHeadline: e.target.value })
+                }
                 className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink font-semibold"
               />
             </div>
             <div>
-              <label className="block font-bold text-ink mb-1.5">Studio Narrative Story</label>
+              <label className="block font-bold text-ink mb-1.5">
+                Studio Narrative Story
+              </label>
               <textarea
                 rows={4}
                 value={settings.aboutStory || ""}
-                onChange={(e) => setSettings({ ...settings, aboutStory: e.target.value })}
+                onChange={e =>
+                  setSettings({ ...settings, aboutStory: e.target.value })
+                }
                 className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink leading-relaxed"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-ink mb-2">Workshop Image (R2 Hosted)</label>
+              <label className="block font-bold text-ink mb-2">
+                Workshop Image (R2 Hosted)
+              </label>
               <R2ImageUpload
                 folder="products"
                 value={settings.aboutImage || ""}
-                onChange={(url) => setSettings({ ...settings, aboutImage: url })}
-                label="Upload Studio Workshop Image (Cloudflare R2)"
+                onChange={url => setSettings({ ...settings, aboutImage: url })}
+                label="Upload Studio Workshop Image "
               />
             </div>
 
             <div>
-              <label className="block font-bold text-ink mb-2">Studio Quality Bullet Points</label>
+              <label className="block font-bold text-ink mb-2">
+                Studio Quality Bullet Points
+              </label>
               <div className="space-y-2 mb-3">
-                {(settings.aboutChecks || []).map((check: string, idx: number) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={check}
-                      onChange={(e) => {
-                        const newChecks = [...settings.aboutChecks];
-                        newChecks[idx] = e.target.value;
-                        setSettings({ ...settings, aboutChecks: newChecks });
-                      }}
-                      className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newChecks = settings.aboutChecks.filter(
-                          (_: any, i: number) => i !== idx
-                        );
-                        setSettings({ ...settings, aboutChecks: newChecks });
-                      }}
-                      className="p-2 text-ink-muted hover:text-red-600 rounded-button"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                {(settings.aboutChecks || []).map(
+                  (check: string, idx: number) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={check}
+                        onChange={e => {
+                          const newChecks = [...settings.aboutChecks];
+                          newChecks[idx] = e.target.value;
+                          setSettings({ ...settings, aboutChecks: newChecks });
+                        }}
+                        className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newChecks = settings.aboutChecks.filter(
+                            (_: any, i: number) => i !== idx,
+                          );
+                          setSettings({ ...settings, aboutChecks: newChecks });
+                        }}
+                        className="p-2 text-ink-muted hover:text-red-600 rounded-button"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ),
+                )}
               </div>
 
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={newCheck}
-                  onChange={(e) => setNewCheck(e.target.value)}
+                  onChange={e => setNewCheck(e.target.value)}
                   placeholder="Add quality guarantee..."
                   className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                 />
@@ -664,7 +820,10 @@ export default function AdminSettingsPage() {
                     if (!newCheck.trim()) return;
                     setSettings({
                       ...settings,
-                      aboutChecks: [...(settings.aboutChecks || []), newCheck.trim()],
+                      aboutChecks: [
+                        ...(settings.aboutChecks || []),
+                        newCheck.trim(),
+                      ],
                     });
                     setNewCheck("");
                   }}
@@ -684,13 +843,20 @@ export default function AdminSettingsPage() {
             </h2>
             <div className="space-y-4">
               {(settings.faqs || []).map((faq: any, idx: number) => (
-                <div key={idx} className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3">
+                <div
+                  key={idx}
+                  className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-primary">Question 0{idx + 1}</span>
+                    <span className="font-bold text-primary">
+                      Question 0{idx + 1}
+                    </span>
                     <button
                       type="button"
                       onClick={() => {
-                        const newFaqs = settings.faqs.filter((_: any, i: number) => i !== idx);
+                        const newFaqs = settings.faqs.filter(
+                          (_: any, i: number) => i !== idx,
+                        );
                         setSettings({ ...settings, faqs: newFaqs });
                       }}
                       className="text-ink-muted hover:text-red-600 text-[11px] font-semibold flex items-center gap-1"
@@ -700,26 +866,36 @@ export default function AdminSettingsPage() {
                     </button>
                   </div>
                   <div>
-                    <label className="block font-bold text-ink mb-1">Question Title</label>
+                    <label className="block font-bold text-ink mb-1">
+                      Question Title
+                    </label>
                     <input
                       type="text"
                       value={faq.question || ""}
-                      onChange={(e) => {
+                      onChange={e => {
                         const newFaqs = [...settings.faqs];
-                        newFaqs[idx] = { ...newFaqs[idx], question: e.target.value };
+                        newFaqs[idx] = {
+                          ...newFaqs[idx],
+                          question: e.target.value,
+                        };
                         setSettings({ ...settings, faqs: newFaqs });
                       }}
                       className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-ink mb-1">Answer Explanation</label>
+                    <label className="block font-bold text-ink mb-1">
+                      Answer Explanation
+                    </label>
                     <textarea
                       rows={3}
                       value={faq.answer || ""}
-                      onChange={(e) => {
+                      onChange={e => {
                         const newFaqs = [...settings.faqs];
-                        newFaqs[idx] = { ...newFaqs[idx], answer: e.target.value };
+                        newFaqs[idx] = {
+                          ...newFaqs[idx],
+                          answer: e.target.value,
+                        };
                         setSettings({ ...settings, faqs: newFaqs });
                       }}
                       className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink leading-relaxed"
@@ -734,14 +910,14 @@ export default function AdminSettingsPage() {
               <input
                 type="text"
                 value={newFaqQ}
-                onChange={(e) => setNewFaqQ(e.target.value)}
+                onChange={e => setNewFaqQ(e.target.value)}
                 placeholder="Question (e.g. Do you print on metallic foil?)"
                 className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
               />
               <textarea
                 rows={2}
                 value={newFaqA}
-                onChange={(e) => setNewFaqA(e.target.value)}
+                onChange={e => setNewFaqA(e.target.value)}
                 placeholder="Answer explanation..."
                 className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
               />
@@ -774,30 +950,45 @@ export default function AdminSettingsPage() {
             </h2>
             <div className="space-y-4">
               {(settings.processSteps || []).map((step: any, idx: number) => (
-                <div key={idx} className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3">
-                  <span className="font-bold text-primary">Step {step.stepNumber || idx + 1}</span>
+                <div
+                  key={idx}
+                  className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3"
+                >
+                  <span className="font-bold text-primary">
+                    Step {step.stepNumber || idx + 1}
+                  </span>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="block font-bold text-ink mb-1">Step Number</label>
+                      <label className="block font-bold text-ink mb-1">
+                        Step Number
+                      </label>
                       <input
                         type="text"
                         value={step.stepNumber || ""}
-                        onChange={(e) => {
+                        onChange={e => {
                           const newSteps = [...settings.processSteps];
-                          newSteps[idx] = { ...newSteps[idx], stepNumber: e.target.value };
+                          newSteps[idx] = {
+                            ...newSteps[idx],
+                            stepNumber: e.target.value,
+                          };
                           setSettings({ ...settings, processSteps: newSteps });
                         }}
                         className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
                       />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block font-bold text-ink mb-1">Step Title</label>
+                      <label className="block font-bold text-ink mb-1">
+                        Step Title
+                      </label>
                       <input
                         type="text"
                         value={step.title || ""}
-                        onChange={(e) => {
+                        onChange={e => {
                           const newSteps = [...settings.processSteps];
-                          newSteps[idx] = { ...newSteps[idx], title: e.target.value };
+                          newSteps[idx] = {
+                            ...newSteps[idx],
+                            title: e.target.value,
+                          };
                           setSettings({ ...settings, processSteps: newSteps });
                         }}
                         className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
@@ -805,13 +996,18 @@ export default function AdminSettingsPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block font-bold text-ink mb-1">Step Description</label>
+                    <label className="block font-bold text-ink mb-1">
+                      Step Description
+                    </label>
                     <textarea
                       rows={2}
                       value={step.description || ""}
-                      onChange={(e) => {
+                      onChange={e => {
                         const newSteps = [...settings.processSteps];
-                        newSteps[idx] = { ...newSteps[idx], description: e.target.value };
+                        newSteps[idx] = {
+                          ...newSteps[idx],
+                          description: e.target.value,
+                        };
                         setSettings({ ...settings, processSteps: newSteps });
                       }}
                       className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink leading-relaxed"
@@ -832,7 +1028,8 @@ export default function AdminSettingsPage() {
                     Google Business Places API Credentials
                   </h2>
                   <p className="text-xs text-ink-muted mt-0.5">
-                    Connect live streaming reviews from your registered Google Business Profile.
+                    Connect live streaming reviews from your registered Google
+                    Business Profile.
                   </p>
                 </div>
                 <a
@@ -848,21 +1045,32 @@ export default function AdminSettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Google Place ID</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Google Place ID
+                  </label>
                   <input
                     type="text"
                     value={settings.googlePlaceId || ""}
-                    onChange={(e) => setSettings({ ...settings, googlePlaceId: e.target.value })}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        googlePlaceId: e.target.value,
+                      })
+                    }
                     placeholder="ChIJ..."
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Google Places API Key</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Google Places API Key
+                  </label>
                   <input
                     type="password"
                     value={settings.googleApiKey || ""}
-                    onChange={(e) => setSettings({ ...settings, googleApiKey: e.target.value })}
+                    onChange={e =>
+                      setSettings({ ...settings, googleApiKey: e.target.value })
+                    }
                     placeholder="AIzaSy..."
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink font-mono"
                   />
@@ -890,41 +1098,49 @@ export default function AdminSettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Current Password</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Current Password
+                  </label>
                   <input
                     type="password"
                     value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    onChange={e => setCurrentPassword(e.target.value)}
                     placeholder="Enter current password"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Admin Security Slug Key</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Admin Security Slug Key
+                  </label>
                   <input
                     type="text"
                     value={slugKey}
-                    onChange={(e) => setSlugKey(e.target.value)}
+                    onChange={e => setSlugKey(e.target.value)}
                     placeholder="iceberg-admin-reset-2026"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">New Password</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    New Password
+                  </label>
                   <input
                     type="password"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={e => setNewPassword(e.target.value)}
                     placeholder="Min 6 characters"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1.5">Confirm New Password</label>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Confirm New Password
+                  </label>
                   <input
                     type="password"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={e => setConfirmPassword(e.target.value)}
                     placeholder="Re-type new password"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
@@ -938,7 +1154,9 @@ export default function AdminSettingsPage() {
                   disabled={passwordLoading}
                   className="px-5 py-2.5 rounded-button bg-ink text-white font-bold text-xs hover:bg-ink/90 transition-colors shadow-soft"
                 >
-                  {passwordLoading ? "Updating Password..." : "Update Security Password"}
+                  {passwordLoading
+                    ? "Updating Password..."
+                    : "Update Security Password"}
                 </button>
               </div>
             </div>
@@ -947,14 +1165,19 @@ export default function AdminSettingsPage() {
 
         <div className="sticky bottom-4 z-20 bg-card/90 backdrop-blur-md p-4 rounded-card border border-border shadow-elevation flex items-center justify-between">
           <span className="text-xs text-ink-muted">
-            All edits update live across the storefront, instant estimators, and WhatsApp routing.
+            All edits update live across the storefront, instant estimators, and
+            WhatsApp routing.
           </span>
           <button
             type="submit"
             disabled={saving}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
           >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {saving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
             <span>{saving ? "Saving Changes..." : "Save All Settings"}</span>
           </button>
         </div>

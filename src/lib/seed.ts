@@ -134,7 +134,7 @@ export const initialProducts = [
       "Ultra-heavyweight 600gsm cotton board with radiused curved corners, hot-stamped gold foil typography, and soft-touch matte velvet lamination.",
     basePrice: 5000,
     minQuantity: 100,
-    turnaroundDays: "24-48 Hours",
+    deliveryDays: "24-48 Hours",
     image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/business-cards.jpg`],
     paperStocks: [
@@ -172,7 +172,7 @@ export const initialProducts = [
       "420gsm premium brushed fleece cotton hoodie with high-density screen printing or intricate direct-to-garment (DTG) embroidery. Preshrunk luxury fit.",
     basePrice: 18500,
     minQuantity: 5,
-    turnaroundDays: "3-4 Days",
+    deliveryDays: "3-4 Days",
     image: `${R2_STORAGE_BASE}/images/products/clothes.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/clothes.jpg`],
     paperStocks: [
@@ -209,7 +209,7 @@ export const initialProducts = [
       "11oz premium grade AAA white ceramic mug with high-gloss polymer coating. Full wrap photographic print that resists fading, microwave and dishwasher safe.",
     basePrice: 3000,
     minQuantity: 12,
-    turnaroundDays: "24-48 Hours",
+    deliveryDays: "24-48 Hours",
     image: `${R2_STORAGE_BASE}/images/products/cups.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/cups.jpg`],
     paperStocks: [
@@ -245,7 +245,7 @@ export const initialProducts = [
       "1200gsm greyboard wrapped in specialty dyed paper with concealed magnetic flap closures. Precision custom EVA foam inlay option for luxury brand rollouts.",
     basePrice: 25000,
     minQuantity: 25,
-    turnaroundDays: "4-5 Days",
+    deliveryDays: "4-5 Days",
     image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/boxes.jpg`],
     paperStocks: [
@@ -281,7 +281,7 @@ export const initialProducts = [
       "Commercial heavy-duty aluminum teardrop base with high-definition anti-curl non-tear PET banner vinyl. Comes with padded Oxford canvas travel bag.",
     basePrice: 55000,
     minQuantity: 1,
-    turnaroundDays: "24 Hours",
+    deliveryDays: "24 Hours",
     image: `${R2_STORAGE_BASE}/images/products/banner.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/banner.jpg`],
     paperStocks: [
@@ -313,7 +313,7 @@ export const initialProducts = [
       "Crisp commercial marketing flyers printed on 170gsm silk art paper with true CMYK digital presses. Ideal for corporate activations, menus, and promotions.",
     basePrice: 16000,
     minQuantity: 200,
-    turnaroundDays: "24 Hours",
+    deliveryDays: "24 Hours",
     image: `${R2_STORAGE_BASE}/images/products/business-cards.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/business-cards.jpg`],
     paperStocks: [
@@ -349,7 +349,7 @@ export const initialProducts = [
       "250gsm reinforced art paper with debossed studio logos, matte film lamination, reinforced cardboard base, and thick braided cotton rope handles.",
     basePrice: 12500,
     minQuantity: 50,
-    turnaroundDays: "3-5 Days",
+    deliveryDays: "3-5 Days",
     image: `${R2_STORAGE_BASE}/images/products/bags.jpg`,
     gallery: [`${R2_STORAGE_BASE}/images/products/bags.jpg`],
     paperStocks: [
@@ -606,7 +606,7 @@ export const initialSiteSettings = {
   stats: [
     { value: "500K+", label: "Units Printed & Delivered" },
     { value: "99.4%", label: "On-Time Fulfillment Rate" },
-    { value: "24-48h", label: "Express Turnaround Available" },
+    { value: "24-48h", label: "Express Delivery Available" },
     { value: "15+", label: "Years of Master Craftsmanship" },
   ],
   corporateHeadline: "Corporate Accounts & Enterprise Contract Printing",

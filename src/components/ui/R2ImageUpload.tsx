@@ -15,7 +15,7 @@ interface R2ImageUploadProps {
 export function R2ImageUpload({
   value,
   onChange,
-  label = "Upload Image (Cloudflare R2)",
+  label = "Upload Image ",
   folder = "products",
   placeholder = "https://pub-...r2.dev/...",
 }: R2ImageUploadProps) {
@@ -78,7 +78,7 @@ export function R2ImageUpload({
           <input
             type="text"
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={e => onChange(e.target.value)}
             placeholder={placeholder}
             className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink text-xs focus:outline-hidden focus:border-primary"
           />

@@ -7,12 +7,16 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 export function FaqSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   const settings = useSiteSettings();
-  const faqs: Array<{ question: string; answer: string }> = settings?.faqs || [];
+  const faqs: Array<{ question: string; answer: string }> =
+    settings?.faqs || [];
 
   if (faqs.length === 0) return null;
 
   return (
-    <section id="faq-section" className="py-16 md:py-24 bg-canvas border-b border-border/40">
+    <section
+      id="faq-section"
+      className="py-16 md:py-24 bg-canvas border-b border-border/40"
+    >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <span className="text-xs font-bold tracking-widest uppercase text-primary block mb-2">
@@ -22,7 +26,8 @@ export function FaqSection() {
             Commercial Print & Production Specifications
           </h2>
           <p className="text-sm text-ink-muted mt-2">
-            Essential information on proofing, turnaround times, file specs, and logistics.
+            Essential information on proofing, delivery times, file specs, and
+            logistics.
           </p>
         </div>
 

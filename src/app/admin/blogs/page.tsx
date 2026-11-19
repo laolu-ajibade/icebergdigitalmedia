@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Edit2, FileText, CheckCircle, ExternalLink } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Edit2,
+  FileText,
+  CheckCircle,
+  ExternalLink,
+} from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { R2_IMAGES } from "@/lib/constants";
 
@@ -94,7 +101,8 @@ export default function AdminBlogsPage() {
             Print Journal & Articles CMS
           </h1>
           <p className="text-xs text-ink-muted mt-1">
-            Author and publish educational printing guides, paper stock analyses, and brand case studies.
+            Author and publish educational printing guides, paper stock
+            analyses, and brand case studies.
           </p>
         </div>
 
@@ -120,16 +128,25 @@ export default function AdminBlogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {blogs.map((b) => (
+              {blogs.map(b => (
                 <tr key={b.slug} className="hover:bg-canvas-soft/50">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <div className="relative w-12 h-10 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
-                        <Image src={b.coverImage} alt={b.title} fill className="object-cover" />
+                        <Image
+                          src={b.coverImage}
+                          alt={b.title}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
                       <div className="max-w-md">
-                        <span className="font-bold text-ink block truncate">{b.title}</span>
-                        <span className="text-[10px] text-ink-muted font-mono">/blog/{b.slug}</span>
+                        <span className="font-bold text-ink block truncate">
+                          {b.title}
+                        </span>
+                        <span className="text-[10px] text-ink-muted font-mono">
+                          /blog/{b.slug}
+                        </span>
                       </div>
                     </div>
                   </td>
@@ -172,71 +189,84 @@ export default function AdminBlogsPage() {
               <h3 className="font-display font-bold text-base text-ink">
                 Author Print Journal Article
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-ink-muted hover:text-ink cursor-pointer">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-ink-muted hover:text-ink cursor-pointer"
+              >
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleSaveBlog} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-ink mb-1">Article Title *</label>
+                <label className="block font-bold text-ink mb-1">
+                  Article Title *
+                </label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Master Guide to Specialty Foil Stamping in Lagos"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={e => setTitle(e.target.value)}
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-ink mb-1">Category</label>
+                  <label className="block font-bold text-ink mb-1">
+                    Category
+                  </label>
                   <input
                     type="text"
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={e => setCategory(e.target.value)}
                     className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1">Read Time</label>
+                  <label className="block font-bold text-ink mb-1">
+                    Read Time
+                  </label>
                   <input
                     type="text"
                     value={readTime}
-                    onChange={(e) => setReadTime(e.target.value)}
+                    onChange={e => setReadTime(e.target.value)}
                     className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                   />
                 </div>
               </div>
 
               <R2ImageUpload
-                label="Cover Image (Cloudflare R2)"
+                label="Cover Image "
                 value={coverImage}
                 onChange={setCoverImage}
                 folder="blogs"
               />
 
               <div>
-                <label className="block font-bold text-ink mb-1">Summary / Excerpt *</label>
+                <label className="block font-bold text-ink mb-1">
+                  Summary / Excerpt *
+                </label>
                 <textarea
                   required
                   rows={2}
                   value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
+                  onChange={e => setExcerpt(e.target.value)}
                   placeholder="Brief preview displayed on the blog card..."
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">Full Article Content (Markdown format supported) *</label>
+                <label className="block font-bold text-ink mb-1">
+                  Full Article Content (Markdown format supported) *
+                </label>
                 <textarea
                   required
                   rows={8}
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={e => setContent(e.target.value)}
                   placeholder="Write article paragraphs and headers (use ### for subheadings)..."
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink font-mono"
                 />

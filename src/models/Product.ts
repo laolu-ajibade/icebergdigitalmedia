@@ -14,7 +14,7 @@ export interface IProduct extends Document {
   description: string;
   basePrice: number; // Starting price in ₦
   minQuantity: number;
-  turnaroundDays: string;
+  deliveryDays: string;
   image: string;
   gallery: string[];
   paperStocks: string[];
@@ -40,7 +40,7 @@ const ProductSchema: Schema = new Schema(
     description: { type: String, required: true },
     basePrice: { type: Number, required: true },
     minQuantity: { type: Number, default: 50 },
-    turnaroundDays: { type: String, default: "24-48 Hours" },
+    deliveryDays: { type: String, default: "24-48 Hours" },
     image: { type: String, required: true },
     gallery: [{ type: String }],
     paperStocks: [{ type: String }],
@@ -50,7 +50,7 @@ const ProductSchema: Schema = new Schema(
     isTopSelling: { type: Boolean, default: false },
     specifications: { type: Map, of: String, default: {} },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Product: Model<IProduct> =

@@ -37,7 +37,7 @@ export default function AdminCategoriesPage() {
 
     const parsedTags = tagsInput
       .split(",")
-      .map((t) => t.trim())
+      .map(t => t.trim())
       .filter(Boolean);
 
     if (parsedTags.length > 5) {
@@ -78,7 +78,8 @@ export default function AdminCategoriesPage() {
             Print & Design Categories ({categories.length})
           </h1>
           <p className="text-xs text-ink-muted mt-1">
-            Manage categories and tags (max 5 tags per category). Categories tagged with <strong>Print</strong> appear in the navbar dropdown.
+            Manage categories and tags (max 5 tags per category). Categories
+            tagged with <strong>Print</strong> appear in the navbar dropdown.
           </p>
         </div>
 
@@ -110,9 +111,13 @@ export default function AdminCategoriesPage() {
             <tbody className="divide-y divide-border/40 text-ink">
               {categories.map((cat, i) => (
                 <tr key={cat.slug} className="hover:bg-canvas-soft/50">
-                  <td className="p-4 font-mono font-bold text-ink-muted">{i + 1}</td>
+                  <td className="p-4 font-mono font-bold text-ink-muted">
+                    {i + 1}
+                  </td>
                   <td className="p-4 font-bold text-ink">{cat.name}</td>
-                  <td className="p-4 font-mono text-ink-muted">/category/{cat.slug}</td>
+                  <td className="p-4 font-mono text-ink-muted">
+                    /category/{cat.slug}
+                  </td>
                   <td className="p-4">
                     <div className="flex items-center gap-1 flex-wrap">
                       {(cat.tags || ["Print"]).map((t: string) => (
@@ -130,7 +135,9 @@ export default function AdminCategoriesPage() {
                       {cat.iconName}
                     </span>
                   </td>
-                  <td className="p-4 text-ink-muted max-w-xs truncate">{cat.description}</td>
+                  <td className="p-4 text-ink-muted max-w-xs truncate">
+                    {cat.description}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -145,7 +152,10 @@ export default function AdminCategoriesPage() {
               <h3 className="font-display font-bold text-base text-ink">
                 Create New Category
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-ink-muted hover:text-ink cursor-pointer">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-ink-muted hover:text-ink cursor-pointer"
+              >
                 ✕
               </button>
             </div>
@@ -156,24 +166,28 @@ export default function AdminCategoriesPage() {
 
             <form onSubmit={handleCreateCategory} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-ink mb-1">Category Name *</label>
+                <label className="block font-bold text-ink mb-1">
+                  Category Name *
+                </label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Brand Identity Design"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={e => setName(e.target.value)}
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">Slug URL</label>
+                <label className="block font-bold text-ink mb-1">
+                  Slug URL
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. brand-identity-design"
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  onChange={e => setSlug(e.target.value)}
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
@@ -185,20 +199,23 @@ export default function AdminCategoriesPage() {
                 <input
                   type="text"
                   value={tagsInput}
-                  onChange={(e) => setTagsInput(e.target.value)}
+                  onChange={e => setTagsInput(e.target.value)}
                   placeholder="e.g. Print, Design, Branding"
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 />
                 <span className="text-[10px] text-ink-muted block mt-1">
-                  Tag with &apos;Print&apos; to appear in the header Print Categories dropdown.
+                  Tag with &apos;Print&apos; to appear in the header Print
+                  Categories dropdown.
                 </span>
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">Icon Token</label>
+                <label className="block font-bold text-ink mb-1">
+                  Icon Token
+                </label>
                 <select
                   value={iconName}
-                  onChange={(e) => setIconName(e.target.value)}
+                  onChange={e => setIconName(e.target.value)}
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 >
                   <option value="Package">Package / Box</option>
@@ -215,18 +232,20 @@ export default function AdminCategoriesPage() {
               </div>
 
               <R2ImageUpload
-                label="Category Banner / Mockup (Cloudflare R2)"
+                label="Category Banner / Mockup "
                 value={image}
                 onChange={setImage}
                 folder="categories"
               />
 
               <div>
-                <label className="block font-bold text-ink mb-1">Description</label>
+                <label className="block font-bold text-ink mb-1">
+                  Description
+                </label>
                 <textarea
                   rows={2}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={e => setDescription(e.target.value)}
                   placeholder="Brief summary of items in this category..."
                   className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
                 />

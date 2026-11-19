@@ -110,7 +110,7 @@ export function TopSellingProducts() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-theme bg-ink/80 text-white text-[11px] font-semibold backdrop-blur-xs">
-                    {prod.turnaroundDays}
+                    {prod.deliveryDays}
                   </div>
                 </div>
 

@@ -42,14 +42,14 @@ export function Navbar() {
   const { totalItemCount, setIsCartOpen } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const printCategories = categories.filter((c) =>
-    c.tags ? c.tags.some((t: string) => t.toLowerCase() === "print") : true
+  const printCategories = categories.filter(c =>
+    c.tags ? c.tags.some((t: string) => t.toLowerCase() === "print") : true,
   );
 
   useEffect(() => {
     fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.categories) setCategories(data.categories);
       })
       .catch(() => {});
@@ -57,7 +57,10 @@ export function Navbar() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     }
@@ -115,7 +118,9 @@ export function Navbar() {
                 <span>Print Categories</span>
                 <ChevronDown
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    isDropdownOpen ? "rotate-180 text-primary" : "text-ink-muted"
+                    isDropdownOpen
+                      ? "rotate-180 text-primary"
+                      : "text-ink-muted"
                   }`}
                 />
               </button>
@@ -132,7 +137,8 @@ export function Navbar() {
                         Commercial Print Categories
                       </h4>
                       <p className="text-xs text-ink-muted">
-                        Select a category to view bespoke specifications, volume pricing, and turnaround times
+                        Select a category to view bespoke specifications, volume
+                        pricing, and delivery times
                       </p>
                     </div>
                     <Link
@@ -144,8 +150,9 @@ export function Navbar() {
                     </Link>
                   </div>
 
-                  {printCategories.slice(0, 10).map((cat) => {
-                    const IconComponent = categoryIconMap[cat.iconName] || Package;
+                  {printCategories.slice(0, 10).map(cat => {
+                    const IconComponent =
+                      categoryIconMap[cat.iconName] || Package;
                     return (
                       <Link
                         key={cat.slug}
@@ -218,7 +225,9 @@ export function Navbar() {
 
             {/* Direct WhatsApp Quote CTA */}
             <a
-              href={getWhatsAppLink("Hello Iceberg Studio, I would like to request a commercial print quote.")}
+              href={getWhatsAppLink(
+                "Hello Iceberg Studio, I would like to request a commercial print quote.",
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:inline-flex items-center justify-center px-4 py-2.5 rounded-button bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary-hover transition-colors shadow-soft"
@@ -232,7 +241,11 @@ export function Navbar() {
               className="lg:hidden p-2 rounded-button bg-canvas-soft text-ink hover:bg-border/40"
               aria-label="Toggle mobile navigation menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -259,7 +272,7 @@ export function Navbar() {
             <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">
               Print Categories
             </span>
-            {printCategories.slice(0, 10).map((cat) => (
+            {printCategories.slice(0, 10).map(cat => (
               <Link
                 key={cat.slug}
                 href={`/category/${cat.slug}`}
@@ -278,7 +291,9 @@ export function Navbar() {
             Blog
           </Link>
           <a
-            href={getWhatsAppLink("Hello Iceberg Studio, I would like to request a commercial print quote.")}
+            href={getWhatsAppLink(
+              "Hello Iceberg Studio, I would like to request a commercial print quote.",
+            )}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-center w-full py-2.5 rounded-button bg-primary text-primary-foreground font-semibold text-sm"

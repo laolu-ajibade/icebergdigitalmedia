@@ -23,19 +23,25 @@ export default function CategoryDedicatedPage({
   useEffect(() => {
     // 1. Fetch Categories to find current category metadata
     fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.categories) {
           const found = data.categories.find((c: any) => c.slug === slug);
-          setCategory(found || { name: slug.replace(/-/g, " "), slug, description: "Commercial printing services" });
+          setCategory(
+            found || {
+              name: slug.replace(/-/g, " "),
+              slug,
+              description: "Commercial printing services",
+            },
+          );
         }
       })
       .catch(() => {});
 
     // 2. Fetch products for this category
     fetch(`/api/products?category=${slug}`)
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.products) setProducts(data.products);
       })
       .catch(() => {});
@@ -52,7 +58,9 @@ export default function CategoryDedicatedPage({
     const tier = selectedProduct.quantityTiers?.[selectedTierIdx] || {
       quantity: selectedProduct.minQuantity,
       totalPrice: selectedProduct.basePrice,
-      pricePerUnit: Math.round(selectedProduct.basePrice / selectedProduct.minQuantity),
+      pricePerUnit: Math.round(
+        selectedProduct.basePrice / selectedProduct.minQuantity,
+      ),
     };
 
     addItem({
@@ -97,7 +105,10 @@ export default function CategoryDedicatedPage({
             Home
           </Link>
           <span>/</span>
-          <Link href="/categories" className="hover:text-primary transition-colors">
+          <Link
+            href="/categories"
+            className="hover:text-primary transition-colors"
+          >
             Categories
           </Link>
           <span>/</span>
@@ -120,14 +131,21 @@ export default function CategoryDedicatedPage({
               {category?.name || slug}
             </h1>
             <p className="text-xs sm:text-sm text-ink-body mt-2 leading-relaxed">
-              {category?.description || "Commercial grade specifications, calibrated CMYK pre-press proofing, and fast dispatch."}
+              {category?.description ||
+                "Commercial grade specifications, calibrated CMYK pre-press proofing, and fast dispatch."}
             </p>
           </div>
 
           <div className="bg-canvas-soft p-4 rounded-theme border border-border/60 text-xs shrink-0 space-y-1">
-            <span className="text-ink-muted block font-medium">Standard SLA Turnaround:</span>
-            <p className="font-display font-bold text-ink text-sm">24–48hr Dispatch Across Lagos</p>
-            <span className="text-[11px] text-ink-muted">Nationwide Delivery via GIG Logistics</span>
+            <span className="text-ink-muted block font-medium">
+              Standard SLA Delivery:
+            </span>
+            <p className="font-display font-bold text-ink text-sm">
+              24–48hr Dispatch Across Lagos
+            </p>
+            <span className="text-[11px] text-ink-muted">
+              Nationwide Delivery via GIG Logistics
+            </span>
           </div>
         </div>
 
@@ -135,13 +153,17 @@ export default function CategoryDedicatedPage({
         {products.length === 0 ? (
           <div className="text-center py-20 bg-card rounded-card border border-border p-8 space-y-4">
             <p className="text-sm text-ink-body font-semibold">
-              Currently compiling bespoke dielines and specifications for this category.
+              Currently compiling bespoke dielines and specifications for this
+              category.
             </p>
             <p className="text-xs text-ink-muted max-w-md mx-auto">
-              Our factory can print any custom size or requirement. Contact our WhatsApp desk directly for an immediate tailored quote.
+              Our factory can print any custom size or requirement. Contact our
+              WhatsApp desk directly for an immediate tailored quote.
             </p>
             <a
-              href={getWhatsAppLink(`Hello Iceberg Studio, I have a custom inquiry for ${category?.name || slug}.`)}
+              href={getWhatsAppLink(
+                `Hello Iceberg Studio, I have a custom inquiry for ${category?.name || slug}.`,
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-button bg-[#25D366] text-white font-bold text-xs"
@@ -152,7 +174,7 @@ export default function CategoryDedicatedPage({
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {products.map((prod) => (
+            {products.map(prod => (
               <div
                 key={prod.slug}
                 className="bg-card rounded-card border border-border/70 overflow-hidden shadow-soft antigravity-card flex flex-col justify-between group"
@@ -166,7 +188,7 @@ export default function CategoryDedicatedPage({
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-theme bg-ink/80 text-white text-[11px] font-semibold backdrop-blur-xs">
-                      {prod.turnaroundDays}
+                      {prod.deliveryDays}
                     </div>
                   </div>
 
@@ -183,7 +205,9 @@ export default function CategoryDedicatedPage({
 
                     <div className="mt-4 pt-3 border-t border-border/50 flex items-baseline justify-between">
                       <div>
-                        <span className="text-[11px] text-ink-muted block">Starting From</span>
+                        <span className="text-[11px] text-ink-muted block">
+                          Starting From
+                        </span>
                         <span className="font-display font-black text-xl text-ink">
                           ₦{prod.basePrice.toLocaleString()}
                         </span>
@@ -248,8 +272,12 @@ export default function CategoryDedicatedPage({
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs">{t.quantity.toLocaleString()} pcs</span>
-                      {selectedTierIdx === idx && <Check className="w-3.5 h-3.5 text-primary" />}
+                      <span className="font-bold text-xs">
+                        {t.quantity.toLocaleString()} pcs
+                      </span>
+                      {selectedTierIdx === idx && (
+                        <Check className="w-3.5 h-3.5 text-primary" />
+                      )}
                     </div>
                     <div className="text-xs font-black text-ink mt-1">
                       ₦{t.totalPrice.toLocaleString()}
@@ -259,30 +287,33 @@ export default function CategoryDedicatedPage({
               </div>
             </div>
 
-            {selectedProduct.finishes && selectedProduct.finishes.length > 0 && (
-              <div>
-                <label className="block text-xs font-bold text-ink mb-2">
-                  Select Finish / Coating
-                </label>
-                <div className="space-y-1.5">
-                  {selectedProduct.finishes.map((f: string) => (
-                    <button
-                      key={f}
-                      type="button"
-                      onClick={() => setSelectedFinish(f)}
-                      className={`w-full p-2.5 rounded-button text-xs font-medium text-left border flex items-center justify-between cursor-pointer transition-all ${
-                        selectedFinish === f
-                          ? "bg-primary-pale border-primary text-ink"
-                          : "bg-canvas-soft border-border text-ink-body hover:border-ink/40"
-                      }`}
-                    >
-                      <span>{f}</span>
-                      {selectedFinish === f && <Check className="w-3.5 h-3.5 text-primary" />}
-                    </button>
-                  ))}
+            {selectedProduct.finishes &&
+              selectedProduct.finishes.length > 0 && (
+                <div>
+                  <label className="block text-xs font-bold text-ink mb-2">
+                    Select Finish / Coating
+                  </label>
+                  <div className="space-y-1.5">
+                    {selectedProduct.finishes.map((f: string) => (
+                      <button
+                        key={f}
+                        type="button"
+                        onClick={() => setSelectedFinish(f)}
+                        className={`w-full p-2.5 rounded-button text-xs font-medium text-left border flex items-center justify-between cursor-pointer transition-all ${
+                          selectedFinish === f
+                            ? "bg-primary-pale border-primary text-ink"
+                            : "bg-canvas-soft border-border text-ink-body hover:border-ink/40"
+                        }`}
+                      >
+                        <span>{f}</span>
+                        {selectedFinish === f && (
+                          <Check className="w-3.5 h-3.5 text-primary" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="pt-4 border-t border-border/60 flex items-center gap-3">
               <button
