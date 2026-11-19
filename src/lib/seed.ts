@@ -584,6 +584,8 @@ export const initialSiteSettings = {
   defaultTheme: "wise",
   topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
   topBarTagline: "Commercial Grade Print Press & Packaging Studio",
+  reviewsTrustedCount: "500+",
+  reviewsOverallRating: 0,
   address: "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria",
   phone: "+234 802 309 3704",
   whatsappRouting: "+2348023093704",

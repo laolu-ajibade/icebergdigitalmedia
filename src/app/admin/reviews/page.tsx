@@ -12,10 +12,12 @@ import {
   ChevronDown,
   X,
   Loader2,
+  Save,
 } from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
 import { Pagination } from "@/components/ui/Pagination";
 import { useToast } from "@/context/ToastContext";
+import { clearSiteSettingsCache } from "@/lib/useSiteSettings";
 
 interface ReviewItem {
   _id?: string;
@@ -46,6 +48,10 @@ export default function AdminReviewsPage() {
   const [selectedReview, setSelectedReview] = useState<ReviewItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [trustedCount, setTrustedCount] = useState("500+");
+  const [customRating, setCustomRating] = useState<string>("");
+  const [calculatedRating, setCalculatedRating] = useState<number>(5.0);
+  const [savingHeader, setSavingHeader] = useState(false);
 
   const [formData, setFormData] = useState<ReviewItem>({
     authorName: "",
@@ -69,10 +75,49 @@ export default function AdminReviewsPage() {
       if (data.reviews) {
         setReviews(data.reviews);
       }
+      if (data.trustedCount) {
+        setTrustedCount(data.trustedCount);
+      }
+      if (typeof data.calculatedRating === "number") {
+        setCalculatedRating(data.calculatedRating);
+      }
+      if (data.customRating && Number(data.customRating) > 0) {
+        setCustomRating(String(data.customRating));
+      } else {
+        setCustomRating("");
+      }
     } catch (err) {
       console.error("Failed to load reviews:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveHeaderConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingHeader(true);
+    try {
+      const parsedRating = customRating.trim() ? Number(customRating) : 0;
+      if (parsedRating < 0 || parsedRating > 5) {
+        showError("Overall rating must be between 0 and 5.0.", "Invalid Rating");
+        return;
+      }
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reviewsTrustedCount: trustedCount.trim() || "500+",
+          reviewsOverallRating: parsedRating,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update reviews header settings");
+      clearSiteSettingsCache();
+      showSuccess("Reviews header count and rating score updated.", "Header Saved");
+      fetchReviews();
+    } catch (err: any) {
+      showError(err.message || "Failed to update header settings.", "Save Failed");
+    } finally {
+      setSavingHeader(false);
     }
   };
 
@@ -236,6 +281,67 @@ export default function AdminReviewsPage() {
           <span>Add New Review</span>
         </button>
       </div>
+
+      {/* Dynamic Reviews Header & Score Configuration */}
+      <form
+        onSubmit={handleSaveHeaderConfig}
+        className="bg-card p-5 rounded-card border border-border shadow-soft space-y-4"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
+          <div>
+            <h2 className="font-display font-bold text-sm text-ink">
+              Homepage Reviews Header & Score Configuration
+            </h2>
+            <p className="text-[11px] text-ink-muted">
+              Configure the dynamic brand count (&ldquo;Trusted by {trustedCount || "500+"} Lagos Brands &amp; Designers&rdquo;) and overall rating score ({customRating ? Number(customRating).toFixed(1) : calculatedRating.toFixed(1)} / 5.0).
+            </p>
+          </div>
+          <button
+            type="submit"
+            disabled={savingHeader}
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 min-h-[38px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft shrink-0 cursor-pointer"
+          >
+            {savingHeader ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Save className="w-3.5 h-3.5" />
+            )}
+            <span>{savingHeader ? "Saving..." : "Save Header Metrics"}</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-ink mb-1.5">
+              Trusted Brands / Clients Count (Headline Figure)
+            </label>
+            <input
+              type="text"
+              value={trustedCount}
+              onChange={(e) => setTrustedCount(e.target.value)}
+              placeholder="e.g. 500+, 1,000+"
+              className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-ink mb-1.5">
+              Overall Rating Score (Out of 5.0 · Leave empty for live average:{" "}
+              {calculatedRating.toFixed(1)} / 5.0)
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              value={customRating}
+              onChange={(e) => setCustomRating(e.target.value)}
+              placeholder={`Auto (${calculatedRating.toFixed(1)})`}
+              className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink focus:outline-none focus:border-primary"
+            />
+          </div>
+        </div>
+      </form>
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-card border border-border shadow-soft">

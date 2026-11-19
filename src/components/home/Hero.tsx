@@ -31,7 +31,7 @@ export function Hero() {
               Commercial Printing Press & Packaging Atelier
             </span>
 
-            <h1 className="font-display font-black text-4xl sm:text-5xl md:text-6xl text-ink tracking-[-0.04em] leading-[1.05]">
+            <h1 className="font-display font-black text-3xl sm:text-5xl md:text-6xl text-ink tracking-[-0.04em] leading-[1.08]">
               {headline}
             </h1>
 
@@ -39,10 +39,10 @@ export function Hero() {
               {subtext}
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 pt-2">
               <Link
                 href={primaryCtaLink}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
               >
                 <span>{primaryCtaText}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -56,7 +56,7 @@ export function Hero() {
                     ? "noopener noreferrer"
                     : undefined
                 }
-                className="inline-flex items-center gap-2 px-4 py-3 rounded-button bg-canvas border border-border hover:bg-canvas-soft text-ink font-semibold text-xs transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[44px] rounded-button bg-canvas border border-border hover:bg-canvas-soft text-ink font-semibold text-xs transition-colors"
               >
                 <span>{secondaryCtaText}</span>
               </a>

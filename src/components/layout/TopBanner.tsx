@@ -3,13 +3,11 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import { Phone, Clock, MessageSquare } from "lucide-react";
-import { useTheme } from "@/context/ThemeContext";
 import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
 export function TopBanner() {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
   const settings = useSiteSettings();
 
   if (pathname?.startsWith("/admin")) {
@@ -27,53 +25,43 @@ export function TopBanner() {
     "Commercial Grade Print Press & Packaging Studio";
 
   return (
-    <div className="bg-ink text-canvas-soft border-b border-border/10 text-xs py-2 px-4 transition-colors">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-6 flex-wrap">
+    <div className="bg-ink text-canvas-soft border-b border-border/10 text-[11px] sm:text-xs py-2 px-3.5 sm:px-6 transition-colors">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center gap-4 lg:gap-6 min-w-0">
           <a
             href={`tel:${whatsapp}`}
-            className="flex items-center gap-1.5 hover:text-primary transition-colors font-medium"
+            className="flex items-center gap-1.5 hover:text-primary transition-colors font-semibold whitespace-nowrap shrink-0"
           >
-            <Phone className="w-3.5 h-3.5 text-primary" />
+            <Phone className="w-3.5 h-3.5 text-primary shrink-0" />
             <span>{phone}</span>
           </a>
-          <div className="hidden sm:flex items-center gap-1.5 opacity-80">
-            <Clock className="w-3.5 h-3.5" />
+
+          <div className="hidden md:flex items-center gap-1.5 opacity-80 whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5 shrink-0" />
             <span>{topBarHoursText}</span>
           </div>
+
           {topBarTagline && (
             <>
-              <span className="hidden md:inline text-white/40">•</span>
-              <span className="hidden md:inline text-white/80">
+              <span className="hidden xl:inline text-white/40">•</span>
+              <span className="hidden xl:inline text-white/80 truncate">
                 {topBarTagline}
               </span>
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-4">
-          <button
-            onClick={toggleTheme}
-            className="flex items-center px-2.5 py-1 rounded-button bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer text-[11px]"
-            title="Toggle between Wise Canvas and Iceberg Brand design systems"
-          >
-            <span>
-              Theme: {theme === "wise" ? "Wise Canvas" : "Iceberg Studio"}
-            </span>
-          </button>
-
-          <a
-            href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(
-              "Hello Iceberg Studio, I have an inquiry regarding commercial printing."
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-primary hover:underline font-semibold"
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>WhatsApp Quick Desk</span>
-          </a>
-        </div>
+        <a
+          href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(
+            "Hello Iceberg Studio, I have an inquiry regarding commercial printing."
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-primary hover:underline font-semibold whitespace-nowrap shrink-0"
+        >
+          <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+          <span>WhatsApp Quick Desk</span>
+        </a>
       </div>
     </div>
   );

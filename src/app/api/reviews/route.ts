@@ -54,8 +54,16 @@ export async function GET(request: Request) {
           )
         : 5.0;
 
+    const customRating = Number(siteSettings?.reviewsOverallRating) || 0;
+    const effectiveRating =
+      customRating > 0 && customRating <= 5 ? customRating : avgRating;
+    const trustedCount = siteSettings?.reviewsTrustedCount || "500+";
+
     return NextResponse.json({
-      rating: avgRating,
+      rating: effectiveRating,
+      calculatedRating: avgRating,
+      customRating,
+      trustedCount,
       totalReviews: formattedReviews.length,
       reviews: formattedReviews,
       isLive: false,

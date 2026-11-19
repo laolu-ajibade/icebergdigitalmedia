@@ -12,7 +12,7 @@ import {
   ShoppingBag,
   Upload,
   RefreshCw,
-  Sparkles,
+  Award,
   Check,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
@@ -311,7 +311,7 @@ export function LivePrintCanvas() {
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative h-[290px] sm:h-[340px] w-full bg-linear-to-b from-canvas-soft to-border/30 flex items-center justify-center p-6 overflow-hidden select-none"
+        className="relative h-[290px] sm:h-[340px] w-full bg-gradient-to-b from-canvas-soft to-border/30 flex items-center justify-center p-6 overflow-hidden select-none"
         style={{ perspective: "1000px" }}
       >
         {/* Spatial Floating Product Container */}
@@ -489,7 +489,7 @@ export function LivePrintCanvas() {
                     <Image src={uploadedLogo} alt="Logo" fill className="object-contain" />
                   </div>
                 ) : (
-                  <Sparkles
+                  <Award
                     className="w-5 h-5 shrink-0"
                     style={{ color: selectedImprintColor.hex }}
                   />

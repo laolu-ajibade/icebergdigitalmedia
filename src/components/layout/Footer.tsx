@@ -41,23 +41,27 @@ export function Footer() {
   const hoursSat = settings?.workingHoursSaturday || "10:00 - 18:00";
   const hoursSun = settings?.workingHoursSunday || "Closed";
 
-  const facebookUrl = settings?.facebookUrl || "https://facebook.com/hazkendigital";
-  const instagramUrl = settings?.instagramUrl || "https://instagram.com/hazkendigital";
+  const facebookUrl =
+    settings?.facebookUrl || "https://facebook.com/hazkendigital";
+  const instagramUrl =
+    settings?.instagramUrl || "https://instagram.com/hazkendigital";
   const twitterUrl = settings?.twitterUrl || "https://x.com/hazkendigital";
   const linkedinUrl =
     settings?.linkedinUrl || "https://linkedin.com/company/hazkendigital";
-  const youtubeUrl = settings?.youtubeUrl || "https://youtube.com/@hazkendigital";
+  const youtubeUrl =
+    settings?.youtubeUrl || "https://youtube.com/@hazkendigital";
 
   const buildWaLink = (msg: string) =>
     `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`;
 
   return (
-    <footer className="bg-[#0b0f19] text-[#e2e8f0] pt-16 pb-8 border-t border-white/10">
+    <footer className="bg-[#0b0f19] text-[#e2e8f0] pt-12 sm:pt-16 pb-24 sm:pb-10 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-white/10">
+          {/* Column 1: Brand Identity */}
+          <div className="space-y-3.5">
             <Link href="/" className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-theme bg-white p-0.5 overflow-hidden flex items-center justify-center">
+              <div className="relative w-10 h-10 rounded-theme bg-white p-0.5 overflow-hidden flex items-center justify-center shrink-0">
                 <Image
                   src="/logo-icon.jpg"
                   alt={companyName}
@@ -65,110 +69,150 @@ export function Footer() {
                   className="object-contain"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="font-display font-black text-lg text-white">
+              <div className="flex flex-col min-w-0">
+                <span className="font-display font-black text-base sm:text-lg text-white leading-tight">
                   {companyName}
                 </span>
-                <span className="text-[10px] text-primary uppercase font-bold tracking-wider">
+                <span className="text-[10px] text-primary uppercase font-bold tracking-wider mt-0.5 truncate">
                   {tagline}
                 </span>
               </div>
             </Link>
 
-            <p className="text-xs text-white/70 leading-relaxed">
-              Web Design, UI UX Design, Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria.
+            <p className="text-xs text-white/75 leading-relaxed">
+              Web Design, UI UX Design, Brand Identity, Graphic Design and
+              Digital Printing Service in Lagos Nigeria.
             </p>
             <p className="text-xs text-white/60 leading-relaxed">
-              Full Responsive Websites and Application, Creative Branding, Graphic Design for Business Advertisement and High-quality Printing.
+              Full Responsive Websites and Application, Creative Branding,
+              Graphic Design for Business Advertisement and High-quality
+              Printing.
             </p>
             <p className="text-xs text-primary font-semibold italic">
               Creativity as it speaks excellence!
             </p>
           </div>
 
-          <div className="space-y-3.5 text-xs text-white/80">
-            <h4 className="font-display font-bold text-sm text-white mb-4">
+          {/* Column 2: Lagos Studio & Factory */}
+          <div className="p-4 sm:p-0 rounded-card sm:rounded-none bg-white/[0.03] sm:bg-transparent border border-white/10 sm:border-0 space-y-3.5 text-xs text-white/80">
+            <h4 className="font-display font-bold text-sm text-white">
               Lagos Studio & Factory
             </h4>
-            <div className="flex items-start gap-2.5">
-              <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <span>{address}</span>
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <MapPin className="w-3.5 h-3.5" />
+              </div>
+              <span className="leading-relaxed">{address}</span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <Phone className="w-4 h-4 text-primary shrink-0" />
-              <a href={`tel:${whatsapp}`} className="hover:text-primary transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <Phone className="w-3.5 h-3.5" />
+              </div>
+              <a
+                href={`tel:${whatsapp}`}
+                className="hover:text-primary transition-colors font-medium"
+              >
                 {phone}
               </a>
             </div>
-            <div className="flex items-center gap-2.5">
-              <Mail className="w-4 h-4 text-primary shrink-0" />
-              <a href={`mailto:${email}`} className="hover:text-primary transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <Mail className="w-3.5 h-3.5" />
+              </div>
+              <a
+                href={`mailto:${email}`}
+                className="hover:text-primary transition-colors break-all"
+              >
                 {email}
               </a>
             </div>
-            <div className="flex items-start gap-2.5">
-              <Clock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <div>
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <Clock className="w-3.5 h-3.5" />
+              </div>
+              <div className="space-y-0.5 leading-relaxed">
                 <p>
-                  Mon - Fri: <strong className="text-white">{hoursWeekday}</strong>
+                  Mon - Fri:{" "}
+                  <strong className="text-white">{hoursWeekday}</strong>
                 </p>
                 <p>
-                  Sat: <strong className="text-white">{hoursSat}</strong> · Sun: {hoursSun}
+                  Sat: <strong className="text-white">{hoursSat}</strong> · Sun:{" "}
+                  {hoursSun}
                 </p>
               </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-display font-bold text-sm text-amber-400 mb-4">
+          {/* Column 3: Quick Links (2 columns on mobile, 1 column on desktop) */}
+          <div className="p-4 sm:p-0 rounded-card sm:rounded-none bg-white/[0.03] sm:bg-transparent border border-white/10 sm:border-0">
+            <h4 className="font-display font-bold text-sm text-amber-400 mb-3.5">
               Quick Links
             </h4>
-            <ul className="space-y-2 text-xs text-white/80">
+            <ul className="grid grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-2.5 text-xs text-white/80">
               <li>
-                <Link href="/" className="hover:text-primary transition-colors">
+                <Link
+                  href="/"
+                  className="hover:text-primary transition-colors block py-0.5"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="hover:text-primary transition-colors">
-                  Service & Print Categories
+                <Link
+                  href="/categories"
+                  className="hover:text-primary transition-colors block py-0.5"
+                >
+                  Print Categories
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:text-primary transition-colors">
-                  Blog & Print Journal
+                <Link
+                  href="/blog"
+                  className="hover:text-primary transition-colors block py-0.5"
+                >
+                  Print Journal
                 </Link>
               </li>
               <li>
-                <a href="#about-studio" className="hover:text-primary transition-colors">
+                <a
+                  href="#about-studio"
+                  className="hover:text-primary transition-colors block py-0.5"
+                >
                   About Studio
                 </a>
               </li>
               <li>
-                <a href="#faq-section" className="hover:text-primary transition-colors">
-                  Contact & Inquiries
+                <a
+                  href="#faq-section"
+                  className="hover:text-primary transition-colors block py-0.5"
+                >
+                  Contact & FAQ
                 </a>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-primary transition-colors">
-                  Admin Control Center
+                <Link
+                  href="/admin"
+                  className="hover:text-primary transition-colors block py-0.5"
+                >
+                  Admin Portal
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div className="space-y-5">
+          {/* Column 4: Socials, Chat & Logistics */}
+          <div className="p-4 sm:p-0 rounded-card sm:rounded-none bg-white/[0.03] sm:bg-transparent border border-white/10 sm:border-0 space-y-5">
             <div>
-              <h4 className="font-display font-bold text-xs text-amber-400 mb-3">
+              <h4 className="font-display font-bold text-xs text-amber-400 mb-2.5">
                 Follow us on:
               </h4>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {facebookUrl && (
                   <a
                     href={facebookUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-theme bg-[#3b5998] text-white flex items-center justify-center hover:opacity-90"
+                    className="w-9 h-9 rounded-theme bg-[#3b5998] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
                     aria-label="Facebook"
                   >
                     <Facebook className="w-4 h-4" />
@@ -179,7 +223,7 @@ export function Footer() {
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-theme bg-linear-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:opacity-90"
+                    className="w-9 h-9 rounded-theme bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
                     aria-label="Instagram"
                   >
                     <Instagram className="w-4 h-4" />
@@ -190,7 +234,7 @@ export function Footer() {
                     href={twitterUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-theme bg-black text-white flex items-center justify-center hover:opacity-90 font-bold text-xs"
+                    className="w-9 h-9 rounded-theme bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-xs"
                     aria-label="X (Twitter)"
                   >
                     𝕏
@@ -201,7 +245,7 @@ export function Footer() {
                     href={linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-theme bg-[#0077b5] text-white flex items-center justify-center hover:opacity-90"
+                    className="w-9 h-9 rounded-theme bg-[#0077b5] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="w-4 h-4" />
@@ -212,7 +256,7 @@ export function Footer() {
                     href={youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 rounded-theme bg-[#ff0000] text-white flex items-center justify-center hover:opacity-90"
+                    className="w-9 h-9 rounded-theme bg-[#ff0000] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
                     aria-label="YouTube"
                   >
                     <Youtube className="w-4 h-4" />
@@ -222,46 +266,50 @@ export function Footer() {
             </div>
 
             <div>
-              <h4 className="font-display font-bold text-xs text-amber-400 mb-2">
+              <h4 className="font-display font-bold text-xs text-amber-400 mb-2.5">
                 Chat with us on:
               </h4>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <a
-                  href={buildWaLink("Hello Iceberg Studio Team, I have an inquiry.")}
+                  href={buildWaLink(
+                    "Hello Iceberg Studio Team, I have an inquiry."
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-theme bg-[#25D366] text-white flex items-center justify-center hover:opacity-90"
+                  className="inline-flex items-center gap-2 px-3 py-2 min-h-[38px] rounded-theme bg-[#25D366] text-white text-xs font-bold hover:opacity-90 transition-opacity"
                   aria-label="Chat on WhatsApp"
                 >
                   <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp</span>
                 </a>
                 <a
                   href="https://m.me/hazkendigital"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-theme bg-[#0084ff] text-white flex items-center justify-center hover:opacity-90"
+                  className="inline-flex items-center gap-2 px-3 py-2 min-h-[38px] rounded-theme bg-[#0084ff] text-white text-xs font-bold hover:opacity-90 transition-opacity"
                   aria-label="Chat on Messenger"
                 >
                   <Send className="w-3.5 h-3.5" />
+                  <span>Messenger</span>
                 </a>
               </div>
             </div>
 
             <div>
-              <h4 className="font-display font-bold text-xs text-amber-400 mb-2 flex items-center gap-1.5">
+              <h4 className="font-display font-bold text-xs text-amber-400 mb-2.5 flex items-center gap-1.5">
                 <Truck className="w-3.5 h-3.5" />
                 <span>Delivery Partners:</span>
               </h4>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-1 rounded-theme bg-[#00A859] text-white font-black text-[10px] tracking-wider">
+                <span className="px-2.5 py-1 rounded-theme bg-[#00A859] text-white font-black text-[10px] tracking-wider">
                   KWIK
                 </span>
                 <span className="text-white/40">+</span>
-                <span className="px-2 py-1 rounded-theme bg-[#34D186] text-[#0f172a] font-black text-[10px] tracking-wider">
+                <span className="px-2.5 py-1 rounded-theme bg-[#34D186] text-[#0f172a] font-black text-[10px] tracking-wider">
                   BOLT
                 </span>
                 <span className="text-white/40">+</span>
-                <span className="px-2 py-1 rounded-theme bg-white text-[#d03238] font-black text-[10px] tracking-wider">
+                <span className="px-2.5 py-1 rounded-theme bg-white text-[#d03238] font-black text-[10px] tracking-wider">
                   GIG LOGISTICS
                 </span>
               </div>
@@ -269,31 +317,35 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
-          <p>
-            Copyright © 2019 - 2026 Hazken Digital / {companyName}. All Rights Reserved.
+        {/* Bottom Copyright & Action Bar */}
+        <div className="pt-6 sm:pt-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+          <p className="text-center sm:text-left leading-relaxed">
+            Copyright © 2019 - 2026 Hazken Digital / {companyName}. All Rights
+            Reserved.
           </p>
           <a
             href={buildWaLink("Hello Iceberg Studio, I need assistance.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-button bg-[#d03238] hover:bg-[#b5262c] text-white font-bold text-xs transition-colors flex items-center gap-1.5"
+            className="w-full sm:w-auto px-5 py-2.5 min-h-[44px] rounded-button bg-[#d03238] hover:bg-[#b5262c] text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 shadow-soft"
           >
+            <MessageCircle className="w-4 h-4" />
             <span>Send Message...</span>
           </a>
         </div>
       </div>
 
+      {/* Floating WhatsApp Button */}
       <a
         href={buildWaLink(
           "Hello Iceberg Creative Print Studio, I would like to order commercial prints."
         )}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-elevation flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+        className="fixed bottom-5 right-5 z-40 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white shadow-elevation flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
         aria-label="Direct WhatsApp Print Desk"
       >
-        <MessageCircle className="w-7 h-7" />
+        <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
       </a>
     </footer>
   );

@@ -7,7 +7,7 @@ import {
   ExternalLink,
   ShieldCheck,
   Building,
-  Sparkles,
+  Layers,
   BarChart3,
   Briefcase,
   Info,
@@ -204,7 +204,7 @@ export default function AdminSettingsPage() {
 
   const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
     { key: "contact", label: "Studio & Socials", icon: Building },
-    { key: "hero", label: "Hero & Intro", icon: Sparkles },
+    { key: "hero", label: "Hero & Intro", icon: Layers },
     { key: "stats", label: "Studio Stats", icon: BarChart3 },
     { key: "corporate", label: "Corporate Perks", icon: Briefcase },
     { key: "about", label: "About Studio", icon: Info },

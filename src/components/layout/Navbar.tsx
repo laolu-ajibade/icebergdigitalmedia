@@ -79,11 +79,11 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-border transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo & Brand Identity */}
-          <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="relative w-11 h-11 rounded-theme overflow-hidden bg-white shadow-soft flex items-center justify-center p-0.5 border border-border/40">
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3.5 group min-w-0">
+            <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-theme overflow-hidden bg-white shadow-soft flex items-center justify-center p-0.5 border border-border/40 shrink-0">
               <Image
                 src="/logo-icon.jpg"
                 alt="Iceberg Print Studio Mark"
@@ -92,16 +92,16 @@ export function Navbar() {
                 priority
               />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <div className="flex items-baseline gap-1.5">
-                <span className="font-display font-black text-xl tracking-tight text-ink">
+                <span className="font-display font-black text-lg sm:text-xl tracking-tight text-ink">
                   Iceberg
                 </span>
-                <span className="text-[11px] font-semibold tracking-wider uppercase text-primary">
+                <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase text-primary">
                   Studio
                 </span>
               </div>
-              <span className="text-[10px] text-ink-muted hidden sm:block italic font-serif">
+              <span className="text-[10px] text-ink-muted truncate italic font-serif max-w-[170px] sm:max-w-none">
                 {settings?.tagline || "Turning Ideas Into Impressions...."}
               </span>
             </div>

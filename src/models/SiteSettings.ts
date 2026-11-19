@@ -6,6 +6,8 @@ export interface ISiteSettings extends Document {
   defaultTheme: "wise" | "iceberg";
   topBarHoursText: string;
   topBarTagline: string;
+  reviewsTrustedCount: string;
+  reviewsOverallRating: number;
   address: string;
   phone: string;
   whatsappRouting: string;
@@ -61,6 +63,8 @@ const SiteSettingsSchema: Schema = new Schema(
       type: String,
       default: "Commercial Grade Print Press & Packaging Studio",
     },
+    reviewsTrustedCount: { type: String, default: "500+" },
+    reviewsOverallRating: { type: Number, default: 0 },
     address: {
       type: String,
       default: "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria",
