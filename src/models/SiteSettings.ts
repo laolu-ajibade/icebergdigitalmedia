@@ -35,6 +35,14 @@ export interface ISiteSettings extends Document {
   aboutImage: string;
   faqs: Array<{ question: string; answer: string }>;
   processSteps: Array<{ stepNumber: string; title: string; description: string }>;
+  studioItems: Array<{
+    id: string;
+    label: string;
+    price: number;
+    minQty: number;
+    stockDesc: string;
+    productSlug: string;
+  }>;
 }
 
 const SiteSettingsSchema: Schema = new Schema(
@@ -117,6 +125,52 @@ const SiteSettingsSchema: Schema = new Schema(
         },
       ],
       default: [],
+    },
+    studioItems: {
+      type: [
+        {
+          id: { type: String },
+          label: { type: String },
+          price: { type: Number },
+          minQty: { type: Number },
+          stockDesc: { type: String },
+          productSlug: { type: String },
+        },
+      ],
+      default: [
+        {
+          id: "tshirt",
+          label: "Apparel",
+          price: 18500,
+          minQty: 5,
+          stockDesc: "420gsm Brushed Fleece Cotton",
+          productSlug: "custom-heavyweight-branded-hoodie",
+        },
+        {
+          id: "mug",
+          label: "Drinkware",
+          price: 3000,
+          minQty: 12,
+          stockDesc: "Grade AAA Glazed Ceramic",
+          productSlug: "two-tone-ceramic-sublimation-mug",
+        },
+        {
+          id: "card",
+          label: "Business Card",
+          price: 5000,
+          minQty: 100,
+          stockDesc: "600gsm Cotton Foil Board",
+          productSlug: "curved-edge-luxury-business-cards",
+        },
+        {
+          id: "box",
+          label: "Rigid Box",
+          price: 25000,
+          minQty: 25,
+          stockDesc: "1200gsm Magnetic Greyboard",
+          productSlug: "luxury-magnetic-rigid-gift-box",
+        },
+      ],
     },
   },
   { timestamps: true }

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { connectDB } from "./db";
 import { Category } from "@/models/Category";
+import { Tag } from "@/models/Tag";
 import { Product } from "@/models/Product";
 import { Blog } from "@/models/Blog";
 import { Review } from "@/models/Review";
@@ -10,6 +11,14 @@ import { AdminUser } from "@/models/AdminUser";
 
 export const R2_STORAGE_BASE =
   "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg";
+
+export const initialTags = [
+  { name: "Print", slug: "print", order: 1 },
+  { name: "Design", slug: "design", order: 2 },
+  { name: "Packaging", slug: "packaging", order: 3 },
+  { name: "Apparel", slug: "apparel", order: 4 },
+  { name: "Branding", slug: "branding", order: 5 },
+];
 
 export const initialCategories = [
   {
@@ -675,6 +684,40 @@ export const initialSiteSettings = {
         "Your order is precision-printed in Shomolu and dispatched across Lagos and nationwide within 24-48 hours.",
     },
   ],
+  studioItems: [
+    {
+      id: "tshirt",
+      label: "Apparel",
+      price: 18500,
+      minQty: 5,
+      stockDesc: "420gsm Brushed Fleece Cotton",
+      productSlug: "custom-heavyweight-branded-hoodie",
+    },
+    {
+      id: "mug",
+      label: "Drinkware",
+      price: 3000,
+      minQty: 12,
+      stockDesc: "Grade AAA Glazed Ceramic",
+      productSlug: "two-tone-ceramic-sublimation-mug",
+    },
+    {
+      id: "card",
+      label: "Business Card",
+      price: 5000,
+      minQty: 100,
+      stockDesc: "600gsm Cotton Foil Board",
+      productSlug: "curved-edge-luxury-business-cards",
+    },
+    {
+      id: "box",
+      label: "Rigid Box",
+      price: 25000,
+      minQty: 25,
+      stockDesc: "1200gsm Magnetic Greyboard",
+      productSlug: "luxury-magnetic-rigid-gift-box",
+    },
+  ],
 };
 
 /**
@@ -683,6 +726,10 @@ export const initialSiteSettings = {
 export async function seedDatabase() {
   await connectDB();
   const currentMonthKey = new Date().toISOString().slice(0, 7);
+
+  if ((await Tag.countDocuments()) === 0) {
+    await Tag.insertMany(initialTags);
+  }
 
   if ((await Category.countDocuments()) === 0) {
     await Category.insertMany(initialCategories);

@@ -68,6 +68,7 @@ export default function AdminSettingsPage() {
     aboutImage: "",
     faqs: [],
     processSteps: [],
+    studioItems: [],
   });
 
   const [saving, setSaving] = useState(false);
@@ -562,6 +563,96 @@ export default function AdminSettingsPage() {
                 />
               </div>
             </div>
+
+            <div className="pt-6 border-t border-border/60 space-y-4">
+              <div>
+                <h3 className="font-display font-bold text-base text-ink">
+                  3D Print Studio Canvas Pricing (Interactive Hero Mockup Stage)
+                </h3>
+                <p className="text-xs text-ink-muted mt-0.5">
+                  Configure the dynamic starting run price (₦), minimum quantity (pcs), and material specification for each of the 4 interactive 3D mockup tabs.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(settings.studioItems || []).map((item: any, idx: number) => (
+                  <div
+                    key={item.id || idx}
+                    className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3"
+                  >
+                    <span className="font-bold text-primary uppercase text-[11px] block">
+                      3D Canvas Item: {item.label || item.id}
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block font-bold text-ink mb-1">Tab Label</label>
+                        <input
+                          type="text"
+                          value={item.label || ""}
+                          onChange={(e) => {
+                            const next = [...settings.studioItems];
+                            next[idx] = { ...next[idx], label: e.target.value };
+                            setSettings({ ...settings, studioItems: next });
+                          }}
+                          className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-ink mb-1">
+                          Starting Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={item.price ?? 0}
+                          onChange={(e) => {
+                            const next = [...settings.studioItems];
+                            next[idx] = {
+                              ...next[idx],
+                              price: Number(e.target.value) || 0,
+                            };
+                            setSettings({ ...settings, studioItems: next });
+                          }}
+                          className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-ink mb-1">
+                          Min Qty (pcs)
+                        </label>
+                        <input
+                          type="number"
+                          value={item.minQty ?? 1}
+                          onChange={(e) => {
+                            const next = [...settings.studioItems];
+                            next[idx] = {
+                              ...next[idx],
+                              minQty: Number(e.target.value) || 1,
+                            };
+                            setSettings({ ...settings, studioItems: next });
+                          }}
+                          className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-bold text-ink mb-1">
+                        Material / Stock Description
+                      </label>
+                      <input
+                        type="text"
+                        value={item.stockDesc || ""}
+                        onChange={(e) => {
+                          const next = [...settings.studioItems];
+                          next[idx] = { ...next[idx], stockDesc: e.target.value };
+                          setSettings({ ...settings, studioItems: next });
+                        }}
+                        className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -760,14 +851,11 @@ export default function AdminSettingsPage() {
             </div>
 
             <div>
-              <label className="block font-bold text-ink mb-2">
-                Workshop Image (R2 Hosted)
-              </label>
               <R2ImageUpload
                 folder="products"
                 value={settings.aboutImage || ""}
                 onChange={url => setSettings({ ...settings, aboutImage: url })}
-                label="Upload Studio Workshop Image "
+                label="Studio Workshop Image"
               />
             </div>
 

@@ -1,16 +1,34 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Edit2, Package, Check, X } from "lucide-react";
-import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
+import {
+  Plus,
+  Trash2,
+  Edit3,
+  UploadCloud,
+  ChevronDown,
+  Loader2,
+  X,
+} from "lucide-react";
 import { R2_IMAGES } from "@/lib/constants";
+import { Pagination } from "@/components/ui/Pagination";
+
+interface TierItem {
+  quantity: number;
+  pricePerUnit: number;
+  totalPrice: number;
+}
+
+const PAGE_SIZE = 6;
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [saving, setSaving] = useState(false);
 
   // Form State
   const [title, setTitle] = useState("");
@@ -18,11 +36,21 @@ export default function AdminProductsPage() {
   const [categorySlug, setCategorySlug] = useState("");
   const [basePrice, setBasePrice] = useState(5000);
   const [minQuantity, setMinQuantity] = useState(100);
-  const [deliveryDays, setDeliveryDays] = useState("24-48 Hours");
-  const [image, setImage] = useState(R2_IMAGES.businessCards);
+  const [turnaroundDays, setTurnaroundDays] = useState("24-48 Hours");
+  const [gallery, setGallery] = useState<string[]>([]);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+
   const [description, setDescription] = useState("");
   const [isTopSelling, setIsTopSelling] = useState(false);
   const [isPopular, setIsPopular] = useState(false);
+
+  const [quantityTiers, setQuantityTiers] = useState<TierItem[]>([]);
+  const [paperStocks, setPaperStocks] = useState<string[]>([]);
+  const [newPaperStock, setNewPaperStock] = useState("");
+  const [finishes, setFinishes] = useState<string[]>([]);
+  const [newFinish, setNewFinish] = useState("");
+
+  const multiFileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProducts = async () => {
     try {
@@ -52,101 +80,190 @@ export default function AdminProductsPage() {
     setEditingProduct(null);
     setTitle("");
     setSlug("");
+    setCategorySlug(categories[0]?.slug || "");
     setBasePrice(5000);
     setMinQuantity(100);
-    setDeliveryDays("24-48 Hours");
-    setImage(R2_IMAGES.businessCards);
+    setTurnaroundDays("24-48 Hours");
+    setGallery([]);
     setDescription("");
-    setIsTopSelling(false);
-    setIsPopular(false);
+    setIsTopSelling(true);
+    setIsPopular(true);
+    setQuantityTiers([
+      { quantity: 100, pricePerUnit: 50, totalPrice: 5000 },
+      { quantity: 250, pricePerUnit: 44, totalPrice: 11000 },
+      { quantity: 500, pricePerUnit: 38, totalPrice: 19000 },
+    ]);
+    setPaperStocks(["350gsm Matte Artboard", "600gsm Cotton Cardstock"]);
+    setFinishes(["Matte Lamination", "Gloss Finish", "Spot UV Lamination"]);
     setIsModalOpen(true);
+  };
+
+  const openEditModal = (prod: any) => {
+    setEditingProduct(prod);
+    setTitle(prod.title || "");
+    setSlug(prod.slug || "");
+    setCategorySlug(prod.categorySlug || categories[0]?.slug || "");
+    setBasePrice(prod.basePrice ?? 5000);
+    setMinQuantity(prod.minQuantity ?? 100);
+    setTurnaroundDays(prod.turnaroundDays || "24-48 Hours");
+
+    const existingGallery =
+      prod.gallery && prod.gallery.length > 0
+        ? prod.gallery
+        : prod.image
+          ? [prod.image]
+          : [];
+    setGallery(existingGallery);
+
+    setDescription(prod.description || "");
+    setIsTopSelling(Boolean(prod.isTopSelling));
+    setIsPopular(Boolean(prod.isPopular));
+
+    setQuantityTiers(
+      prod.quantityTiers && prod.quantityTiers.length > 0
+        ? prod.quantityTiers.map((t: any) => ({
+            quantity: Number(t.quantity) || 1,
+            pricePerUnit: Number(t.pricePerUnit) || 0,
+            totalPrice: Number(t.totalPrice) || 0,
+          }))
+        : [
+            {
+              quantity: prod.minQuantity || 100,
+              pricePerUnit: Math.round(
+                (prod.basePrice || 5000) / (prod.minQuantity || 100)
+              ),
+              totalPrice: prod.basePrice || 5000,
+            },
+          ]
+    );
+    setPaperStocks(
+      prod.paperStocks && prod.paperStocks.length > 0
+        ? [...prod.paperStocks]
+        : ["350gsm Matte Artboard"]
+    );
+    setFinishes(
+      prod.finishes && prod.finishes.length > 0
+        ? [...prod.finishes]
+        : ["Matte Lamination"]
+    );
+    setIsModalOpen(true);
+  };
+
+  const handleMultiFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploadingImages(true);
+    try {
+      const uploadedUrls: string[] = [];
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "products");
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        const data = await res.json();
+        if (res.ok && data.url) {
+          uploadedUrls.push(data.url);
+        }
+      }
+      if (uploadedUrls.length > 0) {
+        setGallery((prev) => [...prev, ...uploadedUrls]);
+      }
+    } catch (err) {
+      console.error("Failed uploading product images:", err);
+    } finally {
+      setIsUploadingImages(false);
+      if (multiFileInputRef.current) multiFileInputRef.current.value = "";
+    }
+  };
+
+  const setPrimaryImage = (idx: number) => {
+    setGallery((prev) => {
+      const selected = prev[idx];
+      const rest = prev.filter((_, i) => i !== idx);
+      return [selected, ...rest];
+    });
+  };
+
+  const removeGalleryImage = (idx: number) => {
+    setGallery((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cat = categories.find(c => c.slug === categorySlug);
-    const categoryName = cat?.name || "General Print";
+    setSaving(true);
+    try {
+      const cat = categories.find((c) => c.slug === categorySlug);
+      const categoryName = cat?.name || "General Print";
+      const cleanGallery =
+        gallery.length > 0 ? gallery : [R2_IMAGES.businessCards];
 
-    const payload = {
-      title,
-      slug: slug || title.toLowerCase().replace(/[^a-z0-9]/g, "-"),
-      categorySlug,
-      categoryName,
-      basePrice: Number(basePrice),
-      minQuantity: Number(minQuantity),
-      deliveryDays,
-      image,
-      description,
-      isTopSelling,
-      isPopular,
-      quantityTiers: [
-        {
-          quantity: Number(minQuantity),
-          pricePerUnit: Math.round(Number(basePrice) / Number(minQuantity)),
-          totalPrice: Number(basePrice),
-        },
-        {
-          quantity: Number(minQuantity) * 2,
-          pricePerUnit: Math.round(
-            (Number(basePrice) * 0.9) / Number(minQuantity),
-          ),
-          totalPrice: Math.round(Number(basePrice) * 1.8),
-        },
-        {
-          quantity: Number(minQuantity) * 5,
-          pricePerUnit: Math.round(
-            (Number(basePrice) * 0.8) / Number(minQuantity),
-          ),
-          totalPrice: Math.round(Number(basePrice) * 4.0),
-        },
-      ],
-      finishes: ["Matte Lamination", "Gloss Finish", "Spot UV Lamination"],
-      paperStocks: ["350gsm Matte Artboard", "600gsm Cotton Cardstock"],
-    };
+      const payload = {
+        title,
+        slug: slug || title.toLowerCase().replace(/[^a-z0-9]/g, "-"),
+        categorySlug,
+        categoryName,
+        basePrice: Number(basePrice),
+        minQuantity: Number(minQuantity),
+        turnaroundDays,
+        image: cleanGallery[0],
+        gallery: cleanGallery,
+        description,
+        isTopSelling,
+        isPopular,
+        quantityTiers,
+        paperStocks,
+        finishes,
+      };
 
-    if (editingProduct) {
-      await fetch(`/api/products/${editingProduct.slug}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      await fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      if (editingProduct) {
+        await fetch(`/api/products/${editingProduct._id || editingProduct.slug}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        await fetch("/api/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      setIsModalOpen(false);
+      fetchProducts();
+    } finally {
+      setSaving(false);
     }
-
-    setIsModalOpen(false);
-    fetchProducts();
   };
 
   const handleDeleteProduct = async (prodSlug: string) => {
-    if (
-      !confirm("Are you sure you want to delete this commercial print product?")
-    )
+    if (!confirm("Are you sure you want to delete this commercial print product?"))
       return;
     await fetch(`/api/products/${prodSlug}`, { method: "DELETE" });
     fetchProducts();
   };
+
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl text-ink">
-            Product Catalog Management
+            Product Catalog & Dynamic Pricing Manager ({products.length})
           </h1>
           <p className="text-xs text-ink-muted mt-1">
-            Configure commercial print products, pricing in Naira (₦), and
-            volume tiers.
+            Configure commercial print products, multi-image galleries, base prices (₦), and volume pricing tiers.
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Product</span>
@@ -154,212 +271,514 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden">
+      <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden p-4 sm:p-6 space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-canvas-soft border-b border-border/60 text-ink-muted uppercase tracking-wider text-[10px]">
               <tr>
-                <th className="p-4">Item</th>
+                <th className="p-4">Item & Gallery</th>
                 <th className="p-4">Category</th>
                 <th className="p-4">Base Price (₦)</th>
                 <th className="p-4">Min Qty</th>
-                <th className="p-4">Delivery</th>
+                <th className="p-4">Volume Tiers</th>
                 <th className="p-4">Top Selling</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {products.map(prod => (
-                <tr key={prod.slug} className="hover:bg-canvas-soft/50">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
-                        <Image
-                          src={prod.image}
-                          alt={prod.title}
-                          fill
-                          className="object-cover"
-                        />
+              {paginatedProducts.map((prod) => {
+                const imgCount =
+                  prod.gallery && prod.gallery.length > 0
+                    ? prod.gallery.length
+                    : 1;
+                return (
+                  <tr key={prod.slug} className="hover:bg-canvas-soft/50">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-11 h-11 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
+                          <Image
+                            src={prod.image}
+                            alt={prod.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <span className="font-bold text-ink block">
+                            {prod.title}
+                          </span>
+                          <span className="text-[10px] text-ink-muted">
+                            /{prod.slug} · {imgCount} image{imgCount > 1 ? "s" : ""}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-bold text-ink block">
-                          {prod.title}
-                        </span>
-                        <span className="text-[10px] text-ink-muted">
-                          /{prod.slug}
-                        </span>
+                    </td>
+                    <td className="p-4">{prod.categoryName}</td>
+                    <td className="p-4 font-bold text-ink">
+                      ₦{prod.basePrice?.toLocaleString()}
+                    </td>
+                    <td className="p-4">{prod.minQuantity} pcs</td>
+                    <td className="p-4 text-ink-muted">
+                      {prod.quantityTiers?.length || 1} tiers
+                    </td>
+                    <td className="p-4">
+                      {prod.isTopSelling ? (
+                        <span className="font-bold text-primary">Featured</span>
+                      ) : (
+                        <span className="text-ink-muted">—</span>
+                      )}
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="inline-flex items-center gap-1.5">
+                        <button
+                          onClick={() => openEditModal(prod)}
+                          className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors cursor-pointer"
+                          title="Edit Product & Pricing"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(prod.slug)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-button transition-colors cursor-pointer"
+                          title="Delete Product"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td className="p-4">{prod.categoryName}</td>
-                  <td className="p-4 font-bold text-ink">
-                    ₦{prod.basePrice?.toLocaleString()}
-                  </td>
-                  <td className="p-4">{prod.minQuantity} pcs</td>
-                  <td className="p-4">{prod.deliveryDays}</td>
-                  <td className="p-4">
-                    {prod.isTopSelling ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-primary-pale text-primary">
-                        Yes
-                      </span>
-                    ) : (
-                      <span className="text-ink-muted text-[11px]">—</span>
-                    )}
-                  </td>
-                  <td className="p-4 text-right">
-                    <button
-                      onClick={() => handleDeleteProduct(prod.slug)}
-                      className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
-                      title="Delete Product"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={products.length}
+          pageSize={PAGE_SIZE}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
-      {/* Modal */}
+      {/* Create / Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-ink/60 backdrop-blur-xs">
-          <div className="bg-card rounded-card border border-border max-w-lg w-full p-6 space-y-4 shadow-elevation">
-            <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <h3 className="font-display font-bold text-base text-ink">
-                Add Commercial Print Product
+          <div className="bg-card rounded-card border border-border max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-elevation my-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border/60 pb-4">
+              <h3 className="font-display font-black text-lg text-ink">
+                {editingProduct
+                  ? `Edit Product & Pricing: ${editingProduct.title}`
+                  : "Add Commercial Print Product"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-ink-muted hover:text-ink cursor-pointer"
+                className="p-1.5 text-ink-muted hover:text-ink cursor-pointer"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink mb-1">
-                  Product Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  placeholder="e.g. Curved Edge Luxury Business Cards"
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink mb-1">
-                  Category *
-                </label>
-                <select
-                  value={categorySlug}
-                  onChange={e => setCategorySlug(e.target.value)}
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
-                >
-                  {categories.map(c => (
-                    <option key={c.slug} value={c.slug}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSaveProduct} className="space-y-5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-ink mb-1">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Product Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="e.g. Curved Edge Luxury Business Cards"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Category *
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={categorySlug}
+                      onChange={(e) => setCategorySlug(e.target.value)}
+                      className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-ink font-semibold cursor-pointer focus:outline-none focus:border-primary"
+                    >
+                      {categories.map((c) => (
+                        <option key={c.slug} value={c.slug}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
                     Starting Base Price (₦) *
                   </label>
                   <input
                     type="number"
                     required
                     value={basePrice}
-                    onChange={e => setBasePrice(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
+                    onChange={(e) => setBasePrice(parseInt(e.target.value) || 0)}
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1">
+                  <label className="block font-bold text-ink mb-1.5">
                     Min Quantity (pcs) *
                   </label>
                   <input
                     type="number"
                     required
                     value={minQuantity}
-                    onChange={e =>
-                      setMinQuantity(parseInt(e.target.value) || 0)
-                    }
-                    className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
+                    onChange={(e) => setMinQuantity(parseInt(e.target.value) || 1)}
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Turnaround SLA
+                  </label>
+                  <input
+                    type="text"
+                    value={turnaroundDays}
+                    onChange={(e) => setTurnaroundDays(e.target.value)}
+                    placeholder="24-48 Hours"
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-ink mb-1">
-                  Delivery Days
-                </label>
-                <input
-                  type="text"
-                  value={deliveryDays}
-                  onChange={e => setDeliveryDays(e.target.value)}
-                  placeholder="24-48 Hours"
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
-                />
+              {/* Clean Multi-Image Upload & Delete Grid */}
+              <div className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <label className="block font-bold text-ink">
+                    Product Images ({gallery.length})
+                  </label>
+
+                  <div>
+                    <input
+                      ref={multiFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleMultiFileUpload}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      disabled={isUploadingImages}
+                      onClick={() => multiFileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] rounded-button bg-card border border-border hover:border-primary text-ink font-bold text-xs transition-colors cursor-pointer"
+                    >
+                      {isUploadingImages ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                      ) : (
+                        <UploadCloud className="w-3.5 h-3.5 text-primary" />
+                      )}
+                      <span>
+                        {isUploadingImages ? "Uploading..." : "Upload Images"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                {gallery.length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-1">
+                    {gallery.map((imgUrl, idx) => (
+                      <div
+                        key={idx}
+                        className={`relative h-24 rounded-theme overflow-hidden border-2 bg-card group ${
+                          idx === 0 ? "border-primary" : "border-border"
+                        }`}
+                      >
+                        <Image
+                          src={imgUrl}
+                          alt={`Product image ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        {idx === 0 ? (
+                          <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-primary text-primary-foreground text-[9px] font-bold">
+                            Primary
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setPrimaryImage(idx)}
+                            className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-ink/80 text-white text-[9px] font-semibold cursor-pointer"
+                          >
+                            Set Primary
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryImage(idx)}
+                          className="absolute top-1.5 right-1.5 p-1.5 rounded-button bg-red-600 hover:bg-red-700 text-white shadow-soft transition-colors cursor-pointer"
+                          title="Delete Image"
+                          aria-label="Delete Image"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <R2ImageUpload
-                label="Product Image "
-                value={image}
-                onChange={setImage}
-                folder="products"
-              />
+              {/* Dynamic Quantity Tiers & Volume Pricing Editor */}
+              <div className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="block font-bold text-ink">
+                      Quantity Tiers & Dynamic Volume Pricing (₦)
+                    </label>
+                    <span className="text-[11px] text-ink-muted">
+                      Define exact quantity thresholds, per-unit rates, and total run prices.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setQuantityTiers((prev) => [
+                        ...prev,
+                        { quantity: 500, pricePerUnit: 40, totalPrice: 20000 },
+                      ])
+                    }
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-button bg-card border border-border hover:bg-canvas text-ink font-bold text-xs cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Tier</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {quantityTiers.map((tier, idx) => (
+                    <div
+                      key={idx}
+                      className="grid grid-cols-12 gap-2 items-center bg-card p-2.5 rounded-theme border border-border/70"
+                    >
+                      <div className="col-span-4">
+                        <label className="block text-[10px] text-ink-muted mb-0.5">
+                          Quantity (pcs)
+                        </label>
+                        <input
+                          type="number"
+                          value={tier.quantity}
+                          onChange={(e) => {
+                            const qty = Number(e.target.value) || 1;
+                            const next = [...quantityTiers];
+                            next[idx] = {
+                              ...next[idx],
+                              quantity: qty,
+                              totalPrice: qty * next[idx].pricePerUnit,
+                            };
+                            setQuantityTiers(next);
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-canvas-soft border border-border text-ink font-semibold"
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <label className="block text-[10px] text-ink-muted mb-0.5">
+                          Unit Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={tier.pricePerUnit}
+                          onChange={(e) => {
+                            const unit = Number(e.target.value) || 0;
+                            const next = [...quantityTiers];
+                            next[idx] = {
+                              ...next[idx],
+                              pricePerUnit: unit,
+                              totalPrice: next[idx].quantity * unit,
+                            };
+                            setQuantityTiers(next);
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-canvas-soft border border-border text-ink"
+                        />
+                      </div>
+                      <div className="col-span-4">
+                        <label className="block text-[10px] text-ink-muted mb-0.5">
+                          Total Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={tier.totalPrice}
+                          onChange={(e) => {
+                            const tot = Number(e.target.value) || 0;
+                            const next = [...quantityTiers];
+                            next[idx] = {
+                              ...next[idx],
+                              totalPrice: tot,
+                            };
+                            setQuantityTiers(next);
+                          }}
+                          className="w-full px-2.5 py-1.5 rounded bg-canvas-soft border border-border text-ink font-bold"
+                        />
+                      </div>
+                      <div className="col-span-1 flex justify-end pt-4">
+                        {quantityTiers.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQuantityTiers((prev) =>
+                                prev.filter((_, i) => i !== idx)
+                              )
+                            }
+                            className="p-1 text-ink-muted hover:text-red-600 cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Paper Stocks & Finishes */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-3.5 rounded-theme bg-canvas-soft border border-border space-y-2">
+                  <label className="block font-bold text-ink">
+                    Paper Stocks / Materials
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {paperStocks.map((s, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-card border border-border text-[11px] font-medium text-ink"
+                      >
+                        <span>{s}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPaperStocks((prev) => prev.filter((_, idx) => idx !== i))
+                          }
+                          className="text-ink-muted hover:text-red-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-1.5 pt-1">
+                    <input
+                      type="text"
+                      value={newPaperStock}
+                      onChange={(e) => setNewPaperStock(e.target.value)}
+                      placeholder="Add paper stock..."
+                      className="flex-1 px-2.5 py-1.5 rounded bg-card border border-border text-ink"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newPaperStock.trim()) return;
+                        setPaperStocks((prev) => [...prev, newPaperStock.trim()]);
+                        setNewPaperStock("");
+                      }}
+                      className="px-3 py-1.5 rounded bg-card border border-border font-semibold text-ink hover:bg-canvas"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-theme bg-canvas-soft border border-border space-y-2">
+                  <label className="block font-bold text-ink">
+                    Finishes / Laminations
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {finishes.map((f, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-card border border-border text-[11px] font-medium text-ink"
+                      >
+                        <span>{f}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFinishes((prev) => prev.filter((_, idx) => idx !== i))
+                          }
+                          className="text-ink-muted hover:text-red-600"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-1.5 pt-1">
+                    <input
+                      type="text"
+                      value={newFinish}
+                      onChange={(e) => setNewFinish(e.target.value)}
+                      placeholder="Add finish option..."
+                      className="flex-1 px-2.5 py-1.5 rounded bg-card border border-border text-ink"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newFinish.trim()) return;
+                        setFinishes((prev) => [...prev, newFinish.trim()]);
+                        setNewFinish("");
+                      }}
+                      className="px-3 py-1.5 rounded bg-card border border-border font-semibold text-ink hover:bg-canvas"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">
+                <label className="block font-bold text-ink mb-1.5">
                   Description *
                 </label>
                 <textarea
                   required
                   rows={3}
                   value={description}
-                  onChange={e => setDescription(e.target.value)}
+                  onChange={(e) => setDescription(e.target.value)}
                   placeholder="Specify material weight (GSM), finish options, and print process..."
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
+                  className="w-full px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
 
-              <div className="flex items-center gap-6 pt-2">
+              <div className="flex items-center gap-6 pt-1">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isTopSelling}
-                    onChange={e => setIsTopSelling(e.target.checked)}
-                    className="rounded"
+                    onChange={(e) => setIsTopSelling(e.target.checked)}
+                    className="rounded w-4 h-4"
                   />
                   <span className="font-semibold text-ink">
-                    Feature on Top Selling Section
+                    Feature on Homepage Top Selling Section
                   </span>
                 </label>
               </div>
 
-              <div className="pt-3 border-t border-border/60 flex items-center justify-end gap-2">
+              <div className="pt-4 border-t border-border/60 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-button bg-canvas-muted text-ink font-semibold"
+                  className="px-4 py-2.5 min-h-[44px] rounded-button bg-canvas-muted text-ink font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-button bg-primary text-primary-foreground font-bold"
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold cursor-pointer"
                 >
-                  Save Product
+                  {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                  <span>{saving ? "Saving..." : "Save Product & Pricing"}</span>
                 </button>
               </div>
             </form>

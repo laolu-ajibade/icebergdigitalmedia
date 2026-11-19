@@ -34,16 +34,42 @@ export async function POST(request: Request) {
         .map((t: string) => t.trim())
         .filter(Boolean);
     }
-    data.tags = tags.slice(0, 5);
+    data.tags = tags;
 
     await connectDB();
-    const createdCategory = await Category.findOneAndUpdate(
-      { slug: data.slug },
-      data,
+    const filter = data._id ? { _id: data._id } : { slug: data.slug };
+    const { _id, ...updateFields } = data;
+    const savedCategory = await Category.findOneAndUpdate(
+      filter,
+      updateFields,
       { new: true, upsert: true }
     );
 
-    return NextResponse.json({ category: createdCategory }, { status: 201 });
+    return NextResponse.json({ category: savedCategory }, { status: 201 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get("slug");
+    const id = searchParams.get("id");
+
+    await connectDB();
+    if (id) {
+      await Category.findByIdAndDelete(id);
+    } else if (slug) {
+      await Category.findOneAndDelete({ slug });
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

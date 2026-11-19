@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/lib/constants";
+import { useSiteSettings } from "@/lib/useSiteSettings";
 
 type ProductType = "tshirt" | "mug" | "card" | "box";
 
@@ -96,8 +97,23 @@ export function LivePrintCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addItem, setIsCartOpen } = useCart();
+  const settings = useSiteSettings();
 
-  const currentProduct = products.find((p) => p.id === activeProduct)!;
+  const dynamicProducts: ProductConfig[] = products.map((baseProd) => {
+    const dbMatch = settings?.studioItems?.find((s: any) => s.id === baseProd.id);
+    if (!dbMatch) return baseProd;
+    return {
+      ...baseProd,
+      label: dbMatch.label || baseProd.label,
+      defaultPrice:
+        typeof dbMatch.price === "number" ? dbMatch.price : baseProd.defaultPrice,
+      minQty: typeof dbMatch.minQty === "number" ? dbMatch.minQty : baseProd.minQty,
+      stockDesc: dbMatch.stockDesc || baseProd.stockDesc,
+    };
+  });
+
+  const currentProduct =
+    dynamicProducts.find((p) => p.id === activeProduct) || dynamicProducts[0];
 
   // Handle subtle 3D spatial tilt on mouse move
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -269,21 +285,21 @@ export function LivePrintCanvas() {
   return (
     <div className="bg-card rounded-card border border-border/80 shadow-elevation overflow-hidden antigravity-card">
       {/* Product Category Tabs */}
-      <div className="grid grid-cols-4 border-b border-border/60 bg-canvas-soft/70 p-1.5 gap-1">
-        {products.map((p) => {
+      <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-border/60 bg-canvas-soft/70 p-1.5 gap-1.5">
+        {dynamicProducts.map((p) => {
           const Icon = p.icon;
           const isActive = activeProduct === p.id;
           return (
             <button
               key={p.id}
               onClick={() => setActiveProduct(p.id)}
-              className={`min-h-[44px] px-2 py-2 rounded-button flex flex-col sm:flex-row items-center justify-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
+              className={`min-h-[44px] px-3 py-2 rounded-button flex items-center justify-center gap-1.5 text-xs font-bold transition-all cursor-pointer ${
                 isActive
                   ? "bg-card text-ink shadow-soft border border-border/60"
                   : "text-ink-muted hover:text-ink hover:bg-canvas-soft"
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? "text-primary" : "text-ink-muted"}`} />
+              <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-primary" : "text-ink-muted"}`} />
               <span className="truncate">{p.label}</span>
             </button>
           );
@@ -535,11 +551,6 @@ export function LivePrintCanvas() {
             </div>
           )}
         </div>
-
-        {/* Live Status indicator */}
-        <div className="absolute top-3 right-3 text-[10px] font-mono text-ink-muted bg-card/80 backdrop-blur-xs px-2.5 py-1 rounded-theme border border-border/40">
-          3D Proofing Stage
-        </div>
       </div>
 
       {/* Control Studio Console */}
@@ -611,12 +622,12 @@ export function LivePrintCanvas() {
             <span className="block text-xs font-bold text-ink mb-2">
               Print / Foil Finish: <strong className="text-primary">{selectedImprintColor.name}</strong>
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {imprintColors.map((color) => (
                 <button
                   key={color.name}
                   onClick={() => setSelectedImprintColor(color)}
-                  className={`w-8 h-8 rounded-full border-2 transition-transform cursor-pointer flex items-center justify-center ${
+                  className={`w-8 h-8 rounded-full border-2 transition-transform cursor-pointer flex items-center justify-center shrink-0 ${
                     selectedImprintColor.name === color.name
                       ? "border-primary scale-110 shadow-soft"
                       : "border-border hover:scale-105"
@@ -644,10 +655,10 @@ export function LivePrintCanvas() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="ml-auto px-2.5 py-1.5 rounded-button bg-canvas-soft border border-border text-[11px] font-semibold text-ink hover:bg-canvas-muted transition-colors flex items-center gap-1 cursor-pointer"
+                className="px-3 py-1.5 min-h-[36px] rounded-button bg-canvas-soft border border-border text-[11px] font-semibold text-ink hover:bg-canvas-muted transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Upload transparent PNG logo"
               >
-                <Upload className="w-3 h-3 text-primary" />
+                <Upload className="w-3.5 h-3.5 text-primary" />
                 <span>{uploadedLogo ? "Change Logo" : "Upload Logo"}</span>
               </button>
             </div>
@@ -655,7 +666,7 @@ export function LivePrintCanvas() {
         </div>
 
         {/* Row 3: Action Buttons (Snapshot Download, WhatsApp, Cart) */}
-        <div className="pt-3 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pt-3 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="text-left w-full sm:w-auto">
             <span className="text-[11px] text-ink-muted block">Factory Starting Run:</span>
             <span className="font-display font-black text-lg text-ink">
@@ -666,11 +677,11 @@ export function LivePrintCanvas() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
             <button
               onClick={handleDownloadSnapshot}
               disabled={isExporting}
-              className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border hover:bg-canvas-muted text-ink font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto min-h-[44px] px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border hover:bg-canvas-muted text-ink font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               title="Download high-res PNG mockup screenshot"
             >
               <Download className="w-3.5 h-3.5 text-primary" />
@@ -679,7 +690,7 @@ export function LivePrintCanvas() {
 
             <button
               onClick={handleAddToCart}
-              className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-button bg-canvas-muted hover:bg-border/60 text-ink font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] px-3.5 py-2.5 rounded-button bg-canvas-muted hover:bg-border/60 text-ink font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
               <span>Add to Cart</span>
@@ -687,7 +698,7 @@ export function LivePrintCanvas() {
 
             <button
               onClick={handleOrderWhatsApp}
-              className="flex-1 sm:flex-none px-4 py-2.5 rounded-button bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs transition-all shadow-soft flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-button bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs transition-all shadow-soft flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Order on WhatsApp</span>

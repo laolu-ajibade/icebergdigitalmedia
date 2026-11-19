@@ -5,23 +5,26 @@ import Image from "next/image";
 import {
   Plus,
   Trash2,
-  Edit2,
-  FileText,
-  CheckCircle,
+  Edit3,
   ExternalLink,
+  ChevronDown,
+  X,
 } from "lucide-react";
 import { R2ImageUpload } from "@/components/ui/R2ImageUpload";
-import { R2_IMAGES } from "@/lib/constants";
+import { Pagination } from "@/components/ui/Pagination";
+
+const PAGE_SIZE = 6;
 
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<any | null>(null);
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState("Print Engineering");
-  const [coverImage, setCoverImage] = useState(R2_IMAGES.businessCards);
+  const [coverImage, setCoverImage] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [readTime, setReadTime] = useState("5 min read");
@@ -45,10 +48,22 @@ export default function AdminBlogsPage() {
     setTitle("");
     setSlug("");
     setCategory("Print Engineering");
-    setCoverImage(R2_IMAGES.businessCards);
+    setCoverImage("");
     setExcerpt("");
     setContent("");
     setReadTime("5 min read");
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (b: any) => {
+    setEditingBlog(b);
+    setTitle(b.title || "");
+    setSlug(b.slug || "");
+    setCategory(b.category || "Print Engineering");
+    setCoverImage(b.coverImage || "");
+    setExcerpt(b.excerpt || "");
+    setContent(b.content || "");
+    setReadTime(b.readTime || "5 min read");
     setIsModalOpen(true);
   };
 
@@ -64,13 +79,13 @@ export default function AdminBlogsPage() {
       excerpt,
       content,
       readTime,
-      author: "Iceberg Master Printmakers",
+      author: editingBlog?.author || "Iceberg Master Printmakers",
       published: true,
-      publishedAt: new Date(),
+      publishedAt: editingBlog?.publishedAt || new Date(),
     };
 
     if (editingBlog) {
-      await fetch(`/api/blogs/${editingBlog.slug}`, {
+      await fetch(`/api/blogs/${editingBlog._id || editingBlog.slug}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -93,29 +108,33 @@ export default function AdminBlogsPage() {
     fetchBlogs();
   };
 
+  const paginatedBlogs = blogs.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl text-ink">
-            Print Journal & Articles CMS
+            Print Journal & Articles CMS ({blogs.length})
           </h1>
           <p className="text-xs text-ink-muted mt-1">
-            Author and publish educational printing guides, paper stock
-            analyses, and brand case studies.
+            Author and publish educational printing guides, paper stock analyses, and brand case studies.
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>Write New Article</span>
+          <span>New Journal Post</span>
         </button>
       </div>
 
-      <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden">
+      <div className="bg-card rounded-card border border-border/80 shadow-soft overflow-hidden p-4 sm:p-6 space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-canvas-soft border-b border-border/60 text-ink-muted uppercase tracking-wider text-[10px]">
@@ -128,78 +147,96 @@ export default function AdminBlogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {blogs.map(b => (
-                <tr key={b.slug} className="hover:bg-canvas-soft/50">
+              {paginatedBlogs.map((b) => (
+                <tr key={b._id || b.slug} className="hover:bg-canvas-soft/50">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="relative w-12 h-10 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
-                        <Image
-                          src={b.coverImage}
-                          alt={b.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="max-w-md">
-                        <span className="font-bold text-ink block truncate">
+                      {b.coverImage && (
+                        <div className="relative w-12 h-10 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
+                          <Image
+                            src={b.coverImage}
+                            alt={b.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <span className="font-bold text-ink block line-clamp-1 max-w-md">
                           {b.title}
                         </span>
-                        <span className="text-[10px] text-ink-muted font-mono">
+                        <span className="text-[10px] text-ink-muted">
                           /blog/{b.slug}
                         </span>
                       </div>
                     </div>
                   </td>
                   <td className="p-4">{b.category}</td>
-                  <td className="p-4">{b.readTime}</td>
+                  <td className="p-4 text-ink-muted">{b.readTime}</td>
                   <td className="p-4">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Published
-                    </span>
+                    <span className="font-bold text-emerald-600">Published</span>
                   </td>
-                  <td className="p-4 text-right space-x-2">
-                    <a
-                      href={`/blog/${b.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block p-1.5 text-ink-muted hover:text-primary transition-colors"
-                      title="View Article"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                    <button
-                      onClick={() => handleDeleteBlog(b.slug)}
-                      className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
-                      title="Delete Article"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                  <td className="p-4 text-right">
+                    <div className="inline-flex items-center gap-1.5">
+                      <a
+                        href={`/blog/${b.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors"
+                        title="View Article"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                      <button
+                        onClick={() => openEditModal(b)}
+                        className="p-2 text-ink-muted hover:text-primary hover:bg-canvas-soft rounded-button transition-colors cursor-pointer"
+                        title="Edit Article"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteBlog(b.slug)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-button transition-colors cursor-pointer"
+                        title="Delete Article"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={blogs.length}
+          pageSize={PAGE_SIZE}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-ink/60 backdrop-blur-xs">
-          <div className="bg-card rounded-card border border-border max-w-xl w-full p-6 space-y-4 shadow-elevation">
+          <div className="bg-card rounded-card border border-border max-w-xl w-full p-6 sm:p-8 space-y-4 shadow-elevation my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <h3 className="font-display font-bold text-base text-ink">
-                Author Print Journal Article
+                {editingBlog
+                  ? `Edit Article: ${editingBlog.title}`
+                  : "Author Print Journal Article"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-ink-muted hover:text-ink cursor-pointer"
+                className="p-1 text-ink-muted hover:text-ink cursor-pointer"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveBlog} className="space-y-3 text-xs">
+            <form onSubmit={handleSaveBlog} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-ink mb-1">
+                <label className="block font-bold text-ink mb-1.5">
                   Article Title *
                 </label>
                 <input
@@ -207,68 +244,78 @@ export default function AdminBlogsPage() {
                   required
                   placeholder="e.g. Master Guide to Specialty Foil Stamping in Lagos"
                   value={title}
-                  onChange={e => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-ink mb-1">
+                  <label className="block font-bold text-ink mb-1.5">
                     Category
                   </label>
-                  <input
-                    type="text"
-                    value={category}
-                    onChange={e => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
-                  />
+                  <div className="relative">
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-ink font-semibold cursor-pointer focus:outline-none focus:border-primary"
+                    >
+                      <option value="Print Engineering">Print Engineering</option>
+                      <option value="Bespoke Packaging">Bespoke Packaging</option>
+                      <option value="Print">Print</option>
+                      <option value="Design">Design</option>
+                      <option value="Packaging">Packaging</option>
+                      <option value="Apparel">Apparel</option>
+                      <option value="Branding">Branding</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
                 </div>
                 <div>
-                  <label className="block font-bold text-ink mb-1">
+                  <label className="block font-bold text-ink mb-1.5">
                     Read Time
                   </label>
                   <input
                     type="text"
                     value={readTime}
-                    onChange={e => setReadTime(e.target.value)}
-                    className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
+                    onChange={(e) => setReadTime(e.target.value)}
+                    className="w-full px-3.5 py-2.5 min-h-[44px] rounded-button bg-canvas-soft border border-border text-ink"
                   />
                 </div>
               </div>
 
               <R2ImageUpload
-                label="Cover Image "
+                label="Cover Image"
                 value={coverImage}
                 onChange={setCoverImage}
                 folder="blogs"
               />
 
               <div>
-                <label className="block font-bold text-ink mb-1">
+                <label className="block font-bold text-ink mb-1.5">
                   Summary / Excerpt *
                 </label>
                 <textarea
                   required
                   rows={2}
                   value={excerpt}
-                  onChange={e => setExcerpt(e.target.value)}
+                  onChange={(e) => setExcerpt(e.target.value)}
                   placeholder="Brief preview displayed on the blog card..."
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink"
+                  className="w-full px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border text-ink"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-ink mb-1">
+                <label className="block font-bold text-ink mb-1.5">
                   Full Article Content (Markdown format supported) *
                 </label>
                 <textarea
                   required
-                  rows={8}
+                  rows={6}
                   value={content}
-                  onChange={e => setContent(e.target.value)}
-                  placeholder="Write article paragraphs and headers (use ### for subheadings)..."
-                  className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-ink font-mono"
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Write technical print guide here. Use ### for subheadings..."
+                  className="w-full px-3.5 py-2.5 rounded-button bg-canvas-soft border border-border text-ink font-mono text-[11px]"
                 />
               </div>
 
@@ -276,15 +323,15 @@ export default function AdminBlogsPage() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-button bg-canvas-muted text-ink font-semibold"
+                  className="px-4 py-2.5 min-h-[44px] rounded-button bg-canvas-muted text-ink font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-button bg-primary text-primary-foreground font-bold"
+                  className="px-5 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold cursor-pointer"
                 >
-                  Publish Article
+                  {editingBlog ? "Update Article" : "Publish Article"}
                 </button>
               </div>
             </form>
