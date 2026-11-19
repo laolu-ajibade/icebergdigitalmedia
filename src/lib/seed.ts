@@ -581,7 +581,7 @@ export const initialReviews = [
 export const initialSiteSettings = {
   companyName: "Iceberg Creative Print Studio",
   tagline: "Turning Ideas Into Impressions....",
-  defaultTheme: "wise",
+  defaultTheme: "iceberg",
   topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
   topBarTagline: "Commercial Grade Print Press & Packaging Studio",
   reviewsTrustedCount: "500+",

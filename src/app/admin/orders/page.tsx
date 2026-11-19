@@ -34,7 +34,7 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display font-black text-2xl text-ink">
-          WhatsApp Orders Ledger ({orders.length})
+          Orders
         </h1>
         <p className="text-xs text-ink-muted mt-1">
           Review commercial print orders dispatched to WhatsApp with itemized specifications.

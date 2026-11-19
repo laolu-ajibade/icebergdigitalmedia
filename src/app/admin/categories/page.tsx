@@ -152,7 +152,7 @@ export default function AdminCategoriesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl text-ink">
-            Print & Design Categories ({categories.length})
+            Categories
           </h1>
           <p className="text-xs text-ink-muted mt-1">
             Manage product categories and assign tags from the database Tag model. Categories tagged with <strong>Print</strong> appear in the navbar dropdown.
@@ -195,7 +195,6 @@ export default function AdminCategoriesPage() {
               <tr>
                 <th className="p-4">Order</th>
                 <th className="p-4">Category</th>
-                <th className="p-4">Slug URL</th>
                 <th className="p-4">Assigned Tags</th>
                 <th className="p-4">Icon Token</th>
                 <th className="p-4">Description</th>
@@ -222,9 +221,6 @@ export default function AdminCategoriesPage() {
                       )}
                       <span className="font-bold text-ink">{cat.name}</span>
                     </div>
-                  </td>
-                  <td className="p-4 font-mono text-ink-muted">
-                    /category/{cat.slug}
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-1.5 flex-wrap">

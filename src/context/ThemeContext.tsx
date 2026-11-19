@@ -15,7 +15,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const settings = useSiteSettings();
-  const [theme, setThemeState] = useState<Theme>("wise");
+  const [theme, setThemeState] = useState<Theme>("iceberg");
   const [userOverrode, setUserOverrode] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -25,7 +25,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(saved);
       document.documentElement.setAttribute("data-theme", saved);
     } else {
-      document.documentElement.setAttribute("data-theme", "wise");
+      document.documentElement.setAttribute("data-theme", "iceberg");
     }
     setMounted(true);
   }, []);

@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>({
     companyName: "",
     tagline: "",
-    defaultTheme: "wise",
+    defaultTheme: "iceberg",
     topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
     topBarTagline: "Commercial Grade Print Press & Packaging Studio",
     address: "",
@@ -391,7 +391,7 @@ export default function AdminSettingsPage() {
     <div className="space-y-8">
       <div className="border-b border-border/60 pb-6">
         <h1 className="font-display font-black text-2xl sm:text-3xl text-ink tracking-tight">
-          Studio CMS & Storefront Settings
+          Storefront Settings
         </h1>
         <p className="text-xs sm:text-sm text-ink-muted mt-1">
           Centrally manage all dynamic homepage sections, headlines, FAQs,

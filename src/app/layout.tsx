@@ -88,7 +88,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="wise"
+      data-theme="iceberg"
       className={`${displayFont.variable} ${sansFont.variable}`}
       suppressHydrationWarning
     >

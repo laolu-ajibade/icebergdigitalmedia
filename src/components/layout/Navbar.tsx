@@ -275,7 +275,7 @@ export function Navbar() {
             onClick={() => setIsMobileMenuOpen(false)}
             className="block py-2 text-sm font-semibold text-ink hover:text-primary"
           >
-            Categories ({categories.length || 10})
+            Categories
           </Link>
           <div className="pl-3 py-1 space-y-1.5 border-l-2 border-primary/30 my-1">
             <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">

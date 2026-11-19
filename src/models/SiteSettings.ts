@@ -58,7 +58,7 @@ const SiteSettingsSchema: Schema = new Schema(
   {
     companyName: { type: String, default: "Iceberg Creative Print Studio" },
     tagline: { type: String, default: "Turning Ideas Into Impressions...." },
-    defaultTheme: { type: String, enum: ["wise", "iceberg"], default: "wise" },
+    defaultTheme: { type: String, enum: ["wise", "iceberg"], default: "iceberg" },
     topBarHoursText: {
       type: String,
       default: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",

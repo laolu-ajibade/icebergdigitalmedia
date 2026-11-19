@@ -18,7 +18,6 @@ import {
   X,
   Loader2,
   ShieldAlert,
-  ChevronRight,
 } from "lucide-react";
 import { useToast } from "@/context/ToastContext";
 
@@ -39,7 +38,7 @@ const NAV_GROUPS: NavGroup[] = [
     groupLabel: "Operations & Orders",
     items: [
       {
-        label: "Overview & Analytics",
+        label: "Overview",
         subtitle: "Traffic & studio metrics",
         href: "/admin",
         icon: LayoutDashboard,
@@ -56,19 +55,19 @@ const NAV_GROUPS: NavGroup[] = [
     groupLabel: "Catalog & Content CMS",
     items: [
       {
-        label: "Product Catalog",
+        label: "Products",
         subtitle: "Products & volume pricing",
         href: "/admin/products",
         icon: Package,
       },
       {
-        label: "Categories (10+)",
+        label: "Categories",
         subtitle: "Print & design taxonomy",
         href: "/admin/categories",
         icon: Layers,
       },
       {
-        label: "Print Journal (Blogs)",
+        label: "Blogs",
         subtitle: "Articles & case studies",
         href: "/admin/blogs",
         icon: FileText,
@@ -85,7 +84,7 @@ const NAV_GROUPS: NavGroup[] = [
     groupLabel: "System & Storefront",
     items: [
       {
-        label: "Studio Settings & CMS",
+        label: "Settings",
         subtitle: "Theme, hero, FAQs & socials",
         href: "/admin/settings",
         icon: Settings,
@@ -217,7 +216,7 @@ export default function AdminLayout({
 
   const renderNavigationContent = (onItemClick?: () => void) => (
     <>
-      <div className="space-y-5 overflow-y-auto pr-1">
+      <div className="flex-1 space-y-5 overflow-y-auto pr-1">
         {NAV_GROUPS.map((group) => (
           <div key={group.groupLabel} className="space-y-1.5">
             <span className="px-2.5 text-[10px] font-bold uppercase tracking-wider text-ink-muted block">
@@ -252,24 +251,8 @@ export default function AdminLayout({
                         <span className="font-display font-bold text-xs block truncate">
                           {item.label}
                         </span>
-                        <span
-                          className={`text-[10px] block truncate ${
-                            isActive
-                              ? "text-primary-foreground/80"
-                              : "text-ink-muted"
-                          }`}
-                        >
-                          {item.subtitle}
-                        </span>
                       </div>
                     </div>
-                    <ChevronRight
-                      className={`w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5 ${
-                        isActive
-                          ? "text-primary-foreground"
-                          : "text-ink-muted/50 group-hover:text-ink"
-                      }`}
-                    />
                   </Link>
                 );
               })}
@@ -351,7 +334,7 @@ export default function AdminLayout({
           />
 
           {/* Slide-over Drawer Panel */}
-          <aside className="relative z-10 w-[86vw] max-w-[320px] h-full bg-card border-r border-border shadow-elevation p-5 flex flex-col justify-between overflow-y-auto">
+          <aside className="relative z-10 w-[86vw] max-w-[320px] h-full bg-card border-r border-border shadow-elevation p-5 flex flex-col overflow-y-auto">
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-border/60">
               <Link
@@ -393,7 +376,7 @@ export default function AdminLayout({
       )}
 
       {/* Desktop Sticky Sidebar Navigation */}
-      <aside className="hidden md:flex md:w-72 md:sticky md:top-0 md:h-screen bg-card border-r border-border p-5 flex-col justify-between shrink-0">
+      <aside className="hidden md:flex md:w-72 md:sticky md:top-0 md:h-screen bg-card border-r border-border p-5 flex-col shrink-0">
         <div className="pb-4 mb-4 border-b border-border/60">
           <Link href="/admin" className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-theme overflow-hidden bg-white shadow-soft p-0.5 border border-border/50 shrink-0">

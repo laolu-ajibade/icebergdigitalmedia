@@ -140,7 +140,7 @@ export default function AdminBlogsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl text-ink">
-            Print Journal & Articles CMS ({blogs.length})
+            Blogs ({blogs.length})
           </h1>
           <p className="text-xs text-ink-muted mt-1">
             Author and publish educational printing guides, paper stock analyses, and brand case studies.
@@ -186,9 +186,6 @@ export default function AdminBlogsPage() {
                       <div>
                         <span className="font-bold text-ink block line-clamp-1 max-w-md">
                           {b.title}
-                        </span>
-                        <span className="text-[10px] text-ink-muted">
-                          /blog/{b.slug}
                         </span>
                       </div>
                     </div>

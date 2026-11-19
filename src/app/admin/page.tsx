@@ -66,10 +66,10 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl sm:text-3xl text-ink">
-            Studio Overview & Metrics
+            Overview
           </h1>
           <p className="text-xs sm:text-sm text-ink-muted mt-1">
-            Real-time monthly traffic counter, commercial catalog status, and WhatsApp orders.
+            Real time monthly traffic counter, commercial catalog status, and WhatsApp orders.
           </p>
         </div>
 
@@ -202,7 +202,7 @@ export default function AdminDashboardPage() {
       <div className="p-6 rounded-card bg-primary-pale/40 border border-primary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="font-display font-bold text-sm text-ink">
-            Customer Reviews & Proof Studio
+            Reviews
           </h3>
           <p className="text-xs text-ink-muted mt-1">
             Curate verified Google customer reviews, star ratings, and reviewer profile images displayed on the homepage.

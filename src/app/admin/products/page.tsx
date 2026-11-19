@@ -236,7 +236,7 @@ export default function AdminProductsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl text-ink">
-            Product Catalog & Dynamic Pricing Manager ({products.length})
+            Products
           </h1>
           <p className="text-xs text-ink-muted mt-1">
             Configure commercial print products, multi-image galleries, base prices (₦), and volume pricing tiers.
@@ -268,33 +268,25 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-ink">
-              {paginatedProducts.map((prod) => {
-                const imgCount =
-                  prod.gallery && prod.gallery.length > 0
-                    ? prod.gallery.length
-                    : 1;
-                return (
-                  <tr key={prod.slug} className="hover:bg-canvas-soft/50">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-11 h-11 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
-                          <Image
-                            src={prod.image}
-                            alt={prod.title}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div>
-                          <span className="font-bold text-ink block">
-                            {prod.title}
-                          </span>
-                          <span className="text-[10px] text-ink-muted">
-                            /{prod.slug} · {imgCount} image{imgCount > 1 ? "s" : ""}
-                          </span>
-                        </div>
+              {paginatedProducts.map((prod) => (
+                <tr key={prod.slug} className="hover:bg-canvas-soft/50">
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-11 h-11 rounded-theme overflow-hidden bg-canvas-soft shrink-0 border border-border/40">
+                        <Image
+                          src={prod.image}
+                          alt={prod.title}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
-                    </td>
+                      <div>
+                        <span className="font-bold text-ink block">
+                          {prod.title}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
                     <td className="p-4">{prod.categoryName}</td>
                     <td className="p-4 font-bold text-ink">
                       ₦{prod.basePrice?.toLocaleString()}
@@ -329,8 +321,7 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                   </tr>
-                );
-              })}
+              ))}
             </tbody>
           </table>
         </div>

@@ -267,7 +267,7 @@ export default function AdminReviewsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-6">
         <div>
           <h1 className="font-display font-black text-2xl sm:text-3xl text-ink tracking-tight">
-            Customer Reviews & Proof Studio ({reviews.length})
+            Reviews
           </h1>
           <p className="text-xs sm:text-sm text-ink-muted mt-1">
             Manage authentic customer reviews, ratings, owner replies, and verified print photos shown on the homepage.
