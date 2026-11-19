@@ -41,15 +41,45 @@ export function Footer() {
   const hoursSat = settings?.workingHoursSaturday || "10:00 - 18:00";
   const hoursSun = settings?.workingHoursSunday || "Closed";
 
-  const facebookUrl =
-    settings?.facebookUrl || "https://facebook.com/hazkendigital";
-  const instagramUrl =
-    settings?.instagramUrl || "https://instagram.com/hazkendigital";
-  const twitterUrl = settings?.twitterUrl || "https://x.com/hazkendigital";
-  const linkedinUrl =
-    settings?.linkedinUrl || "https://linkedin.com/company/hazkendigital";
-  const youtubeUrl =
-    settings?.youtubeUrl || "https://youtube.com/@hazkendigital";
+  const resolveSocialUrl = (val: string | undefined, prefix: string) => {
+    const trimmed = (val ?? "").trim();
+    if (!trimmed) return "";
+    const handle = trimmed
+      .replace(/^https?:\/\/(www\.)?[^/]+\/(company\/|in\/)?/i, "")
+      .replace(/^@+/, "")
+      .replace(/\/+$/, "");
+    return handle ? `${prefix}${handle}` : "";
+  };
+
+  const facebookUrl = resolveSocialUrl(
+    settings?.facebookUrl,
+    "https://facebook.com/"
+  );
+  const instagramUrl = resolveSocialUrl(
+    settings?.instagramUrl,
+    "https://instagram.com/"
+  );
+  const twitterUrl = resolveSocialUrl(settings?.twitterUrl, "https://x.com/");
+  const linkedinUrl = resolveSocialUrl(
+    settings?.linkedinUrl,
+    "https://linkedin.com/company/"
+  );
+  const youtubeUrl = resolveSocialUrl(
+    settings?.youtubeUrl,
+    "https://youtube.com/@"
+  );
+  const tiktokUrl = resolveSocialUrl(
+    settings?.tiktokUrl,
+    "https://tiktok.com/@"
+  );
+  const hasAnySocial = Boolean(
+    facebookUrl ||
+      instagramUrl ||
+      twitterUrl ||
+      linkedinUrl ||
+      youtubeUrl ||
+      tiktokUrl
+  );
 
   const buildWaLink = (msg: string) =>
     `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`;
@@ -202,68 +232,81 @@ export function Footer() {
 
           {/* Column 4: Socials, Chat & Logistics */}
           <div className="p-4 sm:p-0 rounded-card sm:rounded-none bg-white/[0.03] sm:bg-transparent border border-white/10 sm:border-0 space-y-5">
-            <div>
-              <h4 className="font-display font-bold text-xs text-amber-400 mb-2.5">
-                Follow us on:
-              </h4>
-              <div className="flex items-center gap-2 flex-wrap">
-                {facebookUrl && (
-                  <a
-                    href={facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-theme bg-[#3b5998] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                    aria-label="Facebook"
-                  >
-                    <Facebook className="w-4 h-4" />
-                  </a>
-                )}
-                {instagramUrl && (
-                  <a
-                    href={instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-theme bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                    aria-label="Instagram"
-                  >
-                    <Instagram className="w-4 h-4" />
-                  </a>
-                )}
-                {twitterUrl && (
-                  <a
-                    href={twitterUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-theme bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-xs"
-                    aria-label="X (Twitter)"
-                  >
-                    𝕏
-                  </a>
-                )}
-                {linkedinUrl && (
-                  <a
-                    href={linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-theme bg-[#0077b5] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                )}
-                {youtubeUrl && (
-                  <a
-                    href={youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-theme bg-[#ff0000] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                    aria-label="YouTube"
-                  >
-                    <Youtube className="w-4 h-4" />
-                  </a>
-                )}
+            {hasAnySocial && (
+              <div>
+                <h4 className="font-display font-bold text-xs text-amber-400 mb-2.5">
+                  Follow us on:
+                </h4>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {facebookUrl && (
+                    <a
+                      href={facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-theme bg-[#3b5998] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                      aria-label="Facebook"
+                    >
+                      <Facebook className="w-4 h-4" />
+                    </a>
+                  )}
+                  {instagramUrl && (
+                    <a
+                      href={instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-theme bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                      aria-label="Instagram"
+                    >
+                      <Instagram className="w-4 h-4" />
+                    </a>
+                  )}
+                  {twitterUrl && (
+                    <a
+                      href={twitterUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-theme bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-xs"
+                      aria-label="X (Twitter)"
+                    >
+                      𝕏
+                    </a>
+                  )}
+                  {linkedinUrl && (
+                    <a
+                      href={linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-theme bg-[#0077b5] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  )}
+                  {youtubeUrl && (
+                    <a
+                      href={youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-theme bg-[#ff0000] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                      aria-label="YouTube"
+                    >
+                      <Youtube className="w-4 h-4" />
+                    </a>
+                  )}
+                  {tiktokUrl && (
+                    <a
+                      href={tiktokUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-theme bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-[10px]"
+                      aria-label="TikTok"
+                    >
+                      TT
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <h4 className="font-display font-bold text-xs text-amber-400 mb-2.5">
@@ -342,7 +385,7 @@ export function Footer() {
         )}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 z-40 w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white shadow-elevation flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+        className="fixed bottom-5 right-5 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#25D366] text-white shadow-elevation flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
         aria-label="Direct WhatsApp Print Desk"
       >
         <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />

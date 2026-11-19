@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Save,
   Check,
@@ -33,6 +33,61 @@ type TabKey =
   | "faqs"
   | "process"
   | "security";
+
+const SOCIAL_CHANNELS: Array<{
+  field: string;
+  label: string;
+  prefix: string;
+  placeholder: string;
+}> = [
+  {
+    field: "instagramUrl",
+    label: "Instagram Username",
+    prefix: "https://instagram.com/",
+    placeholder: "hazkendigital",
+  },
+  {
+    field: "facebookUrl",
+    label: "Facebook Page Username",
+    prefix: "https://facebook.com/",
+    placeholder: "hazkendigital",
+  },
+  {
+    field: "twitterUrl",
+    label: "Twitter / X Username",
+    prefix: "https://x.com/",
+    placeholder: "hazkendigital",
+  },
+  {
+    field: "linkedinUrl",
+    label: "LinkedIn Company / Profile Handle",
+    prefix: "https://linkedin.com/company/",
+    placeholder: "hazkendigital",
+  },
+  {
+    field: "tiktokUrl",
+    label: "TikTok Username",
+    prefix: "https://tiktok.com/@",
+    placeholder: "hazkendigital",
+  },
+  {
+    field: "youtubeUrl",
+    label: "YouTube Channel Handle",
+    prefix: "https://youtube.com/@",
+    placeholder: "hazkendigital",
+  },
+];
+
+function extractSocialHandle(rawValue: string | undefined): string {
+  if (!rawValue) return "";
+  let cleaned = rawValue.trim();
+  if (!cleaned) return "";
+  cleaned = cleaned
+    .replace(/^https?:\/\/(www\.)?[^/]+\/(company\/|in\/)?/i, "")
+    .replace(/^@+/, "")
+    .replace(/\/+$/, "");
+  return cleaned;
+}
 
 export default function AdminSettingsPage() {
   const { setTheme } = useTheme();
@@ -93,6 +148,44 @@ export default function AdminSettingsPage() {
   const [newCheck, setNewCheck] = useState("");
   const [newFaqQ, setNewFaqQ] = useState("");
   const [newFaqA, setNewFaqA] = useState("");
+  const bottomSaveRef = useRef<HTMLDivElement | null>(null);
+  const [isBottomSaveVisible, setIsBottomSaveVisible] = useState(false);
+
+  useEffect(() => {
+    const checkVisibility = () => {
+      const el = bottomSaveRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top <= window.innerHeight - 10 && rect.bottom >= 0;
+      setIsBottomSaveVisible(inView);
+    };
+
+    checkVisibility();
+
+    const el = bottomSaveRef.current;
+    let observer: IntersectionObserver | null = null;
+    if (el && typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          setIsBottomSaveVisible(entry.isIntersecting);
+        },
+        { threshold: 0.01, rootMargin: "0px 0px 20px 0px" }
+      );
+      observer.observe(el);
+    }
+
+    window.addEventListener("scroll", checkVisibility, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("resize", checkVisibility, { passive: true });
+
+    return () => {
+      if (observer) observer.disconnect();
+      window.removeEventListener("scroll", checkVisibility, { capture: true });
+      window.removeEventListener("resize", checkVisibility);
+    };
+  }, [activeTab, settings]);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -228,13 +321,8 @@ export default function AdminSettingsPage() {
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft shrink-0"
+          className="inline-flex items-center justify-center px-6 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft shrink-0 cursor-pointer"
         >
-          {saving ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
           <span>{saving ? "Saving Changes..." : "Save All Settings"}</span>
         </button>
       </div>
@@ -493,88 +581,47 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-4">
-              <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
-                Social Media Profiles & Channels
-              </h2>
+              <div>
+                <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
+                  Social Media Profiles & Channels
+                </h2>
+                <p className="text-[11px] text-ink-muted mt-2">
+                  Enter only your username/handle for each platform (the base URL prefix is locked automatically). Leave any username empty to hide its icon from the storefront footer.
+                </p>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">
-                    Instagram URL
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.instagramUrl || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, instagramUrl: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">
-                    Facebook Page URL
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.facebookUrl || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, facebookUrl: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">
-                    Twitter / X Profile URL
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.twitterUrl || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, twitterUrl: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">
-                    LinkedIn Profile URL
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.linkedinUrl || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, linkedinUrl: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">
-                    TikTok Profile URL
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.tiktokUrl || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, tiktokUrl: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink mb-1.5">
-                    YouTube Channel URL
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.youtubeUrl || ""}
-                    onChange={e =>
-                      setSettings({ ...settings, youtubeUrl: e.target.value })
-                    }
-                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                  />
-                </div>
+                {SOCIAL_CHANNELS.map(channel => {
+                  const currentHandle = extractSocialHandle(
+                    settings[channel.field]
+                  );
+                  return (
+                    <div key={channel.field}>
+                      <label className="block font-bold text-ink mb-1.5">
+                        {channel.label}
+                      </label>
+                      <div className="flex items-stretch rounded-button border border-border bg-canvas-soft overflow-hidden focus-within:border-primary">
+                        <span className="px-3 py-2.5 bg-border/40 text-ink-muted font-mono text-[11px] border-r border-border select-none flex items-center shrink-0">
+                          {channel.prefix}
+                        </span>
+                        <input
+                          type="text"
+                          value={currentHandle}
+                          onChange={e => {
+                            const handle = extractSocialHandle(e.target.value);
+                            setSettings({
+                              ...settings,
+                              [channel.field]: handle
+                                ? `${channel.prefix}${handle}`
+                                : "",
+                            });
+                          }}
+                          placeholder={channel.placeholder}
+                          className="w-full min-w-0 px-3 py-2.5 min-h-[44px] bg-transparent text-ink font-semibold focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -1361,24 +1408,40 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
-        <div className="sticky bottom-4 z-20 bg-card/90 backdrop-blur-md p-4 rounded-card border border-border shadow-elevation flex items-center justify-between">
-          <span className="text-xs text-ink-muted">
+        {/* Bottom Save Bar: static at the very bottom on mobile, sticky on tablet/desktop */}
+        <div
+          ref={bottomSaveRef}
+          className="sm:sticky sm:bottom-4 z-20 bg-card/90 backdrop-blur-md p-4 rounded-card border border-border shadow-elevation flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
+        >
+          <span className="text-xs text-ink-muted text-center sm:text-left">
             All edits update live across the storefront, instant estimators, and
             WhatsApp routing.
           </span>
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-2.5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft shrink-0 cursor-pointer"
           >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
             <span>{saving ? "Saving Changes..." : "Save All Settings"}</span>
           </button>
         </div>
+
+        {/* Mobile-Only Fixed Floating Save Icon Button (Unmounts when bottom Save button is visible) */}
+        {!isBottomSaveVisible && (
+          <button
+            type="submit"
+            disabled={saving}
+            aria-label="Save All Settings"
+            title="Save All Settings"
+            className="sm:hidden fixed bottom-6 right-6 z-40 w-16 h-16 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground shadow-elevation border border-border/20 flex items-center justify-center transition-all duration-200 cursor-pointer"
+          >
+            {saving ? (
+              <Loader2 className="w-7 h-7 animate-spin" />
+            ) : (
+              <Save className="w-7 h-7" />
+            )}
+          </button>
+        )}
       </form>
     </div>
   );
