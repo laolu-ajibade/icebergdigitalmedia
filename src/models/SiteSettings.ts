@@ -64,7 +64,7 @@ const SiteSettingsSchema: Schema = new Schema(
     footerSummary: {
       type: String,
       default:
-        "Web Design, UI UX Design, Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria.",
+        "Brand Identity, Graphic Design and Digital Printing Service.",
     },
     footerDescription: {
       type: String,

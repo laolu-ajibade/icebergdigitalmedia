@@ -578,7 +578,7 @@ export default function AdminSettingsPage() {
                     onChange={e =>
                       setSettings({ ...settings, footerSummary: e.target.value })
                     }
-                    placeholder="Web Design, UI UX Design, Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria."
+                    placeholder="Brand Identity, Graphic Design and Digital Printing Service"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>

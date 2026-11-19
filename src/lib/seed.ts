@@ -579,7 +579,7 @@ export const initialSiteSettings = {
   companyName: "Iceberg Creative Print Studio",
   tagline: "Turning Ideas Into Impressions....",
   footerSummary:
-    "Web Design, UI UX Design, Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria.",
+    "Brand Identity, Graphic Design and Digital Printing Service.",
   footerDescription:
     "Full Responsive Websites and Application, Creative Branding, Graphic Design for Business Advertisement and High-quality Printing.",
   footerMotto: "Creativity as it speaks excellence!",
