@@ -61,8 +61,15 @@ export async function GET() {
 
     if (googlePlaceId && googleApiKey) {
       try {
-        const url = `https://places.googleapis.com/v1/places/${googlePlaceId}?fields=displayName,rating,userRatingCount,reviews&key=${googleApiKey}`;
-        const res = await fetch(url, { next: { revalidate: 3600 } });
+        const url = `https://places.googleapis.com/v1/places/${googlePlaceId}`;
+        const res = await fetch(url, {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": googleApiKey,
+            "X-Goog-FieldMask": "id,displayName,rating,userRatingCount,reviews",
+          },
+          next: { revalidate: 3600 },
+        });
         if (res.ok) {
           const data = await res.json();
           if (data.reviews && data.reviews.length > 0) {
@@ -79,8 +86,8 @@ export async function GET() {
               totalReviews: data.userRatingCount || 128,
               reviews: formatted,
               isLive: true,
-              googleReviewUrl: `https://search.google.com/local/writereview?placeid=${googlePlaceId}`,
-              googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=Iceberg+Creative+Print+Studio&query_place_id=${googlePlaceId}`,
+              googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
+              googleMapsUrl: `https://www.google.com/maps/place/?q=place_id=${googlePlaceId}`,
             });
           }
         }
@@ -89,19 +96,25 @@ export async function GET() {
       }
     }
 
+    const effectivePlaceId = googlePlaceId || "ChIJvQSY9_iNOxARaGAAOwEgnZA";
+    const defaultReviewUrl = "https://g.page/r/CWhgADsBIJ2QEBM/review";
+    const defaultMapsUrl = `https://www.google.com/maps/place/?q=place_id:${effectivePlaceId}`;
+
     return NextResponse.json({
       rating: 4.9,
       totalReviews: 128,
       reviews: defaultVerifiedReviews,
       isLive: false,
-      googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJicebergprints2026",
-      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Haz-Ken+Digital+Printing+Shomolu+Lagos",
+      googleReviewUrl: defaultReviewUrl,
+      googleMapsUrl: defaultMapsUrl,
     });
   } catch (error: any) {
     return NextResponse.json({
       rating: 4.9,
       totalReviews: 128,
       reviews: defaultVerifiedReviews,
+      googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
+      googleMapsUrl: "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA",
       error: error.message,
     });
   }

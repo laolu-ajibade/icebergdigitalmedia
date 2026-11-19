@@ -9,8 +9,8 @@ export function GoogleReviews() {
     rating: 4.9,
     totalReviews: 128,
     reviews: [],
-    googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJicebergprints2026",
-    googleMapsUrl: "https://www.google.com/maps",
+    googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
+    googleMapsUrl: "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA",
   });
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export function GoogleReviews() {
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href={reviewsData.googleReviewUrl}
+              href={reviewsData.googleReviewUrl || "https://g.page/r/CWhgADsBIJ2QEBM/review"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
@@ -85,7 +85,7 @@ export function GoogleReviews() {
             </a>
 
             <a
-              href={reviewsData.googleMapsUrl}
+              href={reviewsData.googleMapsUrl || "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-button bg-card border border-border text-ink font-semibold text-xs hover:bg-canvas transition-colors"
