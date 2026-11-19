@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme="iceberg"] {
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-active: #0c4a6e;
+  --primary-pale: #e0f2fe;
+  --primary-foreground: #ffffff;
+
+  --secondary: #d97706;
+  --secondary-hover: #b45309;
+  --secondary-foreground: #ffffff;
+
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+
+  --canvas: #ffffff;
+  --canvas-soft: #f8fafc;
+  --canvas-muted: #f1f5f9;
+
+  --ink: #0f172a;
+  --ink-deep: #020617;
+  --ink-body: #334155;
+  --ink-muted: #64748b;
+
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --card-border: #e2e8f0;
+
+  --radius: 16px;
+  --radius-card: 18px;
+  --radius-button: 12px;
+
+  --shadow-elevation: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="wise"] {
+  --primary: #9fe870;
+  --primary-hover: #cdffad;
+  --primary-active: #c5edab;
+  --primary-pale: #e2f6d5;
+  --primary-foreground: #0e0f0c;
+
+  --secondary: #163300;
+  --secondary-hover: #244e05;
+  --secondary-foreground: #ffffff;
+
+  --accent: #38c8ff;
+  --accent-foreground: #0e0f0c;
+
+  --canvas: #ffffff;
+  --canvas-soft: #e8ebe6;
+  --canvas-muted: #dbe0d7;
+
+  --ink: #0e0f0c;
+  --ink-deep: #163300;
+  --ink-body: #454745;
+  --ink-muted: #868685;
+
+  --border: #0e0f0c;
+  --card: #ffffff;
+  --card-foreground: #0e0f0c;
+  --card-border: rgba(14, 15, 12, 0.1);
+
+  --radius: 24px;
+  --radius-card: 24px;
+  --radius-button: 24px;
+
+  --shadow-elevation: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--canvas-soft);
+  color: var(--ink);
+  font-family: var(--font-sans), Inter, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display), "Plus Jakarta Sans", "Wise Sans", system-ui, sans-serif;
+  letter-spacing: -0.035em;
+}
+
+/* Antigravity Spatial Elevation */
+.antigravity-card {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: var(--shadow-elevation);
+}
+
+.antigravity-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 50px -15px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,471 @@
+import bcrypt from "bcryptjs";
+import { connectDB, memoryStore } from "./db";
+import { Category } from "@/models/Category";
+import { Product } from "@/models/Product";
+import { Blog } from "@/models/Blog";
+import { SiteSettings } from "@/models/SiteSettings";
+import { VisitLog } from "@/models/VisitLog";
+import { AdminUser } from "@/models/AdminUser";
+
+export const R2_STORAGE_BASE = "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg";
+
+export const initialCategories = [
+  {
+    name: "Packaging & Rigid Boxes",
+    slug: "packaging-rigid-boxes",
+    description: "Bespoke magnetic gift boxes, rigid product packaging, and courier mailers.",
+    iconName: "Package",
+    image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    order: 1,
+    featured: true,
+    tags: ["Print", "Design", "Packaging"],
+  },
+  {
+    name: "Custom Apparel & Clothes",
+    slug: "custom-apparel-clothes",
+    description: "Heavyweight hoodies, corporate polo shirts, screen-printed & embroidered streetwear.",
+    iconName: "Shirt",
+    image: "${R2_STORAGE_BASE}/images/products/clothes.jpg",
+    order: 2,
+    featured: true,
+    tags: ["Print", "Design", "Apparel"],
+  },
+  {
+    name: "Mugs & Drinkware",
+    slug: "mugs-drinkware",
+    description: "Full-color sublimation ceramic mugs, insulated tumblers, and corporate drinkware.",
+    iconName: "Coffee",
+    image: "${R2_STORAGE_BASE}/images/products/cups.jpg",
+    order: 3,
+    featured: true,
+    tags: ["Print", "Drinkware"],
+  },
+  {
+    name: "Corporate Gifts & Souvenirs",
+    slug: "corporate-gifts-souvenirs",
+    description: "Executive gift boxes, branded umbrellas, metallic pens, customized tech gift sets.",
+    iconName: "Gift",
+    image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    order: 4,
+    featured: true,
+    tags: ["Print", "Design", "Gifts"],
+  },
+  {
+    name: "Large Format & Rollup Banners",
+    slug: "large-format-rollup-banners",
+    description: "Retractable roll-up banners, backdrop stands, teardrop flags, vinyl vehicle branding.",
+    iconName: "Flag",
+    image: "${R2_STORAGE_BASE}/images/products/banner.jpg",
+    order: 5,
+    featured: true,
+    tags: ["Print", "Signage"],
+  },
+  {
+    name: "Executive Stationery",
+    slug: "executive-stationery",
+    description: "Curved-edge business cards, gold foil letterheads, embossed presentation folders.",
+    iconName: "Briefcase",
+    image: "${R2_STORAGE_BASE}/images/products/business-cards.jpg",
+    order: 6,
+    featured: true,
+    tags: ["Print", "Design", "Stationery"],
+  },
+  {
+    name: "Flyers & Marketing Collateral",
+    slug: "flyers-marketing-collateral",
+    description: "A4, A5, and DL commercial flyers, tri-fold brochures, sales brochures, magazines.",
+    iconName: "FileText",
+    image: "${R2_STORAGE_BASE}/images/products/business-cards.jpg",
+    order: 7,
+    featured: true,
+    tags: ["Print", "Marketing"],
+  },
+  {
+    name: "Stickers & Product Labels",
+    slug: "stickers-product-labels",
+    description: "Waterproof vinyl roll labels, die-cut custom stickers, foil seals, jar labels.",
+    iconName: "Tag",
+    image: "${R2_STORAGE_BASE}/images/products/cups.jpg",
+    order: 8,
+    featured: true,
+    tags: ["Print", "Labels"],
+  },
+  {
+    name: "Plastic ID Cards & Badges",
+    slug: "plastic-id-cards-badges",
+    description: "Smart RFID cards, frosted PVC employee badges, branded satin lanyards.",
+    iconName: "CreditCard",
+    image: "${R2_STORAGE_BASE}/images/products/business-cards.jpg",
+    order: 9,
+    featured: true,
+    tags: ["Print", "ID Cards"],
+  },
+  {
+    name: "Calendar & Paper Bags",
+    slug: "calendar-paper-bags",
+    description: "Desktop flip calendars, wall calendars, luxury matte laminated retail paper shopping bags.",
+    iconName: "ShoppingBag",
+    image: "${R2_STORAGE_BASE}/images/products/bags.jpg",
+    order: 10,
+    featured: true,
+    tags: ["Print", "Packaging"],
+  },
+];
+
+export const initialProducts = [
+  {
+    title: "Curved Edge Luxury Business Cards",
+    slug: "curved-edge-luxury-business-cards",
+    categorySlug: "executive-stationery",
+    categoryName: "Executive Stationery",
+    description: "Ultra-heavyweight 600gsm cotton board with radiused curved corners, hot-stamped gold foil typography, and soft-touch matte velvet lamination.",
+    basePrice: 5000,
+    minQuantity: 100,
+    turnaroundDays: "24-48 Hours",
+    image: "${R2_STORAGE_BASE}/images/products/business-cards.jpg",
+    gallery: ["${R2_STORAGE_BASE}/images/products/business-cards.jpg"],
+    paperStocks: ["600gsm Cotton Cardstock", "350gsm Matte Artboard", "400gsm Pearl Metallic"],
+    finishes: ["Gold Foil Stamping + Soft Touch", "Spot UV Lamination", "Blind Debossing", "Plain Matte"],
+    quantityTiers: [
+      { quantity: 100, pricePerUnit: 50, totalPrice: 5000 },
+      { quantity: 250, pricePerUnit: 44, totalPrice: 11000 },
+      { quantity: 500, pricePerUnit: 38, totalPrice: 19000 },
+      { quantity: 1000, pricePerUnit: 32, totalPrice: 32000 },
+    ],
+    isPopular: true,
+    isTopSelling: true,
+    specifications: {
+      "Dimensions": "85mm x 55mm (Standard Euro/Nigeria)",
+      "Stock": "600gsm Uncoated / Coated Cotton Core",
+      "Corner Radius": "6mm Precision Die-Cut",
+      "Coating": "Matte Anti-Scratch Velvet",
+    },
+  },
+  {
+    title: "Custom Heavyweight Branded Hoodie",
+    slug: "custom-heavyweight-branded-hoodie",
+    categorySlug: "custom-apparel-clothes",
+    categoryName: "Custom Apparel & Clothes",
+    description: "420gsm premium brushed fleece cotton hoodie with high-density screen printing or intricate direct-to-garment (DTG) embroidery. Preshrunk luxury fit.",
+    basePrice: 18500,
+    minQuantity: 5,
+    turnaroundDays: "3-4 Days",
+    image: "${R2_STORAGE_BASE}/images/products/clothes.jpg",
+    gallery: ["${R2_STORAGE_BASE}/images/products/clothes.jpg"],
+    paperStocks: ["420gsm Brushed Fleece Cotton", "350gsm French Terry", "500gsm Heavyweight Luxury"],
+    finishes: ["Puff Print / 3D Screen Print", "Embroidery (10,000 stitches)", "Direct-to-Film (DTF) Vibrant"],
+    quantityTiers: [
+      { quantity: 5, pricePerUnit: 18500, totalPrice: 92500 },
+      { quantity: 20, pricePerUnit: 16500, totalPrice: 330000 },
+      { quantity: 50, pricePerUnit: 14800, totalPrice: 740000 },
+      { quantity: 100, pricePerUnit: 13200, totalPrice: 1320000 },
+    ],
+    isPopular: true,
+    isTopSelling: true,
+    specifications: {
+      "Material": "100% Organic Ring-Spun Cotton",
+      "Weight": "420 GSM",
+      "Fit": "Modern Relaxed / Boxy Cut",
+      "Colors": "Charcoal, Cream, Jet Black, Deep Navy",
+    },
+  },
+  {
+    title: "Two-Tone Ceramic Sublimation Mug",
+    slug: "two-tone-ceramic-sublimation-mug",
+    categorySlug: "mugs-drinkware",
+    categoryName: "Mugs & Drinkware",
+    description: "11oz premium grade AAA white ceramic mug with high-gloss polymer coating. Full wrap photographic print that resists fading, microwave and dishwasher safe.",
+    basePrice: 3000,
+    minQuantity: 12,
+    turnaroundDays: "24-48 Hours",
+    image: "${R2_STORAGE_BASE}/images/products/cups.jpg",
+    gallery: ["${R2_STORAGE_BASE}/images/products/cups.jpg"],
+    paperStocks: ["Grade AAA Glazed Ceramic", "Matte Ceramic", "Stainless Insulated Tumbler"],
+    finishes: ["High Gloss Sublimation", "Matte Hydro-Dip", "Laser Engraved (Tumbler)"],
+    quantityTiers: [
+      { quantity: 12, pricePerUnit: 3000, totalPrice: 36000 },
+      { quantity: 50, pricePerUnit: 2600, totalPrice: 130000 },
+      { quantity: 100, pricePerUnit: 2300, totalPrice: 230000 },
+      { quantity: 500, pricePerUnit: 1950, totalPrice: 975000 },
+    ],
+    isPopular: true,
+    isTopSelling: true,
+    specifications: {
+      "Capacity": "11 oz / 330 ml",
+      "Printing": "300 DPI 8-Color Sublimation Transfer",
+      "Safety": "Lead & Cadmium Free, Dishwasher Safe",
+    },
+  },
+  {
+    title: "Luxury Magnetic Rigid Gift Box",
+    slug: "luxury-magnetic-rigid-gift-box",
+    categorySlug: "packaging-rigid-boxes",
+    categoryName: "Packaging & Rigid Boxes",
+    description: "1200gsm greyboard wrapped in specialty dyed paper with concealed magnetic flap closures. Precision custom EVA foam inlay option for luxury brand rollouts.",
+    basePrice: 25000,
+    minQuantity: 25,
+    turnaroundDays: "4-5 Days",
+    image: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    gallery: [`${R2_STORAGE_BASE}/images/products/boxes.jpg`],
+    paperStocks: ["1200gsm Heavy Greyboard", "1500gsm Extra Stiff Board", "Recycled Kraft Rigid"],
+    finishes: ["Gold Foil Hot Stamping", "Debossing + Spot UV", "Matte Soft-Touch Anti-Scratch"],
+    quantityTiers: [
+      { quantity: 25, pricePerUnit: 25000, totalPrice: 625000 },
+      { quantity: 50, pricePerUnit: 22000, totalPrice: 1100000 },
+      { quantity: 100, pricePerUnit: 19500, totalPrice: 1950000 },
+      { quantity: 250, pricePerUnit: 17000, totalPrice: 4250000 },
+    ],
+    isPopular: true,
+    isTopSelling: true,
+    specifications: {
+      "Construction": "Collapsible or Assembled Rigid Greyboard",
+      "Closure": "Concealed Neodymium Magnets",
+      "Lining": "Satin fabric or Laser-Cut EVA Foam",
+    },
+  },
+  {
+    title: "8-ft Retractable Roll-up Exhibition Banner",
+    slug: "retractable-rollup-banner-8ft",
+    categorySlug: "large-format-rollup-banners",
+    categoryName: "Large Format & Rollup Banners",
+    description: "Commercial heavy-duty aluminum teardrop base with high-definition anti-curl non-tear PET banner vinyl. Comes with padded Oxford canvas travel bag.",
+    basePrice: 55000,
+    minQuantity: 1,
+    turnaroundDays: "24 Hours",
+    image: "${R2_STORAGE_BASE}/images/products/banner.jpg",
+    gallery: ["${R2_STORAGE_BASE}/images/products/banner.jpg"],
+    paperStocks: ["Anti-Curl Grey-Back PET Film", "Heavy 440gsm Vinyl Banner", "Fabric Dye-Sublimation"],
+    finishes: ["Matte Anti-Glare Coating", "Vivid Satin Lamination"],
+    quantityTiers: [
+      { quantity: 1, pricePerUnit: 55000, totalPrice: 55000 },
+      { quantity: 3, pricePerUnit: 50000, totalPrice: 150000 },
+      { quantity: 5, pricePerUnit: 46000, totalPrice: 230000 },
+      { quantity: 10, pricePerUnit: 42000, totalPrice: 420000 },
+    ],
+    isPopular: true,
+    isTopSelling: true,
+    specifications: {
+      "Dimensions": "33 x 80 inches (85cm x 200cm)",
+      "Hardware": "Weighted Silver Aluminum Luxury Base",
+      "Resolution": "1440 DPI Eco-Solvent Commercial Print",
+    },
+  },
+  {
+    title: "A5 HD Double-Sided Full Color Flyers",
+    slug: "a5-hd-double-sided-flyers",
+    categorySlug: "flyers-marketing-collateral",
+    categoryName: "Flyers & Marketing Collateral",
+    description: "Crisp commercial marketing flyers printed on 170gsm silk art paper with true CMYK digital presses. Ideal for corporate activations, menus, and promotions.",
+    basePrice: 16000,
+    minQuantity: 200,
+    turnaroundDays: "24 Hours",
+    image: "${R2_STORAGE_BASE}/images/products/business-cards.jpg",
+    gallery: ["${R2_STORAGE_BASE}/images/products/business-cards.jpg"],
+    paperStocks: ["170gsm Silk Art Paper", "250gsm Gloss Board", "300gsm Heavy Card"],
+    finishes: ["Double-Sided Gloss Lamination", "Double-Sided Matte Finish", "Machine Varnish"],
+    quantityTiers: [
+      { quantity: 200, pricePerUnit: 80, totalPrice: 16000 },
+      { quantity: 500, pricePerUnit: 60, totalPrice: 30000 },
+      { quantity: 1000, pricePerUnit: 45, totalPrice: 45000 },
+      { quantity: 2500, pricePerUnit: 35, totalPrice: 87500 },
+    ],
+    isPopular: true,
+    isTopSelling: true,
+    specifications: {
+      "Dimensions": "148mm x 210mm (Standard A5)",
+      "Stock": "170gsm FSC-Certified Silk",
+      "Print": "Full Color Process Double-Sided (4/4)",
+    },
+  },
+  {
+    title: "Luxury Debossed Paper Shopping Bags",
+    slug: "luxury-debossed-paper-shopping-bags",
+    categorySlug: "calendar-paper-bags",
+    categoryName: "Calendar & Paper Bags",
+    description: "250gsm reinforced art paper with debossed studio logos, matte film lamination, reinforced cardboard base, and thick braided cotton rope handles.",
+    basePrice: 12500,
+    minQuantity: 50,
+    turnaroundDays: "3-5 Days",
+    image: "${R2_STORAGE_BASE}/images/products/bags.jpg",
+    gallery: ["${R2_STORAGE_BASE}/images/products/bags.jpg"],
+    paperStocks: ["250gsm Coated Art Paper", "200gsm Natural Kraft Paper", "Specialty Pearlized Paper"],
+    finishes: ["Matte Lamination + Debossing", "Gold Foil + Matte Black", "Spot UV Logo"],
+    quantityTiers: [
+      { quantity: 50, pricePerUnit: 250, totalPrice: 12500 },
+      { quantity: 100, pricePerUnit: 220, totalPrice: 22000 },
+      { quantity: 250, pricePerUnit: 190, totalPrice: 47500 },
+      { quantity: 500, pricePerUnit: 165, totalPrice: 82500 },
+    ],
+    isPopular: false,
+    isTopSelling: false,
+    specifications: {
+      "Size": "Medium: 32cm (H) x 25cm (W) x 10cm (Gusset)",
+      "Handles": "Thick Braided 100% Cotton with Eyelets",
+      "Base": "Reinforced 400gsm Bottom Stiffener",
+    },
+  },
+];
+
+export const initialBlogs = [
+  {
+    title: "The Ultimate Guide to Paper Weights (GSM) and Finishes: Matte, Gloss, and Soft-Touch Explained",
+    slug: "guide-to-paper-weights-and-finishes",
+    excerpt: "Navigating GSM ratings, tactile lamination choices, and coating techniques so your business stationery and marketing collateral convey true luxury in Lagos.",
+    category: "Print Engineering",
+    coverImage: "${R2_STORAGE_BASE}/images/products/business-cards.jpg",
+    author: "Iceberg Master Printmakers",
+    readTime: "6 min read",
+    tags: ["Paper Stocks", "Finishes", "Business Cards", "Print Guide"],
+    published: true,
+    publishedAt: new Date(),
+    content: `When a client holds your business card, presentation brochure, or proposal folder, the subconscious judgment of your brand happens in the fingertips before their eyes read a single line of text.
+
+### Understanding GSM: The Foundation of Tactile Prestige
+GSM stands for *Grams per Square Meter*. It is the international standard measuring paper density and weight:
+
+- **80 – 100 GSM:** Standard office copy paper and internal letterheads.
+- **130 – 170 GSM:** High-impact commercial flyers, marketing brochures, and posters. Offers vibrant color saturation without feeling flimsy.
+- **250 – 300 GSM:** Presentation folder covers, invitations, and lightweight greeting cards.
+- **350 – 600 GSM:** Executive commercial business cards and luxury stationery. At 600gsm cotton board, your card resists bends, feels architectural, and immediately conveys institutional weight.
+
+### Choosing the Right Finish: Matte vs. Gloss vs. Soft-Touch
+
+1. **Matte Lamination:** A glare-free, satin surface that diffuses light. Perfect for corporate brands, legal practices, and luxury goods where understated sophistication is desired.
+2. **Gloss Lamination:** A glass-like high-shine coating that amplifies color saturation, making reds, blues, and blacks punch with intense depth. Ideal for product flyers and food menus.
+3. **Soft-Touch Velvet Lamination:** A premium polyurethane film that feels like brushed peach skin or velvet suede. When paired with raised Spot UV or hot-stamped gold foil, the contrast between the velvety background and glossy raised foil creates an unforgettable tactile impression.
+
+At **Iceberg Creative Print Studio**, our Shomolu press house uses calibrated high-definition digital presses and Italian die-cutting blades to ensure precision registration on every single sheet.`,
+  },
+  {
+    title: "How Custom Rigid Packaging Transforms Brand Perception and Unboxing in Lagos",
+    slug: "how-custom-rigid-packaging-transforms-brand-perception",
+    excerpt: "Why leading Nigerian fashion houses, corporate gift curators, and tech founders are investing in magnetic rigid boxes to drive viral unboxing and customer retention.",
+    category: "Bespoke Packaging",
+    coverImage: `${R2_STORAGE_BASE}/images/products/boxes.jpg`,
+    author: "Iceberg Packaging Atelier",
+    readTime: "5 min read",
+    tags: ["Packaging", "Unboxing", "Branding", "Luxury Boxes"],
+    published: true,
+    publishedAt: new Date(Date.now() - 86400000 * 3),
+    content: `In an era dominated by social commerce and influencer marketing across Lagos, Abuja, and Port Harcourt, packaging is no longer just a shipping container — it is your customer's first physical touchpoint with your brand.
+
+### The Psychology of The Magnetic Snap
+Have you ever wondered why opening an Apple product or a luxury watch feels so satisfying? It is the deliberate acoustic feedback of the magnetic snap. 
+
+Our bespoke magnetic rigid boxes are engineered with 1200gsm high-density board wrapped in custom embossed paper stocks. When the lid drops, dual neodymium magnets pull together with a crisp, reassuring click. This sensory cue signals value, care, and craftsmanship before the product is even revealed.
+
+### 3 Rules for Designing High-Converting Rigid Packaging
+
+1. **Minimalist Exterior with High-Impact Foil:** Avoid cluttering the box lid. A clean logo rendered in micro-embossed metallic gold or champagne foil against a deep navy or chalk-white surface stands out dramatically on camera.
+2. **Custom Die-Cut EVA Foam Inlays:** Protect fragile items (such as perfumery, ceramic mugs, or bespoke tech accessories) with laser-cut foam lined with velvet. This prevents movement in transit with Nigerian couriers like Kwik, Bolt, or GIG Logistics.
+3. **The Surprise Interior:** Consider printing an inspirational quote, brand manifesto, or QR code inside the lid. This invites the recipient to scan, share on Instagram stories, or save the box for long-term desk storage.
+
+Ready to engineer custom packaging that turns your customers into brand evangelists? Contact the Iceberg studio team today for a tailored 3D mockup and factory proof.`,
+  },
+];
+
+export const initialSiteSettings = {
+  companyName: "Iceberg Creative Print Studio",
+  tagline: "Turning Ideas Into Impressions....",
+  address: "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria",
+  phone: "+234 902 948 0399",
+  whatsappRouting: "+2349029480399",
+  email: "hazkendigital@gmail.com",
+  workingHoursWeekday: "09:00 - 18:00",
+  workingHoursSaturday: "10:00 - 18:00",
+  workingHoursSunday: "Closed",
+  facebookUrl: "https://facebook.com/hazkendigital",
+  instagramUrl: "https://instagram.com/hazkendigital",
+  twitterUrl: "https://x.com/hazkendigital",
+  linkedinUrl: "https://linkedin.com/company/hazkendigital",
+  youtubeUrl: "https://youtube.com/@hazkendigital",
+  tiktokUrl: "https://tiktok.com/@hazkendigital",
+  googlePlaceId: "",
+  googleApiKey: "",
+  deliveryPartners: ["Kwik Delivery", "Bolt Logistics", "GIG Logistics"],
+};
+
+export async function ensureSeeded() {
+  const currentMonthKey = new Date().toISOString().slice(0, 7); // e.g. "2026-11"
+
+  // Always seed in-memory store
+  if (memoryStore.categories.length === 0) {
+    memoryStore.categories = [...initialCategories];
+  }
+  if (memoryStore.products.length === 0) {
+    memoryStore.products = [...initialProducts];
+  }
+  if (memoryStore.blogs.length === 0) {
+    memoryStore.blogs = [...initialBlogs];
+  }
+  if (!memoryStore.settings) {
+    memoryStore.settings = { ...initialSiteSettings };
+  }
+  if (!memoryStore.monthlyVisits[currentMonthKey]) {
+    memoryStore.monthlyVisits[currentMonthKey] = 1480;
+  }
+  if (!memoryStore.adminUser) {
+    const passwordHash = await bcrypt.hash("admin123", 10);
+    memoryStore.adminUser = {
+      email: "admin@icebergprints.com",
+      passwordHash,
+      role: "Super Admin",
+    };
+  }
+
+  // If MongoDB is connected, seed MongoDB collections
+  const db = await connectDB();
+  if (db) {
+    try {
+      const catCount = await Category.countDocuments();
+      if (catCount === 0) {
+        await Category.insertMany(initialCategories);
+      }
+
+      const prodCount = await Product.countDocuments();
+      if (prodCount === 0) {
+        await Product.insertMany(initialProducts);
+      }
+
+      const blogCount = await Blog.countDocuments();
+      if (blogCount === 0) {
+        await Blog.insertMany(initialBlogs);
+      }
+
+      const settingsCount = await SiteSettings.countDocuments();
+      if (settingsCount === 0) {
+        await SiteSettings.create(initialSiteSettings);
+      }
+
+      const visitCount = await VisitLog.findOne({ monthKey: currentMonthKey });
+      if (!visitCount) {
+        await VisitLog.create({
+          monthKey: currentMonthKey,
+          hits: 1480,
+          uniqueVisitors: 920,
+          lastVisited: new Date(),
+        });
+      }
+
+      const adminCount = await AdminUser.countDocuments();
+      if (adminCount === 0) {
+        await AdminUser.create({
+          email: memoryStore.adminUser.email,
+          passwordHash: memoryStore.adminUser.passwordHash,
+          role: memoryStore.adminUser.role,
+        });
+      } else {
+        const existingAdmin = await AdminUser.findOne({ email: "admin@icebergprints.com" });
+        if (existingAdmin) {
+          memoryStore.adminUser = {
+            email: existingAdmin.email,
+            passwordHash: existingAdmin.passwordHash,
+            role: existingAdmin.role,
+          };
+        }
+      }
+    } catch (err: any) {
+      console.warn("DB seed warning (using in-memory):", err.message);
+    }
+  }
+}
