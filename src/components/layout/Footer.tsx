@@ -30,6 +30,14 @@ export function Footer() {
 
   const companyName = settings?.companyName || "Iceberg Studio";
   const tagline = settings?.tagline || "Creative Print Press";
+  const footerSummary =
+    settings?.footerSummary ??
+    "Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria.";
+  const footerDescription =
+    settings?.footerDescription ??
+    "We Create Experiences ThatInspire, Impact And Transform!";
+  const footerMotto =
+    settings?.footerMotto ?? "Creativity as it speaks excellence!";
   const address =
     settings?.address ||
     "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria.";
@@ -116,18 +124,21 @@ export function Footer() {
               </div>
             </Link>
 
-            <p className="text-xs text-white/75 leading-relaxed">
-              Web Design, UI UX Design, Brand Identity, Graphic Design and
-              Digital Printing Service in Lagos Nigeria.
-            </p>
-            <p className="text-xs text-white/60 leading-relaxed">
-              Full Responsive Websites and Application, Creative Branding,
-              Graphic Design for Business Advertisement and High-quality
-              Printing.
-            </p>
-            <p className="text-xs text-primary font-semibold italic">
-              Creativity as it speaks excellence!
-            </p>
+            {footerSummary && (
+              <p className="text-xs text-white/75 leading-relaxed">
+                {footerSummary}
+              </p>
+            )}
+            {footerDescription && (
+              <p className="text-xs text-white/60 leading-relaxed">
+                {footerDescription}
+              </p>
+            )}
+            {footerMotto && (
+              <p className="text-xs text-primary font-semibold italic">
+                {footerMotto}
+              </p>
+            )}
           </div>
 
           {/* Column 2: Lagos Studio & Factory */}

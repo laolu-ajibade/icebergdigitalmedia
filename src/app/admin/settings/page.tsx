@@ -171,6 +171,9 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>({
     companyName: "",
     tagline: "",
+    footerSummary: "",
+    footerDescription: "",
+    footerMotto: "",
     defaultTheme: "iceberg",
     topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
     topBarTagline: "Commercial Grade Print Press & Packaging Studio",
@@ -555,6 +558,48 @@ export default function AdminSettingsPage() {
                     onChange={e =>
                       setSettings({ ...settings, tagline: e.target.value })
                     }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Footer Lead Summary
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={settings.footerSummary ?? ""}
+                    onChange={e =>
+                      setSettings({ ...settings, footerSummary: e.target.value })
+                    }
+                    placeholder="Web Design, UI UX Design, Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria."
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Footer Secondary Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={settings.footerDescription ?? ""}
+                    onChange={e =>
+                      setSettings({ ...settings, footerDescription: e.target.value })
+                    }
+                    placeholder="Full Responsive Websites and Application, Creative Branding, Graphic Design for Business Advertisement and High-quality Printing."
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Footer Highlight Motto
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.footerMotto ?? ""}
+                    onChange={e =>
+                      setSettings({ ...settings, footerMotto: e.target.value })
+                    }
+                    placeholder="Creativity as it speaks excellence!"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>

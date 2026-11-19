@@ -578,6 +578,11 @@ export const initialReviews = [
 export const initialSiteSettings = {
   companyName: "Iceberg Creative Print Studio",
   tagline: "Turning Ideas Into Impressions....",
+  footerSummary:
+    "Web Design, UI UX Design, Brand Identity, Graphic Design and Digital Printing Service in Lagos Nigeria.",
+  footerDescription:
+    "Full Responsive Websites and Application, Creative Branding, Graphic Design for Business Advertisement and High-quality Printing.",
+  footerMotto: "Creativity as it speaks excellence!",
   defaultTheme: "iceberg",
   topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
   topBarTagline: "Commercial Grade Print Press & Packaging Studio",
