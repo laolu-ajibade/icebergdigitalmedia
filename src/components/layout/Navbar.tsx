@@ -201,19 +201,19 @@ export function Navbar() {
               Blog
             </Link>
 
-            <a
-              href="#about-studio"
+            <Link
+              href="/#about-studio"
               className="text-sm font-semibold text-ink hover:text-primary transition-colors"
             >
               About Studio
-            </a>
+            </Link>
 
-            <a
-              href="#faq-section"
+            <Link
+              href="/#faq-section"
               className="text-sm font-semibold text-ink hover:text-primary transition-colors"
             >
               FAQ
-            </a>
+            </Link>
           </nav>
 
           {/* Right Action Buttons */}

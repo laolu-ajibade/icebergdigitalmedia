@@ -27,12 +27,85 @@ import { useToast } from "@/context/ToastContext";
 type TabKey =
   | "contact"
   | "hero"
+  | "mockup"
   | "stats"
   | "corporate"
   | "about"
   | "faqs"
   | "process"
   | "security";
+
+const DEFAULT_STUDIO_ITEMS = [
+  {
+    id: "tshirt",
+    label: "Apparel",
+    price: 18500,
+    minQty: 5,
+    stockDesc: "420gsm Brushed Fleece Cotton",
+    productSlug: "custom-heavyweight-branded-hoodie",
+  },
+  {
+    id: "mug",
+    label: "Drinkware",
+    price: 3000,
+    minQty: 12,
+    stockDesc: "Grade AAA Glazed Ceramic",
+    productSlug: "two-tone-ceramic-sublimation-mug",
+  },
+  {
+    id: "card",
+    label: "Business Card",
+    price: 5000,
+    minQty: 100,
+    stockDesc: "600gsm Cotton Foil Board",
+    productSlug: "curved-edge-luxury-business-cards",
+  },
+  {
+    id: "jotter",
+    label: "Jotters",
+    price: 15000,
+    minQty: 50,
+    stockDesc: "A5 Hardcover Spiral Note Jotter",
+    productSlug: "custom-hardcover-spiral-note-jotter",
+  },
+];
+
+function normalizeStudioItems(rawItems: any[] | undefined) {
+  if (!Array.isArray(rawItems) || rawItems.length === 0) {
+    return DEFAULT_STUDIO_ITEMS;
+  }
+  return DEFAULT_STUDIO_ITEMS.map(defItem => {
+    const match = rawItems.find(
+      (r: any) =>
+        r.id === defItem.id || (defItem.id === "jotter" && r.id === "box"),
+    );
+    if (!match) return defItem;
+    const isOldBox =
+      defItem.id === "jotter" &&
+      (match.id === "box" || match.label === "Rigid Box");
+    return {
+      ...defItem,
+      ...match,
+      id: defItem.id,
+      label: isOldBox ? "Jotters" : match.label || defItem.label,
+      price:
+        isOldBox && match.price === 25000
+          ? 15000
+          : typeof match.price === "number"
+            ? match.price
+            : defItem.price,
+      minQty:
+        isOldBox && match.minQty === 25
+          ? 50
+          : typeof match.minQty === "number"
+            ? match.minQty
+            : defItem.minQty,
+      stockDesc: isOldBox
+        ? "A5 Hardcover Spiral Note Jotter"
+        : match.stockDesc || defItem.stockDesc,
+    };
+  });
+}
 
 const SOCIAL_CHANNELS: Array<{
   field: string;
@@ -44,37 +117,37 @@ const SOCIAL_CHANNELS: Array<{
     field: "instagramUrl",
     label: "Instagram Username",
     prefix: "https://instagram.com/",
-    placeholder: "hazkendigital",
+    placeholder: "digitalmedia",
   },
   {
     field: "facebookUrl",
     label: "Facebook Page Username",
     prefix: "https://facebook.com/",
-    placeholder: "hazkendigital",
+    placeholder: "digitalmedia",
   },
   {
     field: "twitterUrl",
     label: "Twitter / X Username",
     prefix: "https://x.com/",
-    placeholder: "hazkendigital",
+    placeholder: "digitalmedia",
   },
   {
     field: "linkedinUrl",
     label: "LinkedIn Company / Profile Handle",
     prefix: "https://linkedin.com/company/",
-    placeholder: "hazkendigital",
+    placeholder: "digitalmedia",
   },
   {
     field: "tiktokUrl",
     label: "TikTok Username",
     prefix: "https://tiktok.com/@",
-    placeholder: "hazkendigital",
+    placeholder: "digitalmedia",
   },
   {
     field: "youtubeUrl",
     label: "YouTube Channel Handle",
     prefix: "https://youtube.com/@",
-    placeholder: "hazkendigital",
+    placeholder: "digitalmedia",
   },
 ];
 
@@ -131,7 +204,7 @@ export default function AdminSettingsPage() {
     aboutImage: "",
     faqs: [],
     processSteps: [],
-    studioItems: [],
+    studioItems: DEFAULT_STUDIO_ITEMS,
   });
 
   const [saving, setSaving] = useState(false);
@@ -169,7 +242,7 @@ export default function AdminSettingsPage() {
         ([entry]) => {
           setIsBottomSaveVisible(entry.isIntersecting);
         },
-        { threshold: 0.01, rootMargin: "0px 0px 20px 0px" }
+        { threshold: 0.01, rootMargin: "0px 0px 20px 0px" },
       );
       observer.observe(el);
     }
@@ -192,7 +265,11 @@ export default function AdminSettingsPage() {
       .then(res => res.json())
       .then(data => {
         if (data.settings) {
-          setSettings((prev: any) => ({ ...prev, ...data.settings }));
+          setSettings((prev: any) => ({
+            ...prev,
+            ...data.settings,
+            studioItems: normalizeStudioItems(data.settings.studioItems),
+          }));
         }
       })
       .catch(() => {});
@@ -219,7 +296,10 @@ export default function AdminSettingsPage() {
           setTheme(settings.defaultTheme);
         }
         setSuccess(true);
-        showSuccess("All studio settings have been saved to the database.", "Settings Saved");
+        showSuccess(
+          "All studio settings have been saved to the database.",
+          "Settings Saved",
+        );
         setTimeout(() => setSuccess(false), 4000);
       } else {
         const errData = await res.json().catch(() => ({}));
@@ -298,6 +378,7 @@ export default function AdminSettingsPage() {
   const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
     { key: "contact", label: "Studio & Socials", icon: Building },
     { key: "hero", label: "Hero & Intro", icon: Layers },
+    { key: "mockup", label: "3D Mockup Pricing", icon: Layers },
     { key: "stats", label: "Studio Stats", icon: BarChart3 },
     { key: "corporate", label: "Corporate Perks", icon: Briefcase },
     { key: "about", label: "About Studio", icon: Info },
@@ -577,13 +658,15 @@ export default function AdminSettingsPage() {
                   Social Media Profiles & Channels
                 </h2>
                 <p className="text-[11px] text-ink-muted mt-2">
-                  Enter only your username/handle for each platform (the base URL prefix is locked automatically). Leave any username empty to hide its icon from the storefront footer.
+                  Enter only your username/handle for each platform (the base
+                  URL prefix is locked automatically). Leave any username empty
+                  to hide its icon from the storefront footer.
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {SOCIAL_CHANNELS.map(channel => {
                   const currentHandle = extractSocialHandle(
-                    settings[channel.field]
+                    settings[channel.field],
                   );
                   return (
                     <div key={channel.field}>
@@ -725,7 +808,9 @@ export default function AdminSettingsPage() {
                   3D Print Studio Canvas Pricing (Interactive Hero Mockup Stage)
                 </h3>
                 <p className="text-xs text-ink-muted mt-0.5">
-                  Configure the dynamic starting run price (₦), minimum quantity (pcs), and material specification for each of the 4 interactive 3D mockup tabs.
+                  Configure the dynamic starting run price (₦), minimum quantity
+                  (pcs), and material specification for each of the 4
+                  interactive 3D mockup tabs.
                 </p>
               </div>
 
@@ -740,11 +825,13 @@ export default function AdminSettingsPage() {
                     </span>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block font-bold text-ink mb-1">Tab Label</label>
+                        <label className="block font-bold text-ink mb-1">
+                          Tab Label
+                        </label>
                         <input
                           type="text"
                           value={item.label || ""}
-                          onChange={(e) => {
+                          onChange={e => {
                             const next = [...settings.studioItems];
                             next[idx] = { ...next[idx], label: e.target.value };
                             setSettings({ ...settings, studioItems: next });
@@ -759,7 +846,7 @@ export default function AdminSettingsPage() {
                         <input
                           type="number"
                           value={item.price ?? 0}
-                          onChange={(e) => {
+                          onChange={e => {
                             const next = [...settings.studioItems];
                             next[idx] = {
                               ...next[idx],
@@ -777,7 +864,7 @@ export default function AdminSettingsPage() {
                         <input
                           type="number"
                           value={item.minQty ?? 1}
-                          onChange={(e) => {
+                          onChange={e => {
                             const next = [...settings.studioItems];
                             next[idx] = {
                               ...next[idx],
@@ -796,9 +883,12 @@ export default function AdminSettingsPage() {
                       <input
                         type="text"
                         value={item.stockDesc || ""}
-                        onChange={(e) => {
+                        onChange={e => {
                           const next = [...settings.studioItems];
-                          next[idx] = { ...next[idx], stockDesc: e.target.value };
+                          next[idx] = {
+                            ...next[idx],
+                            stockDesc: e.target.value,
+                          };
                           setSettings({ ...settings, studioItems: next });
                         }}
                         className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
@@ -807,6 +897,116 @@ export default function AdminSettingsPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "mockup" && (
+          <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-5">
+            <div className="border-b border-border/60 pb-3">
+              <h2 className="font-display font-bold text-base text-ink">
+                3D Print Studio Canvas Pricing (Apparel, Drinkware, Business
+                Card & Jotters)
+              </h2>
+              <p className="text-xs text-ink-muted mt-0.5">
+                Configure the dynamic Factory Starting Run price (₦), minimum
+                quantity (pcs), tab label, and material description for each of
+                the 4 interactive 3D mockup tabs on the homepage.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(settings.studioItems || DEFAULT_STUDIO_ITEMS).map(
+                (item: any, idx: number) => (
+                  <div
+                    key={item.id || idx}
+                    className="p-4 rounded-theme bg-canvas-soft border border-border space-y-3"
+                  >
+                    <span className="font-bold text-primary uppercase text-[11px] block">
+                      3D Mockup Item: {item.label || item.id}
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block font-bold text-ink mb-1">
+                          Tab Label
+                        </label>
+                        <input
+                          type="text"
+                          value={item.label || ""}
+                          onChange={e => {
+                            const next = [
+                              ...(settings.studioItems || DEFAULT_STUDIO_ITEMS),
+                            ];
+                            next[idx] = { ...next[idx], label: e.target.value };
+                            setSettings({ ...settings, studioItems: next });
+                          }}
+                          className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-ink mb-1">
+                          Starting Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={item.price ?? 0}
+                          onChange={e => {
+                            const next = [
+                              ...(settings.studioItems || DEFAULT_STUDIO_ITEMS),
+                            ];
+                            next[idx] = {
+                              ...next[idx],
+                              price: Number(e.target.value) || 0,
+                            };
+                            setSettings({ ...settings, studioItems: next });
+                          }}
+                          className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold text-ink mb-1">
+                          Min Qty (pcs)
+                        </label>
+                        <input
+                          type="number"
+                          value={item.minQty ?? 1}
+                          onChange={e => {
+                            const next = [
+                              ...(settings.studioItems || DEFAULT_STUDIO_ITEMS),
+                            ];
+                            next[idx] = {
+                              ...next[idx],
+                              minQty: Number(e.target.value) || 1,
+                            };
+                            setSettings({ ...settings, studioItems: next });
+                          }}
+                          className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-bold text-ink mb-1">
+                        Material / Stock Description
+                      </label>
+                      <input
+                        type="text"
+                        value={item.stockDesc || ""}
+                        onChange={e => {
+                          const next = [
+                            ...(settings.studioItems || DEFAULT_STUDIO_ITEMS),
+                          ];
+                          next[idx] = {
+                            ...next[idx],
+                            stockDesc: e.target.value,
+                          };
+                          setSettings({ ...settings, studioItems: next });
+                        }}
+                        className="w-full px-3 py-2 bg-card border border-border rounded-button text-ink"
+                      />
+                    </div>
+                  </div>
+                ),
+              )}
             </div>
           </div>
         )}
@@ -1295,7 +1495,9 @@ export default function AdminSettingsPage() {
                     type="text"
                     readOnly
                     disabled
-                    value={settings.googlePlaceId || "ChIJvQSY9_iNOxARaGAAOwEgnZA"}
+                    value={
+                      settings.googlePlaceId || "ChIJvQSY9_iNOxARaGAAOwEgnZA"
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink-muted cursor-not-allowed select-none opacity-80"
                   />
                 </div>
@@ -1307,7 +1509,10 @@ export default function AdminSettingsPage() {
                     type="password"
                     readOnly
                     disabled
-                    value={settings.googleApiKey || "••••••••••••••••••••••••••••••••••••"}
+                    value={
+                      settings.googleApiKey ||
+                      "••••••••••••••••••••••••••••••••••••"
+                    }
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink-muted font-mono cursor-not-allowed select-none opacity-80"
                   />
                 </div>

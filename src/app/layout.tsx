@@ -8,6 +8,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { VisitTracker } from "@/components/analytics/VisitTracker";
+import { SITE_URL, R2_IMAGES } from "@/lib/constants";
 import "@/styles/globals.css";
 
 const displayFont = Plus_Jakarta_Sans({
@@ -25,9 +26,53 @@ const sansFont = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Iceberg Creative Print Studio | Turning Ideas Into Impressions",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default:
+      "Iceberg Creative Print Studio | Commercial Printing & Packaging in Lagos",
+    template: "%s | Iceberg Creative Print Studio",
+  },
   description:
-    "Commercial Grade Digital Printing Press & Packaging Studio in Shomolu Lagos Nigeria. Bespoke rigid boxes, luxury business cards, branded apparel, mugs, and wide-format exhibition rollups with nationwide delivery.",
+    "Commercial digital printing press and bespoke packaging studio in Shomolu, Lagos. Custom rigid boxes, luxury business cards, branded apparel, mugs, jotters, and exhibition banners delivered across Nigeria.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_NG",
+    url: SITE_URL,
+    siteName: "Iceberg Creative Print Studio",
+    title:
+      "Iceberg Creative Print Studio | Commercial Printing & Packaging in Lagos",
+    description:
+      "High-definition digital press, bespoke rigid packaging, branded apparel, and corporate collateral produced in Shomolu, Lagos with nationwide delivery.",
+    images: [
+      {
+        url: R2_IMAGES.boxes,
+        width: 1200,
+        height: 630,
+        alt: "Iceberg Creative Print Studio — Commercial Printing & Bespoke Packaging in Lagos",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Iceberg Creative Print Studio | Commercial Printing & Packaging in Lagos",
+    description:
+      "Commercial printing, rigid boxes, business cards, branded apparel, and custom jotters in Shomolu, Lagos.",
+    images: [R2_IMAGES.boxes],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "/logo-icon.jpg",
     shortcut: "/logo-icon.jpg",

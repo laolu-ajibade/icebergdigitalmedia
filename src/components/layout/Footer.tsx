@@ -36,7 +36,7 @@ export function Footer() {
   const phone = settings?.phone || CONTACT_PHONE;
   const whatsapp =
     (settings?.whatsappRouting || "").replace(/[^0-9]/g, "") || WHATSAPP_NUMBER;
-  const email = settings?.email || "hazkendigital@gmail.com";
+  const email = settings?.email || "digitalmedia@gmail.com";
   const hoursWeekday = settings?.workingHoursWeekday || "09:00 - 18:00";
   const hoursSat = settings?.workingHoursSaturday || "10:00 - 18:00";
   const hoursSun = settings?.workingHoursSunday || "Closed";
@@ -53,32 +53,32 @@ export function Footer() {
 
   const facebookUrl = resolveSocialUrl(
     settings?.facebookUrl,
-    "https://facebook.com/"
+    "https://facebook.com/",
   );
   const instagramUrl = resolveSocialUrl(
     settings?.instagramUrl,
-    "https://instagram.com/"
+    "https://instagram.com/",
   );
   const twitterUrl = resolveSocialUrl(settings?.twitterUrl, "https://x.com/");
   const linkedinUrl = resolveSocialUrl(
     settings?.linkedinUrl,
-    "https://linkedin.com/company/"
+    "https://linkedin.com/company/",
   );
   const youtubeUrl = resolveSocialUrl(
     settings?.youtubeUrl,
-    "https://youtube.com/@"
+    "https://youtube.com/@",
   );
   const tiktokUrl = resolveSocialUrl(
     settings?.tiktokUrl,
-    "https://tiktok.com/@"
+    "https://tiktok.com/@",
   );
   const hasAnySocial = Boolean(
     facebookUrl ||
-      instagramUrl ||
-      twitterUrl ||
-      linkedinUrl ||
-      youtubeUrl ||
-      tiktokUrl
+    instagramUrl ||
+    twitterUrl ||
+    linkedinUrl ||
+    youtubeUrl ||
+    tiktokUrl,
   );
 
   const buildWaLink = (msg: string) =>
@@ -204,20 +204,20 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#about-studio"
+                <Link
+                  href="/#about-studio"
                   className="hover:text-primary transition-colors block py-0.5"
                 >
                   About Studio
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#faq-section"
+                <Link
+                  href="/#faq-section"
                   className="hover:text-primary transition-colors block py-0.5"
                 >
                   Contact & FAQ
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -315,7 +315,7 @@ export function Footer() {
               <div className="flex items-center gap-2.5">
                 <a
                   href={buildWaLink(
-                    "Hello Iceberg Studio Team, I have an inquiry."
+                    "Hello Iceberg Studio Team, I have an inquiry.",
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -326,7 +326,7 @@ export function Footer() {
                   <span>WhatsApp</span>
                 </a>
                 <a
-                  href="https://m.me/hazkendigital"
+                  href="https://m.me/digitalmedia"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-3 py-2 min-h-[38px] rounded-theme bg-[#0084ff] text-white text-xs font-bold hover:opacity-90 transition-opacity"
@@ -381,7 +381,7 @@ export function Footer() {
       {/* Floating WhatsApp Button */}
       <a
         href={buildWaLink(
-          "Hello Iceberg Creative Print Studio, I would like to order commercial prints."
+          "Hello Iceberg Creative Print Studio, I would like to order commercial prints.",
         )}
         target="_blank"
         rel="noopener noreferrer"

@@ -6,7 +6,7 @@ import {
   Shirt,
   Coffee,
   Briefcase,
-  Package,
+  BookOpen,
   Download,
   Send,
   ShoppingBag,
@@ -14,12 +14,22 @@ import {
   RefreshCw,
   Award,
   Check,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-type ProductType = "tshirt" | "mug" | "card" | "box";
+type ProductType = "tshirt" | "mug" | "card" | "jotter";
 
 interface ProductConfig {
   id: ProductType;
@@ -56,12 +66,12 @@ const products: ProductConfig[] = [
     stockDesc: "600gsm Cotton Foil Board",
   },
   {
-    id: "box",
-    label: "Rigid Box",
-    icon: Package,
-    defaultPrice: 25000,
-    minQty: 25,
-    stockDesc: "1200gsm Magnetic Greyboard",
+    id: "jotter",
+    label: "Jotters",
+    icon: BookOpen,
+    defaultPrice: 15000,
+    minQty: 50,
+    stockDesc: "A5 Hardcover Spiral Note Jotter",
   },
 ];
 
@@ -85,10 +95,16 @@ export function LivePrintCanvas() {
   const [activeProduct, setActiveProduct] = useState<ProductType>("tshirt");
   const [brandName, setBrandName] = useState("APEX STUDIO");
   const [tagline, setTagline] = useState("TURNING IDEAS INTO IMPRESSIONS");
+  const [showText, setShowText] = useState(true);
   const [selectedBodyColor, setSelectedBodyColor] = useState(bodyColors[0]);
   const [selectedImprintColor, setSelectedImprintColor] = useState(imprintColors[0]);
   const [uploadedLogo, setUploadedLogo] = useState<string | null>(null);
   const [r2LogoUrl, setR2LogoUrl] = useState<string | null>(null);
+  const [logoOffset, setLogoOffset] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [logoScale, setLogoScale] = useState<number>(1);
 
   // 3D Spatial Tilt state
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -100,15 +116,29 @@ export function LivePrintCanvas() {
   const settings = useSiteSettings();
 
   const dynamicProducts: ProductConfig[] = products.map((baseProd) => {
-    const dbMatch = settings?.studioItems?.find((s: any) => s.id === baseProd.id);
+    const dbMatch = settings?.studioItems?.find(
+      (s: any) =>
+        s.id === baseProd.id ||
+        (baseProd.id === "jotter" && s.id === "box")
+    );
     if (!dbMatch) return baseProd;
+    const resolvedLabel =
+      baseProd.id === "jotter" &&
+      (!dbMatch.label || dbMatch.label === "Rigid Box")
+        ? "Jotters"
+        : dbMatch.label || baseProd.label;
+    const resolvedStock =
+      baseProd.id === "jotter" &&
+      (!dbMatch.stockDesc || dbMatch.stockDesc.includes("Greyboard"))
+        ? baseProd.stockDesc
+        : dbMatch.stockDesc || baseProd.stockDesc;
     return {
       ...baseProd,
-      label: dbMatch.label || baseProd.label,
+      label: resolvedLabel,
       defaultPrice:
         typeof dbMatch.price === "number" ? dbMatch.price : baseProd.defaultPrice,
       minQty: typeof dbMatch.minQty === "number" ? dbMatch.minQty : baseProd.minQty,
-      stockDesc: dbMatch.stockDesc || baseProd.stockDesc,
+      stockDesc: resolvedStock,
     };
   });
 
@@ -138,6 +168,8 @@ export function LivePrintCanvas() {
       const reader = new FileReader();
       reader.onload = (event) => {
         setUploadedLogo(event.target?.result as string);
+        setLogoOffset({ x: 0, y: 0 });
+        setLogoScale(1);
       };
       reader.readAsDataURL(file);
 
@@ -157,6 +189,34 @@ export function LivePrintCanvas() {
     }
   };
 
+  const handleRemoveLogo = () => {
+    setUploadedLogo(null);
+    setR2LogoUrl(null);
+    setLogoOffset({ x: 0, y: 0 });
+    setLogoScale(1);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const nudgeLogo = (dx: number, dy: number) => {
+    setLogoOffset((prev) => ({
+      x: Math.max(-95, Math.min(95, prev.x + dx)),
+      y: Math.max(-95, Math.min(95, prev.y + dy)),
+    }));
+  };
+
+  const adjustLogoScale = (delta: number) => {
+    setLogoScale((prev) =>
+      Number(Math.max(0.6, Math.min(2.2, prev + delta)).toFixed(2))
+    );
+  };
+
+  const resetLogoTransform = () => {
+    setLogoOffset({ x: 0, y: 0 });
+    setLogoScale(1);
+  };
+
   // Export current mockup canvas to high-res PNG
   const handleDownloadSnapshot = () => {
     setIsExporting(true);
@@ -168,6 +228,39 @@ export function LivePrintCanvas() {
       setIsExporting(false);
       return;
     }
+
+    const finalizeExport = () => {
+      // Render Imprint / Brand Details on top (matches z-20 text over z-10 logo)
+      if (showText) {
+        ctx.fillStyle = selectedImprintColor.hex;
+        ctx.textAlign = "center";
+
+        ctx.font = "900 42px 'Plus Jakarta Sans', system-ui, sans-serif";
+        ctx.fillText(brandName || "ICEBERG STUDIO", 600, 440, 360);
+
+        if (tagline) {
+          ctx.font = "600 17px 'Plus Jakarta Sans', system-ui, sans-serif";
+          ctx.fillText(tagline.toUpperCase(), 600, 480, 360);
+        }
+      }
+
+      // Branding Watermark & Metadata
+      ctx.fillStyle = "#64748b";
+      ctx.font = "500 16px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText(
+        `Iceberg Creative Print Studio — ${currentProduct.label} Proof Preview · ${selectedBodyColor.name} / ${selectedImprintColor.name}`,
+        600,
+        840
+      );
+
+      const link = document.createElement("a");
+      link.download = `iceberg-mockup-${activeProduct}-${(brandName || "proof")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "-")}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      setIsExporting(false);
+    };
 
     // Background fill
     ctx.fillStyle = "#f8fafc";
@@ -188,30 +281,25 @@ export function LivePrintCanvas() {
     // Render Product Base Shape
     ctx.fillStyle = selectedBodyColor.hex;
     if (activeProduct === "tshirt") {
-      // Draw stylized t-shirt silhouette
       ctx.beginPath();
       ctx.roundRect(320, 220, 560, 520, 32);
       ctx.fill();
     } else if (activeProduct === "mug") {
-      // Mug body
       ctx.beginPath();
       ctx.roundRect(400, 240, 400, 480, 24);
       ctx.fill();
-      // Mug handle
       ctx.lineWidth = 40;
       ctx.strokeStyle = selectedBodyColor.hex;
       ctx.beginPath();
       ctx.arc(800, 480, 80, -Math.PI / 2, Math.PI / 2);
       ctx.stroke();
     } else if (activeProduct === "card") {
-      // Business card with curved corners
       ctx.beginPath();
       ctx.roundRect(300, 280, 600, 360, 28);
       ctx.fill();
     } else {
-      // Rigid box lid
       ctx.beginPath();
-      ctx.roundRect(320, 260, 560, 420, 24);
+      ctx.roundRect(390, 190, 420, 540, 20);
       ctx.fill();
     }
 
@@ -220,37 +308,20 @@ export function LivePrintCanvas() {
     ctx.shadowBlur = 0;
     ctx.shadowOffsetY = 0;
 
-    // Render Imprint / Brand Details
-    ctx.fillStyle = selectedImprintColor.hex;
-    ctx.textAlign = "center";
-
-    // Draw Brand Name
-    ctx.font = "900 44px 'Plus Jakarta Sans', system-ui, sans-serif";
-    ctx.fillText(brandName || "ICEBERG STUDIO", 600, 450);
-
-    // Draw Tagline
-    if (tagline) {
-      ctx.font = "600 18px 'Plus Jakarta Sans', system-ui, sans-serif";
-      ctx.fillText(tagline.toUpperCase(), 600, 490);
+    if (uploadedLogo) {
+      const logoImg = new window.Image();
+      logoImg.onload = () => {
+        const size = 96 * logoScale;
+        const x = 600 + logoOffset.x * 2 - size / 2;
+        const y = 520 + logoOffset.y * 2 - size / 2;
+        ctx.drawImage(logoImg, x, y, size, size);
+        finalizeExport();
+      };
+      logoImg.onerror = finalizeExport;
+      logoImg.src = uploadedLogo;
+    } else {
+      finalizeExport();
     }
-
-    // Branding Watermark & Metadata
-    ctx.fillStyle = "#64748b";
-    ctx.font = "500 16px 'Plus Jakarta Sans', system-ui, sans-serif";
-    ctx.fillText(
-      `Iceberg Creative Print Studio — ${currentProduct.label} Proof Preview · ${selectedBodyColor.name} / ${selectedImprintColor.name}`,
-      600,
-      840
-    );
-
-    // Trigger download
-    const link = document.createElement("a");
-    link.download = `iceberg-mockup-${activeProduct}-${(brandName || "proof")
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "-")}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    setIsExporting(false);
   };
 
   const handleOrderWhatsApp = () => {
@@ -311,242 +382,701 @@ export function LivePrintCanvas() {
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="relative h-[290px] sm:h-[340px] w-full bg-gradient-to-b from-canvas-soft to-border/30 flex items-center justify-center p-6 overflow-hidden select-none"
+        className="relative h-[360px] sm:h-[430px] w-full bg-gradient-to-b from-canvas-soft to-border/30 flex items-center justify-center p-3 sm:p-6 overflow-hidden select-none"
         style={{ perspective: "1000px" }}
       >
         {/* Spatial Floating Product Container */}
         <div
-          className="relative transition-transform duration-150 ease-out flex items-center justify-center"
+          className="relative transition-transform duration-150 ease-out flex items-center justify-center w-full"
           style={{
             transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
           }}
         >
-          {/* Mockup Product 1: T-Shirt / Hoodie */}
+          {/* Mockup Product 1: Realistic Tailored Heavyweight Crewneck T-Shirt */}
           {activeProduct === "tshirt" && (
-            <div className="relative w-64 sm:w-76 h-56 sm:h-64 flex items-center justify-center filter drop-shadow-xl">
-              {/* T-Shirt Vector Shape with Dynamic Color */}
-              <svg viewBox="0 0 400 340" className="w-full h-full">
+            <div className="relative w-[300px] sm:w-[380px] md:w-[420px] h-[270px] sm:h-[330px] md:h-[355px] max-w-full flex items-center justify-center filter drop-shadow-2xl">
+              <svg viewBox="0 0 440 390" className="w-full h-full">
                 <defs>
-                  <filter id="fabricTexture" x="0%" y="0%" width="100%" height="100%">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
-                    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.04 0" />
+                  <filter
+                    id="fabricTexture"
+                    x="0%"
+                    y="0%"
+                    width="100%"
+                    height="100%"
+                  >
+                    <feTurbulence
+                      type="fractalNoise"
+                      baseFrequency="0.045"
+                      numOctaves="3"
+                      result="noise"
+                    />
+                    <feColorMatrix
+                      type="matrix"
+                      values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.035 0"
+                    />
                     <feBlend mode="multiply" in="SourceGraphic" />
                   </filter>
-                  <linearGradient id="foldShadow" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="rgba(0,0,0,0.2)" />
-                    <stop offset="25%" stopColor="rgba(255,255,255,0.08)" />
-                    <stop offset="50%" stopColor="rgba(0,0,0,0.15)" />
-                    <stop offset="75%" stopColor="rgba(255,255,255,0.08)" />
-                    <stop offset="100%" stopColor="rgba(0,0,0,0.2)" />
+                  <linearGradient
+                    id="torsoCylinder"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="rgba(0,0,0,0.28)" />
+                    <stop offset="18%" stopColor="rgba(255,255,255,0.09)" />
+                    <stop offset="38%" stopColor="rgba(0,0,0,0.06)" />
+                    <stop offset="50%" stopColor="rgba(255,255,255,0.11)" />
+                    <stop offset="65%" stopColor="rgba(0,0,0,0.08)" />
+                    <stop offset="82%" stopColor="rgba(255,255,255,0.07)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
+                  </linearGradient>
+                  <radialGradient
+                    id="chestLight"
+                    cx="50%"
+                    cy="34%"
+                    r="48%"
+                  >
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.14)" />
+                    <stop offset="65%" stopColor="rgba(255,255,255,0.02)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.16)" />
+                  </radialGradient>
+                  <linearGradient
+                    id="innerCollarShade"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="rgba(0,0,0,0.45)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.7)" />
                   </linearGradient>
                 </defs>
-                {/* Body & Sleeves */}
+
+                {/* Back Inner Collar Pocket */}
                 <path
-                  d="M130,20 Q160,50 200,50 Q240,50 270,20 L370,80 L330,150 L280,120 L280,320 L120,320 L120,120 L70,150 L30,80 Z"
+                  d="M158,28 Q220,44 282,28 Q266,68 220,68 Q174,68 158,28 Z"
                   fill={selectedBodyColor.hex}
-                  stroke="rgba(0,0,0,0.15)"
+                />
+                <path
+                  d="M158,28 Q220,44 282,28 Q266,68 220,68 Q174,68 158,28 Z"
+                  fill="url(#innerCollarShade)"
+                />
+
+                {/* Woven Neck Label Tag Inside Collar */}
+                <rect
+                  x="207"
+                  y="36"
+                  width="26"
+                  height="15"
+                  rx="2"
+                  fill="#f8fafc"
+                  opacity="0.88"
+                />
+                <line
+                  x1="212"
+                  y1="42"
+                  x2="228"
+                  y2="42"
+                  stroke="#0f172a"
                   strokeWidth="2"
+                  opacity="0.65"
+                />
+                <line
+                  x1="215"
+                  y1="46"
+                  x2="225"
+                  y2="46"
+                  stroke="#64748b"
+                  strokeWidth="1.2"
+                  opacity="0.6"
+                />
+
+                {/* Main Tailored T-Shirt Silhouette */}
+                <path
+                  d="M158,28
+                     C140,33 108,46 84,60
+                     C62,73 34,98 18,118
+                     C15,122 16,127 20,131
+                     L66,166
+                     C71,169 76,168 80,163
+                     L110,126
+                     C114,158 113,255 110,360
+                     C110,366 115,370 122,370
+                     Q220,375 318,370
+                     C325,370 330,366 330,360
+                     C327,255 326,158 330,126
+                     L360,163
+                     C364,168 369,169 374,166
+                     L420,131
+                     C424,127 425,122 422,118
+                     C406,98 378,73 356,60
+                     C332,46 300,33 282,28
+                     Q258,72 220,72
+                     Q182,72 158,28 Z"
+                  fill={selectedBodyColor.hex}
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.12)"
+                      : "rgba(15,23,42,0.16)"
+                  }
+                  strokeWidth="1.8"
                   filter="url(#fabricTexture)"
                 />
-                <path
-                  d="M130,20 Q160,50 200,50 Q240,50 270,20 L370,80 L330,150 L280,120 L280,320 L120,320 L120,120 L70,150 L30,80 Z"
-                  fill="url(#foldShadow)"
-                />
-                {/* Collar Rib */}
-                <path
-                  d="M130,20 Q160,50 200,50 Q240,50 270,20"
-                  fill="none"
-                  stroke="rgba(0,0,0,0.25)"
-                  strokeWidth="4"
-                />
-              </svg>
 
-              {/* Chest Imprint Placement */}
-              <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 sm:w-36 text-center pointer-events-none space-y-1">
-                {uploadedLogo && (
-                  <div className="relative w-10 h-10 mx-auto mb-1">
-                    <Image src={uploadedLogo} alt="Logo" fill className="object-contain" />
-                  </div>
-                )}
-                <h4
-                  className="font-display font-black text-sm sm:text-base tracking-tighter leading-none"
-                  style={{ color: selectedImprintColor.hex }}
-                >
-                  {brandName || "YOUR BRAND"}
-                </h4>
-                {tagline && (
-                  <p
-                    className="font-sans font-semibold text-[8px] sm:text-[9px] tracking-wider uppercase opacity-90"
-                    style={{ color: selectedImprintColor.hex }}
-                  >
-                    {tagline}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
+                {/* 3D Cylindrical & Chest Lighting Overlay */}
+                <path
+                  d="M158,28
+                     C140,33 108,46 84,60
+                     C62,73 34,98 18,118
+                     C15,122 16,127 20,131
+                     L66,166
+                     C71,169 76,168 80,163
+                     L110,126
+                     C114,158 113,255 110,360
+                     C110,366 115,370 122,370
+                     Q220,375 318,370
+                     C325,370 330,366 330,360
+                     C327,255 326,158 330,126
+                     L360,163
+                     C364,168 369,169 374,166
+                     L420,131
+                     C424,127 425,122 422,118
+                     C406,98 378,73 356,60
+                     C332,46 300,33 282,28
+                     Q258,72 220,72
+                     Q182,72 158,28 Z"
+                  fill="url(#torsoCylinder)"
+                />
+                <path
+                  d="M158,28
+                     C140,33 108,46 84,60
+                     C62,73 34,98 18,118
+                     C15,122 16,127 20,131
+                     L66,166
+                     C71,169 76,168 80,163
+                     L110,126
+                     C114,158 113,255 110,360
+                     C110,366 115,370 122,370
+                     Q220,375 318,370
+                     C325,370 330,366 330,360
+                     C327,255 326,158 330,126
+                     L360,163
+                     C364,168 369,169 374,166
+                     L420,131
+                     C424,127 425,122 422,118
+                     C406,98 378,73 356,60
+                     C332,46 300,33 282,28
+                     Q258,72 220,72
+                     Q182,72 158,28 Z"
+                  fill="url(#chestLight)"
+                />
 
-          {/* Mockup Product 2: Ceramic Coffee Mug */}
-          {activeProduct === "mug" && (
-            <div className="relative w-56 sm:w-64 h-52 sm:h-60 flex items-center justify-center filter drop-shadow-2xl">
-              <svg viewBox="0 0 340 300" className="w-full h-full">
-                <defs>
-                  <linearGradient id="ceramicSheen" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="rgba(0,0,0,0.25)" />
-                    <stop offset="20%" stopColor="rgba(255,255,255,0.4)" />
-                    <stop offset="45%" stopColor="rgba(255,255,255,0.05)" />
-                    <stop offset="85%" stopColor="rgba(0,0,0,0.2)" />
-                    <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
-                  </linearGradient>
-                </defs>
-                {/* Mug Handle */}
+                {/* Armhole / Raglan Tailored Seam Contours */}
                 <path
-                  d="M210,80 C290,80 290,210 210,210"
+                  d="M144,34 Q118,78 110,126"
                   fill="none"
-                  stroke={selectedBodyColor.hex}
-                  strokeWidth="32"
-                  strokeLinecap="round"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.09)"
+                      : "rgba(0,0,0,0.1)"
+                  }
+                  strokeWidth="1.5"
                 />
                 <path
-                  d="M210,80 C290,80 290,210 210,210"
+                  d="M296,34 Q322,78 330,126"
                   fill="none"
-                  stroke="rgba(0,0,0,0.2)"
-                  strokeWidth="32"
-                  strokeLinecap="round"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.09)"
+                      : "rgba(0,0,0,0.1)"
+                  }
+                  strokeWidth="1.5"
                 />
-                {/* Mug Cylinder Body */}
-                <rect
-                  x="70"
-                  y="40"
-                  width="170"
-                  height="220"
-                  rx="18"
+
+                {/* Ribbed Crewneck Collar Band */}
+                <path
+                  d="M158,28 Q182,72 220,72 Q258,72 282,28 L293,32 Q265,84 220,84 Q175,84 147,32 Z"
                   fill={selectedBodyColor.hex}
-                  stroke="rgba(0,0,0,0.15)"
-                  strokeWidth="2"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.16)"
+                      : "rgba(0,0,0,0.18)"
+                  }
+                  strokeWidth="1.5"
                 />
-                <rect x="70" y="40" width="170" height="220" rx="18" fill="url(#ceramicSheen)" />
+                <path
+                  d="M158,28 Q182,72 220,72 Q258,72 282,28 L293,32 Q265,84 220,84 Q175,84 147,32 Z"
+                  fill="rgba(0,0,0,0.14)"
+                />
+                {/* Collar Twin-Needle Stitching */}
+                <path
+                  d="M144,35 Q173,88 220,88 Q267,88 296,35"
+                  fill="none"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.18)"
+                      : "rgba(0,0,0,0.2)"
+                  }
+                  strokeWidth="1.2"
+                  strokeDasharray="3 2"
+                />
+
+                {/* Twin-Needle Sleeve Cuff & Bottom Hem Stitching */}
+                <line
+                  x1="25"
+                  y1="122"
+                  x2="74"
+                  y2="159"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.16)"
+                      : "rgba(0,0,0,0.18)"
+                  }
+                  strokeWidth="1.2"
+                  strokeDasharray="3 2"
+                />
+                <line
+                  x1="415"
+                  y1="122"
+                  x2="366"
+                  y2="159"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.16)"
+                      : "rgba(0,0,0,0.18)"
+                  }
+                  strokeWidth="1.2"
+                  strokeDasharray="3 2"
+                />
+                <path
+                  d="M113,358 Q220,363 327,358"
+                  fill="none"
+                  stroke={
+                    selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.16)"
+                      : "rgba(0,0,0,0.18)"
+                  }
+                  strokeWidth="1.2"
+                  strokeDasharray="3 2"
+                />
               </svg>
 
-              {/* Mug Print Area */}
-              <div className="absolute top-[48%] left-[45%] -translate-x-1/2 -translate-y-1/2 w-28 text-center pointer-events-none space-y-1">
-                {uploadedLogo && (
-                  <div className="relative w-8 h-8 mx-auto mb-1">
-                    <Image src={uploadedLogo} alt="Logo" fill className="object-contain" />
+              {/* Chest Imprint Zone: Strictly contained inside torso (w-[43%]), Text always layered on top (z-20) over Logo (z-10) */}
+              <div className="absolute top-[29%] left-1/2 -translate-x-1/2 w-[43%] max-w-[168px] px-1 text-center pointer-events-none flex flex-col items-center">
+                {showText && (
+                  <div className="relative z-20 flex flex-col items-center w-full overflow-hidden">
+                    <h4
+                      className="font-display font-black text-xs sm:text-sm md:text-base tracking-tight leading-tight break-words w-full"
+                      style={{
+                        color: selectedImprintColor.hex,
+                        textShadow: selectedImprintColor.isFoil
+                          ? "0 1px 3px rgba(0,0,0,0.35)"
+                          : "none",
+                      }}
+                    >
+                      {brandName || "YOUR BRAND"}
+                    </h4>
+                    {tagline && (
+                      <p
+                        className="font-sans font-semibold text-[7px] sm:text-[8px] tracking-wider uppercase opacity-90 mt-1 break-words w-full leading-snug"
+                        style={{ color: selectedImprintColor.hex }}
+                      >
+                        {tagline}
+                      </p>
+                    )}
                   </div>
                 )}
-                <h4
-                  className="font-display font-black text-xs sm:text-sm tracking-tight leading-none"
-                  style={{ color: selectedImprintColor.hex }}
-                >
-                  {brandName || "YOUR BRAND"}
-                </h4>
-                {tagline && (
-                  <p
-                    className="font-sans font-semibold text-[7px] tracking-wider uppercase opacity-90"
-                    style={{ color: selectedImprintColor.hex }}
-                  >
-                    {tagline}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
 
-          {/* Mockup Product 3: Curved Luxury Business Card */}
-          {activeProduct === "card" && (
-            <div
-              className="relative w-72 sm:w-84 h-44 sm:h-50 rounded-[22px] p-6 shadow-2xl flex flex-col justify-between border transition-colors duration-200"
-              style={{
-                backgroundColor: selectedBodyColor.hex,
-                borderColor: selectedBodyColor.isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
-              }}
-            >
-              {/* Foil Stamped Logo and Name */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <h4
-                    className="font-display font-black text-lg sm:text-xl tracking-tight leading-tight"
+                {uploadedLogo && (
+                  <div
+                    className="relative z-10 w-12 h-12 sm:w-14 sm:h-14 mt-2.5 transition-transform duration-150 ease-out"
                     style={{
-                      color: selectedImprintColor.hex,
-                      textShadow: selectedImprintColor.isFoil ? "0 1px 2px rgba(0,0,0,0.3)" : "none",
+                      transform: `translate(${logoOffset.x}px, ${logoOffset.y}px) scale(${logoScale})`,
+                      transformOrigin: "center center",
                     }}
                   >
-                    {brandName || "YOUR COMPANY"}
-                  </h4>
-                  {tagline && (
-                    <p
-                      className="font-sans font-bold text-[9px] tracking-widest uppercase mt-0.5"
-                      style={{ color: selectedImprintColor.hex, opacity: 0.85 }}
+                    <Image
+                      src={uploadedLogo}
+                      alt="Logo"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Mockup Product 2: Realistic 3D Glazed Ceramic Coffee Mug */}
+          {activeProduct === "mug" && (
+            <div className="relative w-[272px] sm:w-[336px] h-[252px] sm:h-[310px] max-w-full flex items-center justify-center filter drop-shadow-2xl">
+              <svg viewBox="0 0 360 320" className="w-full h-full">
+                <defs>
+                  <linearGradient
+                    id="ceramicSheen"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="rgba(0,0,0,0.32)" />
+                    <stop offset="16%" stopColor="rgba(255,255,255,0.45)" />
+                    <stop offset="28%" stopColor="rgba(255,255,255,0.12)" />
+                    <stop offset="55%" stopColor="rgba(0,0,0,0.04)" />
+                    <stop offset="82%" stopColor="rgba(0,0,0,0.22)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.4)" />
+                  </linearGradient>
+                  <linearGradient
+                    id="mugInterior"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="rgba(0,0,0,0.55)" />
+                    <stop offset="100%" stopColor="rgba(0,0,0,0.25)" />
+                  </linearGradient>
+                </defs>
+
+                {/* Ergonomic 3D C-Handle */}
+                <path
+                  d="M235,88 C322,88 322,226 235,226"
+                  fill="none"
+                  stroke={selectedBodyColor.hex}
+                  strokeWidth="34"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M235,88 C322,88 322,226 235,226"
+                  fill="none"
+                  stroke="rgba(0,0,0,0.24)"
+                  strokeWidth="34"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M240,94 C310,94 310,220 240,220"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.22)"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
+
+                {/* Tapered Ceramic Base Foot */}
+                <path
+                  d="M78,266 Q155,282 232,266 L224,280 Q155,292 86,280 Z"
+                  fill={selectedBodyColor.hex}
+                />
+                <path
+                  d="M78,266 Q155,282 232,266 L224,280 Q155,292 86,280 Z"
+                  fill="rgba(0,0,0,0.35)"
+                />
+
+                {/* Mug Cylinder Body */}
+                <path
+                  d="M65,52 L65,252 C65,268 105,278 155,278 C205,278 245,268 245,252 L245,52 Z"
+                  fill={selectedBodyColor.hex}
+                  stroke="rgba(0,0,0,0.15)"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M65,52 L65,252 C65,268 105,278 155,278 C205,278 245,268 245,252 L245,52 Z"
+                  fill="url(#ceramicSheen)"
+                />
+
+                {/* Specular Vertical Ceramic Highlight Bar */}
+                <rect
+                  x="88"
+                  y="64"
+                  width="14"
+                  height="194"
+                  rx="7"
+                  fill="rgba(255,255,255,0.18)"
+                />
+
+                {/* Top Elliptical Rim & Inner Mug Opening */}
+                <ellipse
+                  cx="155"
+                  cy="52"
+                  rx="90"
+                  ry="18"
+                  fill={selectedBodyColor.hex}
+                  stroke="rgba(255,255,255,0.35)"
+                  strokeWidth="2"
+                />
+                <ellipse
+                  cx="155"
+                  cy="52"
+                  rx="82"
+                  ry="13"
+                  fill={selectedBodyColor.hex}
+                />
+                <ellipse
+                  cx="155"
+                  cy="52"
+                  rx="82"
+                  ry="13"
+                  fill="url(#mugInterior)"
+                />
+              </svg>
+
+              {/* Mug Print Area: Strictly contained inside mug cylinder (w-[43%]), Text on top (z-20), Logo beneath (z-10) */}
+              <div className="absolute top-[33%] left-[43%] -translate-x-1/2 w-[43%] px-1 text-center pointer-events-none flex flex-col items-center">
+                {showText && (
+                  <div className="relative z-20 flex flex-col items-center w-full overflow-hidden">
+                    <h4
+                      className="font-display font-black text-xs sm:text-sm tracking-tight leading-tight break-words w-full"
+                      style={{
+                        color: selectedImprintColor.hex,
+                        textShadow: selectedImprintColor.isFoil
+                          ? "0 1px 2px rgba(0,0,0,0.3)"
+                          : "none",
+                      }}
                     >
-                      {tagline}
-                    </p>
+                      {brandName || "YOUR BRAND"}
+                    </h4>
+                    {tagline && (
+                      <p
+                        className="font-sans font-semibold text-[6.5px] sm:text-[7.5px] tracking-wider uppercase opacity-90 mt-1 break-words w-full leading-snug"
+                        style={{ color: selectedImprintColor.hex }}
+                      >
+                        {tagline}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {uploadedLogo && (
+                  <div
+                    className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 mt-2 transition-transform duration-150 ease-out"
+                    style={{
+                      transform: `translate(${logoOffset.x * 0.75}px, ${logoOffset.y * 0.75}px) scale(${logoScale})`,
+                      transformOrigin: "center center",
+                    }}
+                  >
+                    <Image
+                      src={uploadedLogo}
+                      alt="Logo"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Mockup Product 3: 600gsm Curved Luxury Business Card Stack */}
+          {activeProduct === "card" && (
+            <div className="relative flex items-center justify-center">
+              {/* Angled Backing Card Stack for 3D Depth */}
+              <div
+                className="absolute inset-0 rounded-[22px] border shadow-xl -rotate-3 translate-y-2.5 translate-x-2 opacity-65 pointer-events-none"
+                style={{
+                  backgroundColor: selectedBodyColor.hex,
+                  borderColor: selectedBodyColor.isDark
+                    ? "rgba(255,255,255,0.18)"
+                    : "rgba(0,0,0,0.14)",
+                }}
+              />
+
+              {/* Primary Foreground Luxury Business Card */}
+              <div
+                className="relative z-10 w-[308px] sm:w-[400px] h-[196px] sm:h-[240px] max-w-full rounded-[22px] p-6 sm:p-7 shadow-2xl flex flex-col justify-between border transition-colors duration-200 overflow-hidden"
+                style={{
+                  backgroundColor: selectedBodyColor.hex,
+                  borderColor: selectedBodyColor.isDark
+                    ? "rgba(255,255,255,0.22)"
+                    : "rgba(0,0,0,0.14)",
+                }}
+              >
+                {/* Diagonal Cotton Paper & Foil Sheen Overlay */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 48%, rgba(0,0,0,0.18) 100%)",
+                  }}
+                />
+
+                {/* Foil Stamped Name & Tagline (z-20) on top, Logo (z-10) */}
+                <div className="relative flex flex-col">
+                  <div className="relative z-20 flex items-start justify-between gap-2">
+                    {showText ? (
+                      <div className="min-w-0 flex-1">
+                        <h4
+                          className="font-display font-black text-lg sm:text-2xl tracking-tight leading-tight break-words"
+                          style={{
+                            color: selectedImprintColor.hex,
+                            textShadow: selectedImprintColor.isFoil
+                              ? "0 1px 3px rgba(0,0,0,0.35)"
+                              : "none",
+                          }}
+                        >
+                          {brandName || "YOUR COMPANY"}
+                        </h4>
+                        {tagline && (
+                          <p
+                            className="font-sans font-bold text-[9px] sm:text-[10px] tracking-widest uppercase mt-1 break-words leading-snug"
+                            style={{
+                              color: selectedImprintColor.hex,
+                              opacity: 0.88,
+                            }}
+                          >
+                            {tagline}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex-1" />
+                    )}
+
+                    {!uploadedLogo && (
+                      <Award
+                        className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"
+                        style={{ color: selectedImprintColor.hex }}
+                      />
+                    )}
+                  </div>
+
+                  {uploadedLogo && (
+                    <div
+                      className="relative z-10 w-10 h-10 sm:w-12 sm:h-12 mt-2.5 self-center transition-transform duration-150 ease-out"
+                      style={{
+                        transform: `translate(${logoOffset.x}px, ${logoOffset.y * 0.65}px) scale(${logoScale})`,
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      <Image
+                        src={uploadedLogo}
+                        alt="Logo"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                   )}
                 </div>
 
-                {uploadedLogo ? (
-                  <div className="relative w-10 h-10 rounded overflow-hidden">
-                    <Image src={uploadedLogo} alt="Logo" fill className="object-contain" />
+                {/* Bottom Card Specs */}
+                <div
+                  className="relative z-20 flex items-end justify-between border-t pt-3"
+                  style={{
+                    borderColor: selectedBodyColor.isDark
+                      ? "rgba(255,255,255,0.12)"
+                      : "rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <div
+                    className="text-[9px] font-mono"
+                    style={{ color: selectedImprintColor.hex, opacity: 0.8 }}
+                  >
+                    600GSM COTTON · CURVED CORNER
                   </div>
-                ) : (
-                  <Award
-                    className="w-5 h-5 shrink-0"
+                  <div
+                    className="text-[9px] font-mono font-bold"
                     style={{ color: selectedImprintColor.hex }}
-                  />
-                )}
-              </div>
-
-              {/* Bottom Card Specs */}
-              <div className="flex items-end justify-between border-t border-white/10 pt-3">
-                <div className="text-[9px] font-mono" style={{ color: selectedImprintColor.hex, opacity: 0.8 }}>
-                  600GSM COTTON · CURVED CORNER
-                </div>
-                <div className="text-[9px] font-mono font-bold" style={{ color: selectedImprintColor.hex }}>
-                  SHOMOLU PRESS
+                  >
+                    SHOMOLU PRESS
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Mockup Product 4: Magnetic Rigid Box */}
-          {activeProduct === "box" && (
-            <div
-              className="relative w-72 sm:w-84 h-52 sm:h-58 rounded-card p-7 shadow-2xl flex flex-col items-center justify-center text-center border transition-colors duration-200"
-              style={{
-                backgroundColor: selectedBodyColor.hex,
-                borderColor: selectedBodyColor.isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
-              }}
-            >
-              {/* Embossed Magnetic Lid Seam */}
-              <div className="absolute top-0 inset-x-0 h-4 bg-black/10 rounded-t-card border-b border-black/15" />
+          {/* Mockup Product 4: Realistic Hardcover Spiral Note Jotter */}
+          {activeProduct === "jotter" && (
+            <div className="relative flex items-center justify-center filter drop-shadow-2xl">
+              {/* Layered Cream/White Paper Page Stack Edges */}
+              <div className="absolute -right-2.5 top-2.5 bottom-2.5 w-4 rounded-r-lg bg-slate-200 border border-slate-300 shadow-lg" />
+              <div className="absolute -right-1.5 top-2 bottom-2 w-3 rounded-r-md bg-white border border-slate-300" />
+              <div className="absolute -right-0.5 top-1.5 bottom-1.5 w-2 rounded-r-md bg-slate-50 border-r border-slate-300" />
 
-              {uploadedLogo && (
-                <div className="relative w-12 h-12 mb-2">
-                  <Image src={uploadedLogo} alt="Logo" fill className="object-contain" />
-                </div>
-              )}
+              {/* Twin-Loop Metallic Wire-O Spiral Rings Along Left Spine */}
+              <div className="relative z-30 -mr-2.5 flex flex-col justify-between h-[248px] sm:h-[296px] py-2">
+                {[...Array(10)].map((_, idx) => (
+                  <div key={idx} className="space-y-0.5">
+                    <div className="w-5 h-2 rounded-full bg-gradient-to-r from-slate-500 via-white to-slate-600 border border-slate-700/50 shadow-xs" />
+                    <div className="w-5 h-1.5 rounded-full bg-gradient-to-r from-slate-600 via-slate-100 to-slate-500 border border-slate-700/50 shadow-xs" />
+                  </div>
+                ))}
+              </div>
 
-              <h4
-                className="font-display font-black text-xl sm:text-2xl tracking-tighter leading-tight"
+              {/* Jotter Hardcover Front */}
+              <div
+                className="relative z-10 w-[236px] sm:w-[288px] h-[276px] sm:h-[332px] max-w-full rounded-r-card rounded-l-[6px] pl-7 pr-6 py-7 shadow-2xl flex flex-col items-center justify-center text-center border transition-colors duration-200 overflow-hidden"
                 style={{
-                  color: selectedImprintColor.hex,
-                  textShadow: selectedImprintColor.isFoil ? "0 1px 3px rgba(0,0,0,0.4)" : "none",
+                  backgroundColor: selectedBodyColor.hex,
+                  borderColor: selectedBodyColor.isDark
+                    ? "rgba(255,255,255,0.2)"
+                    : "rgba(0,0,0,0.14)",
                 }}
               >
-                {brandName || "LUXURY PACKAGING"}
-              </h4>
+                {/* Hardcover 3D Lighting Sheen */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(125deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.02) 45%, rgba(0,0,0,0.22) 100%)",
+                  }}
+                />
 
-              {tagline && (
-                <p
-                  className="font-sans font-bold text-[9px] tracking-widest uppercase mt-1"
-                  style={{ color: selectedImprintColor.hex, opacity: 0.85 }}
-                >
-                  {tagline}
-                </p>
-              )}
+                {/* Punched Spiral Binding Holes Along Left Spine */}
+                <div className="absolute left-2 top-3.5 bottom-3.5 flex flex-col justify-between py-0.5 pointer-events-none">
+                  {[...Array(10)].map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="w-2 h-2.5 rounded-xs bg-black/45 border border-white/10"
+                    />
+                  ))}
+                </div>
 
-              <div className="absolute bottom-3 text-[9px] font-mono opacity-60 text-white">
-                1200GSM RIGID MAGNETIC CLOSURE
+                {/* Center Brand Imprint: Text on top (z-20), movable/scalable Logo beneath (z-10) */}
+                <div className="relative flex flex-col items-center my-auto w-full overflow-hidden px-1">
+                  {showText && (
+                    <div className="relative z-20 flex flex-col items-center w-full">
+                      <h4
+                        className="font-display font-black text-base sm:text-xl tracking-tight leading-tight break-words w-full"
+                        style={{
+                          color: selectedImprintColor.hex,
+                          textShadow: selectedImprintColor.isFoil
+                            ? "0 1px 3px rgba(0,0,0,0.38)"
+                            : "none",
+                        }}
+                      >
+                        {brandName || "EVENT JOTTER"}
+                      </h4>
+
+                      {tagline && (
+                        <p
+                          className="font-sans font-bold text-[8px] sm:text-[9px] tracking-widest uppercase mt-1 break-words w-full leading-snug"
+                          style={{
+                            color: selectedImprintColor.hex,
+                            opacity: 0.88,
+                          }}
+                        >
+                          {tagline}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {uploadedLogo && (
+                    <div
+                      className="relative z-10 w-12 h-12 sm:w-14 sm:h-14 mt-3 transition-transform duration-150 ease-out"
+                      style={{
+                        transform: `translate(${logoOffset.x * 0.8}px, ${logoOffset.y * 0.8}px) scale(${logoScale})`,
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      <Image
+                        src={uploadedLogo}
+                        alt="Logo"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -555,36 +1085,68 @@ export function LivePrintCanvas() {
 
       {/* Control Studio Console */}
       <div className="p-5 md:p-6 space-y-4 bg-card">
-        {/* Row 1: Brand Name & Tagline Inputs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-bold text-ink mb-1">
-              Your Company / Brand Name
-            </label>
-            <input
-              type="text"
-              maxLength={24}
-              value={brandName}
-              onChange={(e) => setBrandName(e.target.value)}
-              placeholder="e.g. Apex Global"
-              className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-xs text-ink font-semibold focus:outline-none focus:border-primary"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-ink mb-1">
-              Tagline / Sub-Text
-            </label>
-            <input
-              type="text"
-              maxLength={36}
-              value={tagline}
-              onChange={(e) => setTagline(e.target.value)}
-              placeholder="e.g. Lagos, Nigeria"
-              className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
-            />
-          </div>
+        {/* Text Visibility Toggle Bar */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+            Brand Text &amp; Tagline
+          </span>
+          <button
+            type="button"
+            onClick={() => setShowText((prev) => !prev)}
+            aria-pressed={showText}
+            title={showText ? "Hide text on mockup (Logo only)" : "Show text on mockup"}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[34px] rounded-button border text-[11px] font-bold transition-colors cursor-pointer ${
+              showText
+                ? "bg-primary-pale/60 border-primary/40 text-ink"
+                : "bg-canvas-soft border-border text-ink-muted hover:text-ink"
+            }`}
+          >
+            {showText ? (
+              <>
+                <Eye className="w-3.5 h-3.5 text-primary" />
+                <span>Text On</span>
+              </>
+            ) : (
+              <>
+                <EyeOff className="w-3.5 h-3.5" />
+                <span>Text Off (Logo Only)</span>
+              </>
+            )}
+          </button>
         </div>
+
+        {/* Row 1: Brand Name & Tagline Inputs */}
+        {showText && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-ink mb-1">
+                Your Company / Brand Name
+              </label>
+              <input
+                type="text"
+                maxLength={20}
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+                placeholder="e.g. Apex Global"
+                className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-xs text-ink font-semibold focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-ink mb-1">
+                Tagline / Sub-Text
+              </label>
+              <input
+                type="text"
+                maxLength={32}
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                placeholder="e.g. Lagos, Nigeria"
+                className="w-full px-3 py-2 rounded-button bg-canvas-soft border border-border text-xs text-ink focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Row 2: Color Swatches & Logo Upload */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
@@ -644,7 +1206,7 @@ export function LivePrintCanvas() {
                 </button>
               ))}
 
-              {/* Upload Logo Trigger */}
+              {/* Upload & Delete Logo Triggers */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -652,18 +1214,134 @@ export function LivePrintCanvas() {
                 onChange={handleLogoUpload}
                 className="hidden"
               />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 min-h-[36px] rounded-button bg-canvas-soft border border-border text-[11px] font-semibold text-ink hover:bg-canvas-muted transition-colors flex items-center gap-1.5 cursor-pointer"
-                title="Upload transparent PNG logo"
-              >
-                <Upload className="w-3.5 h-3.5 text-primary" />
-                <span>{uploadedLogo ? "Change Logo" : "Upload Logo"}</span>
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1.5 min-h-[36px] rounded-button bg-canvas-soft border border-border text-[11px] font-semibold text-ink hover:bg-canvas-muted transition-colors flex items-center gap-1.5 cursor-pointer"
+                  title="Upload transparent PNG logo"
+                >
+                  <Upload className="w-3.5 h-3.5 text-primary" />
+                  <span>{uploadedLogo ? "Change Logo" : "Upload Logo"}</span>
+                </button>
+
+                {uploadedLogo && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="p-2 min-h-[36px] min-w-[36px] rounded-button bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 transition-colors flex items-center justify-center cursor-pointer"
+                    title="Delete uploaded logo"
+                    aria-label="Delete uploaded logo"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Interactive Logo Placement (Up/Down/Left/Right) & Scale Studio Bar */}
+        {uploadedLogo && (
+          <div className="p-3.5 rounded-card bg-canvas-soft border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {/* 4-Direction Nudge Controls */}
+            <div className="flex items-center justify-between sm:justify-start gap-2">
+              <span className="text-[11px] font-bold text-ink mr-1">
+                Move Logo:
+              </span>
+              <div className="inline-flex items-center gap-1 bg-card p-1 rounded-button border border-border shadow-soft">
+                <button
+                  type="button"
+                  onClick={() => nudgeLogo(-8, 0)}
+                  title="Move Left"
+                  aria-label="Move Logo Left"
+                  className="p-1.5 min-h-[32px] min-w-[32px] rounded-theme hover:bg-canvas-soft text-ink flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => nudgeLogo(0, -8)}
+                  title="Move Up"
+                  aria-label="Move Logo Up"
+                  className="p-1.5 min-h-[32px] min-w-[32px] rounded-theme hover:bg-canvas-soft text-ink flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => nudgeLogo(0, 8)}
+                  title="Move Down"
+                  aria-label="Move Logo Down"
+                  className="p-1.5 min-h-[32px] min-w-[32px] rounded-theme hover:bg-canvas-soft text-ink flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => nudgeLogo(8, 0)}
+                  title="Move Right"
+                  aria-label="Move Logo Right"
+                  className="p-1.5 min-h-[32px] min-w-[32px] rounded-theme hover:bg-canvas-soft text-ink flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={resetLogoTransform}
+                  title="Reset Logo Position & Size"
+                  aria-label="Reset Logo Position & Size"
+                  className="px-2 py-1 min-h-[32px] rounded-theme hover:bg-canvas-soft text-ink-muted hover:text-ink text-[10px] font-bold flex items-center gap-1 border-l border-border/60 ml-0.5 transition-colors cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Logo Scale / Size Controls */}
+            <div className="flex items-center justify-between sm:justify-end gap-2">
+              <span className="text-[11px] font-bold text-ink">
+                Logo Size:{" "}
+                <strong className="text-primary">
+                  {Math.round(logoScale * 100)}%
+                </strong>
+              </span>
+              <div className="inline-flex items-center gap-1.5 bg-card px-2 py-1 rounded-button border border-border shadow-soft">
+                <button
+                  type="button"
+                  onClick={() => adjustLogoScale(-0.15)}
+                  disabled={logoScale <= 0.6}
+                  title="Decrease Logo Size"
+                  aria-label="Decrease Logo Size"
+                  className="p-1 min-h-[28px] min-w-[28px] rounded-theme hover:bg-canvas-soft text-ink disabled:opacity-35 flex items-center justify-center cursor-pointer"
+                >
+                  <ZoomOut className="w-3.5 h-3.5" />
+                </button>
+                <input
+                  type="range"
+                  min="0.6"
+                  max="2.2"
+                  step="0.05"
+                  value={logoScale}
+                  onChange={(e) => setLogoScale(parseFloat(e.target.value))}
+                  aria-label="Logo size scale"
+                  className="w-20 sm:w-24 accent-primary cursor-pointer"
+                />
+                <button
+                  type="button"
+                  onClick={() => adjustLogoScale(0.15)}
+                  disabled={logoScale >= 2.2}
+                  title="Increase Logo Size"
+                  aria-label="Increase Logo Size"
+                  className="p-1 min-h-[28px] min-w-[28px] rounded-theme hover:bg-canvas-soft text-ink disabled:opacity-35 flex items-center justify-center cursor-pointer"
+                >
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Row 3: Action Buttons (Snapshot Download, WhatsApp, Cart) */}
         <div className="pt-3 border-t border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

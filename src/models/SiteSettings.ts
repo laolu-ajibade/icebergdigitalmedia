@@ -39,7 +39,11 @@ export interface ISiteSettings extends Document {
   aboutChecks: string[];
   aboutImage: string;
   faqs: Array<{ question: string; answer: string }>;
-  processSteps: Array<{ stepNumber: string; title: string; description: string }>;
+  processSteps: Array<{
+    stepNumber: string;
+    title: string;
+    description: string;
+  }>;
   studioItems: Array<{
     id: string;
     label: string;
@@ -71,19 +75,22 @@ const SiteSettingsSchema: Schema = new Schema(
     },
     phone: { type: String, default: "+234 802 309 3704" },
     whatsappRouting: { type: String, default: "+2348023093704" },
-    email: { type: String, default: "hazkendigital@gmail.com" },
+    email: { type: String, default: "digitalmedia@gmail.com" },
     workingHoursWeekday: { type: String, default: "09:00 - 18:00" },
     workingHoursSaturday: { type: String, default: "10:00 - 18:00" },
     workingHoursSunday: { type: String, default: "Closed" },
-    facebookUrl: { type: String, default: "https://facebook.com/hazkendigital" },
-    instagramUrl: { type: String, default: "https://instagram.com/hazkendigital" },
-    twitterUrl: { type: String, default: "https://x.com/hazkendigital" },
+    facebookUrl: { type: String, default: "https://facebook.com/digitalmedia" },
+    instagramUrl: {
+      type: String,
+      default: "https://instagram.com/digitalmedia",
+    },
+    twitterUrl: { type: String, default: "https://x.com/digitalmedia" },
     linkedinUrl: {
       type: String,
-      default: "https://linkedin.com/company/hazkendigital",
+      default: "https://linkedin.com/company/digitalmedia",
     },
-    youtubeUrl: { type: String, default: "https://youtube.com/@hazkendigital" },
-    tiktokUrl: { type: String, default: "https://tiktok.com/@hazkendigital" },
+    youtubeUrl: { type: String, default: "https://youtube.com/@digitalmedia" },
+    tiktokUrl: { type: String, default: "https://tiktok.com/@digitalmedia" },
     googlePlaceId: { type: String, default: "" },
     googleApiKey: { type: String, default: "" },
     deliveryPartners: {
@@ -102,7 +109,10 @@ const SiteSettingsSchema: Schema = new Schema(
     heroPrimaryCtaText: { type: String, default: "Explore Products" },
     heroPrimaryCtaLink: { type: String, default: "#top-selling" },
     heroSecondaryCtaText: { type: String, default: "Instant WhatsApp Quote" },
-    heroSecondaryCtaLink: { type: String, default: "https://wa.me/2348023093704" },
+    heroSecondaryCtaLink: {
+      type: String,
+      default: "https://wa.me/2348023093704",
+    },
     stats: {
       type: [{ value: { type: String }, label: { type: String } }],
       default: [],
@@ -179,17 +189,17 @@ const SiteSettingsSchema: Schema = new Schema(
           productSlug: "curved-edge-luxury-business-cards",
         },
         {
-          id: "box",
-          label: "Rigid Box",
-          price: 25000,
-          minQty: 25,
-          stockDesc: "1200gsm Magnetic Greyboard",
-          productSlug: "luxury-magnetic-rigid-gift-box",
+          id: "jotter",
+          label: "Jotters",
+          price: 15000,
+          minQty: 50,
+          stockDesc: "A5 Hardcover Spiral Note Jotter",
+          productSlug: "custom-hardcover-spiral-note-jotter",
         },
       ],
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const SiteSettings: Model<ISiteSettings> =

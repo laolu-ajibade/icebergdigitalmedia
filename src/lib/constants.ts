@@ -1,3 +1,10 @@
+// Canonical Site URL for SEO, Sitemaps, and OpenGraph
+export const SITE_URL =
+  (process.env.NEXT_PUBLIC_SITE_URL || "https://icebergprints.com").replace(
+    /\/+$/,
+    ""
+  );
+
 // Centralized Asset & Cloudflare R2 Constants
 export const R2_PUBLIC_BASE =
   process.env.NEXT_PUBLIC_R2_URL ||
