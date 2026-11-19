@@ -3,6 +3,7 @@
 import React from "react";
 import { Phone, Clock, MessageSquare, Sparkles } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { CONTACT_PHONE, WHATSAPP_NUMBER, getWhatsAppLink } from "@/lib/constants";
 
 export function TopBanner() {
   const { theme, toggleTheme } = useTheme();
@@ -12,11 +13,11 @@ export function TopBanner() {
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-6 flex-wrap">
           <a
-            href="tel:+2349029480399"
+            href={`tel:${WHATSAPP_NUMBER}`}
             className="flex items-center gap-1.5 hover:text-primary transition-colors font-medium"
           >
             <Phone className="w-3.5 h-3.5 text-primary" />
-            <span>+234 902 948 0399</span>
+            <span>{CONTACT_PHONE}</span>
           </a>
           <div className="hidden sm:flex items-center gap-1.5 opacity-80">
             <Clock className="w-3.5 h-3.5" />
@@ -37,7 +38,7 @@ export function TopBanner() {
           </button>
 
           <a
-            href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20have%20an%20inquiry%20regarding%20commercial%20printing."
+            href={getWhatsAppLink("Hello Iceberg Studio, I have an inquiry regarding commercial printing.")}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 text-primary hover:underline font-semibold"

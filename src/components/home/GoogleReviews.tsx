@@ -17,9 +17,20 @@ export function GoogleReviews() {
     fetch("/api/reviews")
       .then((res) => res.json())
       .then((data) => {
+        console.log("%c[Google Business Reviews Data Received]:", "color: #4285F4; font-weight: bold; font-size: 13px;", data);
+        if (data.isLive) {
+          console.log("%c✓ Live Google Reviews Loaded Successfully!", "color: #34A853; font-weight: bold;", data.reviews);
+        } else {
+          console.warn(
+            "[Google Reviews] Currently displaying verified fallback because live Google API returned:",
+            data.googleApiResponse || data.error || "No live reviews returned"
+          );
+        }
         if (data.reviews) setReviewsData(data);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[Google Reviews] Failed to fetch /api/reviews:", err);
+      });
   }, []);
 
   return (

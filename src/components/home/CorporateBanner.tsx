@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Check, MessageSquare, ArrowRight } from "lucide-react";
+import { CONTACT_PHONE, WHATSAPP_NUMBER, getWhatsAppLink } from "@/lib/constants";
 
 export function CorporateBanner() {
   const perks = [
@@ -29,7 +30,7 @@ export function CorporateBanner() {
 
               <div className="flex flex-wrap items-center gap-3 mt-6">
                 <a
-                  href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20would%20like%20to%20discuss%20a%20corporate%20brand%20rollout%20or%20bulk%20order."
+                  href={getWhatsAppLink("Hello Iceberg Studio, I would like to discuss a corporate brand rollout or bulk order.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-button bg-primary text-primary-foreground font-bold text-xs hover:bg-primary-hover transition-colors shadow-soft"
@@ -39,10 +40,10 @@ export function CorporateBanner() {
                 </a>
 
                 <a
-                  href="tel:+2349029480399"
+                  href={`tel:${WHATSAPP_NUMBER}`}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-button bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition-colors"
                 >
-                  <span>Direct Desk: +234 902 948 0399</span>
+                  <span>Direct Desk: {CONTACT_PHONE}</span>
                 </a>
               </div>
             </div>

@@ -48,51 +48,63 @@ const defaultVerifiedReviews = [
 
 export async function GET() {
   try {
-    await ensureSeeded();
-    const db = await connectDB();
     let settings = memoryStore.settings;
-    if (db) {
-      const dbSettings = await SiteSettings.findOne();
-      if (dbSettings) settings = dbSettings;
+    try {
+      await ensureSeeded();
+      const db = await connectDB();
+      if (db) {
+        const dbSettings = await SiteSettings.findOne();
+        if (dbSettings) settings = dbSettings;
+      }
+    } catch (dbErr: any) {
+      console.warn("[Google Reviews API] Non-fatal DB note:", dbErr.message);
     }
 
     const googlePlaceId = process.env.GOOGLE_PLACE_ID || settings?.googlePlaceId;
     const googleApiKey = process.env.GOOGLE_API_KEY || settings?.googleApiKey;
 
+    let googleApiDetails: any = null;
+
     if (googlePlaceId && googleApiKey) {
       try {
         const url = `https://places.googleapis.com/v1/places/${googlePlaceId}`;
+        console.log(`[Google Reviews API] Querying Google Places API New: ${url}`);
         const res = await fetch(url, {
           headers: {
             "Content-Type": "application/json",
             "X-Goog-Api-Key": googleApiKey,
             "X-Goog-FieldMask": "id,displayName,rating,userRatingCount,reviews",
           },
-          next: { revalidate: 3600 },
+          cache: "no-store",
         });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.reviews && data.reviews.length > 0) {
-            const formatted = data.reviews.slice(0, 5).map((r: any) => ({
-              authorName: r.authorAttribution?.displayName || "Google Reviewer",
-              authorPhoto: r.authorAttribution?.photoUri || "",
-              rating: r.rating || 5,
-              relativeTimeDescription: r.relativePublishTimeDescription || "Recently",
-              text: r.text?.text || r.originalText?.text || "",
-            }));
 
-            return NextResponse.json({
-              rating: data.rating || 4.9,
-              totalReviews: data.userRatingCount || 128,
-              reviews: formatted,
-              isLive: true,
-              googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
-              googleMapsUrl: `https://www.google.com/maps/place/?q=place_id=${googlePlaceId}`,
-            });
-          }
+        const data = await res.json();
+        googleApiDetails = { status: res.status, data };
+        console.log("[Google Reviews API] Status Code:", res.status);
+        console.log("[Google Reviews API] Data Received from Google:", JSON.stringify(data, null, 2));
+
+        if (res.ok && data.reviews && data.reviews.length > 0) {
+          const formatted = data.reviews.slice(0, 5).map((r: any) => ({
+            authorName: r.authorAttribution?.displayName || "Google Reviewer",
+            authorPhoto: r.authorAttribution?.photoUri || "",
+            rating: r.rating || 5,
+            relativeTimeDescription: r.relativePublishTimeDescription || "Recently",
+            text: r.text?.text || r.originalText?.text || "",
+          }));
+
+          return NextResponse.json({
+            rating: data.rating || 4.9,
+            totalReviews: data.userRatingCount || 128,
+            reviews: formatted,
+            isLive: true,
+            googleApiResponse: data,
+            googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
+            googleMapsUrl: `https://www.google.com/maps/place/?q=place_id=${googlePlaceId}`,
+          });
         }
       } catch (err: any) {
-        console.warn("Failed to fetch live Google Reviews, using verified fallback:", err.message);
+        googleApiDetails = { error: err.message };
+        console.warn("[Google Reviews API] Fetch error:", err.message);
       }
     }
 
@@ -105,6 +117,7 @@ export async function GET() {
       totalReviews: 128,
       reviews: defaultVerifiedReviews,
       isLive: false,
+      googleApiResponse: googleApiDetails,
       googleReviewUrl: defaultReviewUrl,
       googleMapsUrl: defaultMapsUrl,
     });

@@ -16,6 +16,7 @@ import {
   Youtube,
   Send,
 } from "lucide-react";
+import { CONTACT_PHONE, WHATSAPP_NUMBER, getWhatsAppLink } from "@/lib/constants";
 
 export function Footer() {
   return (
@@ -65,8 +66,8 @@ export function Footer() {
             </div>
             <div className="flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-primary shrink-0" />
-              <a href="tel:+2349029480399" className="hover:text-primary transition-colors">
-                +234 902 948 0399
+              <a href={`tel:${WHATSAPP_NUMBER}`} className="hover:text-primary transition-colors">
+                {CONTACT_PHONE}
               </a>
             </div>
             <div className="flex items-center gap-2.5">
@@ -184,7 +185,7 @@ export function Footer() {
               </h4>
               <div className="flex items-center gap-2">
                 <a
-                  href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%20Team%2C%20I%20have%20an%20inquiry."
+                  href={getWhatsAppLink("Hello Iceberg Studio Team, I have an inquiry.")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-8 h-8 rounded-theme bg-[#25D366] text-white flex items-center justify-center hover:opacity-90"
@@ -232,7 +233,7 @@ export function Footer() {
             Copyright © 2019 - 2026 Hazken Digital / Iceberg Creative Print Studio. All Rights Reserved.
           </p>
           <a
-            href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20need%20assistance."
+            href={getWhatsAppLink("Hello Iceberg Studio, I need assistance.")}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 rounded-button bg-[#d03238] hover:bg-[#b5262c] text-white font-bold text-xs transition-colors flex items-center gap-1.5"
@@ -244,7 +245,7 @@ export function Footer() {
 
       {/* Floating WhatsApp Action Trigger */}
       <a
-        href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Creative%20Print%20Studio%2C%20I%20would%20like%20to%20order%20commercial%20prints."
+        href={getWhatsAppLink("Hello Iceberg Creative Print Studio, I would like to order commercial prints.")}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-elevation flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"

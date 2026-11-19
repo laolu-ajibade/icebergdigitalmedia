@@ -2,14 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { Save, Check, ExternalLink, ShieldCheck, HelpCircle } from "lucide-react";
+import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<any>({
     companyName: "Iceberg Creative Print Studio",
     tagline: "Turning Ideas Into Impressions....",
     address: "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria",
-    phone: "+234 902 948 0399",
-    whatsappRouting: "+2349029480399",
+    phone: CONTACT_PHONE,
+    whatsappRouting: `+${WHATSAPP_NUMBER}`,
     email: "hazkendigital@gmail.com",
     workingHoursWeekday: "09:00 - 18:00",
     workingHoursSaturday: "10:00 - 18:00",
@@ -209,7 +210,7 @@ export default function AdminSettingsPage() {
                 required
                 value={settings.whatsappRouting || ""}
                 onChange={(e) => setSettings({ ...settings, whatsappRouting: e.target.value })}
-                placeholder="+2349029480399"
+                placeholder={`+${WHATSAPP_NUMBER}`}
                 className="w-full px-3 py-2.5 rounded-button bg-canvas-soft border border-border text-ink"
               />
               <p className="text-[11px] text-ink-muted mt-1">
@@ -225,7 +226,7 @@ export default function AdminSettingsPage() {
                 type="text"
                 value={settings.phone || ""}
                 onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                placeholder="+234 902 948 0399"
+                placeholder={CONTACT_PHONE}
                 className="w-full px-3 py-2.5 rounded-button bg-canvas-soft border border-border text-ink"
               />
             </div>

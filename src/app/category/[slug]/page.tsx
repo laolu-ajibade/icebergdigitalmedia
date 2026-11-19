@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Send, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getWhatsAppLink } from "@/lib/constants";
 
 export default function CategoryDedicatedPage({
   params,
@@ -83,7 +84,7 @@ export default function CategoryDedicatedPage({
     msg += `💰 *Total:* ₦${tier.totalPrice.toLocaleString()}\n\n`;
     msg += `Hello Iceberg Studio team, I am on your category page and would like to confirm my order specifications!`;
 
-    window.open(`https://wa.me/2349029480399?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(getWhatsAppLink(msg), "_blank");
     setSelectedProduct(null);
   };
 
@@ -140,7 +141,7 @@ export default function CategoryDedicatedPage({
               Our factory can print any custom size or requirement. Contact our WhatsApp desk directly for an immediate tailored quote.
             </p>
             <a
-              href={`https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20have%20a%20custom%20inquiry%20for%20${encodeURIComponent(category?.name || slug)}.`}
+              href={getWhatsAppLink(`Hello Iceberg Studio, I have a custom inquiry for ${category?.name || slug}.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-button bg-[#25D366] text-white font-bold text-xs"

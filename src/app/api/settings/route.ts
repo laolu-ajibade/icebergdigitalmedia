@@ -18,6 +18,12 @@ export async function GET() {
         if (!obj.googleApiKey && process.env.GOOGLE_API_KEY) {
           obj.googleApiKey = process.env.GOOGLE_API_KEY;
         }
+        if (process.env.NEXT_PUBLIC_CONTACT_PHONE) {
+          obj.phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
+        }
+        if (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) {
+          obj.whatsappRouting = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+        }
         return NextResponse.json({ settings: obj });
       }
     }
@@ -27,6 +33,12 @@ export async function GET() {
     }
     if (!memSettings.googleApiKey && process.env.GOOGLE_API_KEY) {
       memSettings.googleApiKey = process.env.GOOGLE_API_KEY;
+    }
+    if (process.env.NEXT_PUBLIC_CONTACT_PHONE) {
+      memSettings.phone = process.env.NEXT_PUBLIC_CONTACT_PHONE;
+    }
+    if (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) {
+      memSettings.whatsappRouting = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
     }
     return NextResponse.json({ settings: memSettings });
   } catch (error: any) {

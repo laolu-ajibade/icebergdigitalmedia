@@ -16,6 +16,7 @@ import {
   Check,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getWhatsAppLink } from "@/lib/constants";
 
 type ProductType = "tshirt" | "mug" | "card" | "box";
 
@@ -248,7 +249,7 @@ export function LivePrintCanvas() {
     if (r2LogoUrl) msg += `📎 *Uploaded Logo Proof:* ${r2LogoUrl}\n`;
     msg += `\nHello Iceberg Studio team, I generated this mockup on your website and would like to proceed with production!`;
 
-    window.open(`https://wa.me/2349029480399?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(getWhatsAppLink(msg), "_blank");
   };
 
   const handleAddToCart = () => {

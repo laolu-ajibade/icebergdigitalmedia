@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, ArrowRight, Check, Send } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getWhatsAppLink } from "@/lib/constants";
 
 export function TopSellingProducts() {
   const [products, setProducts] = useState<any[]>([]);
@@ -64,7 +65,7 @@ export function TopSellingProducts() {
     msg += `💰 *Total:* ₦${tier.totalPrice.toLocaleString()}\n\n`;
     msg += `Hello Iceberg Studio team, I'd like to place this order and send over artwork files.`;
 
-    window.open(`https://wa.me/2349029480399?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(getWhatsAppLink(msg), "_blank");
     setSelectedProduct(null);
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 export interface CartItem {
   id: string;
@@ -94,7 +95,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     customerName: string,
     customerPhone: string,
     deliveryAddress: string,
-    routingNumber = "+2349029480399"
+    routingNumber = WHATSAPP_NUMBER
   ) => {
     const cleanNumber = routingNumber.replace(/[^0-9]/g, "");
     

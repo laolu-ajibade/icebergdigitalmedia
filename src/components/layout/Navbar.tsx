@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getWhatsAppLink } from "@/lib/constants";
 
 const categoryIconMap: Record<string, React.ElementType> = {
   Package,
@@ -217,7 +218,7 @@ export function Navbar() {
 
             {/* Direct WhatsApp Quote CTA */}
             <a
-              href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20would%20like%20to%20request%20a%20commercial%20print%20quote."
+              href={getWhatsAppLink("Hello Iceberg Studio, I would like to request a commercial print quote.")}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:inline-flex items-center justify-center px-4 py-2.5 rounded-button bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary-hover transition-colors shadow-soft"
@@ -277,7 +278,7 @@ export function Navbar() {
             Blog
           </Link>
           <a
-            href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20would%20like%20to%20request%20a%20commercial%20print%20quote."
+            href={getWhatsAppLink("Hello Iceberg Studio, I would like to request a commercial print quote.")}
             target="_blank"
             rel="noopener noreferrer"
             className="block text-center w-full py-2.5 rounded-button bg-primary text-primary-foreground font-semibold text-sm"

@@ -23,3 +23,17 @@ export const LOCAL_DEFAULTS = {
   favicon: "/favicon.ico",
   placeholder: "/logo-icon.jpg",
 };
+
+// Contact & WhatsApp Configuration (configurable via environment variables)
+export const CONTACT_PHONE =
+  process.env.NEXT_PUBLIC_CONTACT_PHONE || "+234 802 309 3704";
+
+// Clean raw digits for wa.me link (e.g. 2348023093704)
+export const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ||
+  CONTACT_PHONE.replace(/[^0-9]/g, "");
+
+export const getWhatsAppLink = (message: string = "") => {
+  const textParam = message ? `?text=${encodeURIComponent(message)}` : "";
+  return `https://wa.me/${WHATSAPP_NUMBER}${textParam}`;
+};

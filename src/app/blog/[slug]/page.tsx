@@ -4,6 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, MessageSquare, Share2 } from "lucide-react";
+import { getWhatsAppLink } from "@/lib/constants";
 
 export default function BlogPostReaderPage({
   params,
@@ -129,7 +130,7 @@ export default function BlogPostReaderPage({
               </p>
             </div>
             <a
-              href="https://wa.me/2349029480399?text=Hello%20Iceberg%20Studio%2C%20I%20read%20your%20print%20article%20and%20would%20like%20to%20discuss%20a%20project."
+              href={getWhatsAppLink("Hello Iceberg Studio, I read your print article and would like to discuss a project.")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-button bg-[#25D366] text-white font-bold text-xs shrink-0 shadow-soft"
