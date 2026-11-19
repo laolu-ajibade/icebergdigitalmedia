@@ -12,7 +12,11 @@ import { FaqSection } from "@/components/home/FaqSection";
 import { connectDB } from "@/lib/db";
 import { SiteSettings } from "@/models/SiteSettings";
 import { Review } from "@/models/Review";
+import { Product } from "@/models/Product";
+import { Category } from "@/models/Category";
 import { SITE_URL, CONTACT_PHONE, R2_IMAGES } from "@/lib/constants";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title:
@@ -27,13 +31,31 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   let localBusinessJsonLd: Record<string, any> | null = null;
   let faqJsonLd: Record<string, any> | null = null;
+  let initialProducts: any[] = [];
+  let initialCategories: any[] = [];
+  let initialFaqs: Array<{ question: string; answer: string }> = [];
 
   try {
     await connectDB();
-    const [settings, reviews] = await Promise.all([
+    const [settings, reviews, products, categories] = await Promise.all([
       SiteSettings.findOne().lean() as Promise<any>,
       Review.find({ featured: true }, { rating: 1 }).lean() as Promise<any[]>,
+      Product.find({ isTopSelling: true }).sort({ createdAt: -1 }).limit(6).lean() as Promise<any[]>,
+      Category.find().sort({ order: 1 }).limit(10).lean() as Promise<any[]>,
     ]);
+
+    initialProducts = JSON.parse(JSON.stringify(products || []));
+    initialCategories = JSON.parse(JSON.stringify(categories || []));
+    initialFaqs = Array.isArray(settings?.faqs)
+      ? JSON.parse(JSON.stringify(settings.faqs))
+      : [];
+
+    const socialLinks = [
+      settings?.instagram,
+      settings?.facebook,
+      settings?.twitter,
+      settings?.linkedin,
+    ].filter((u) => typeof u === "string" && u.startsWith("http"));
 
     const reviewCount = reviews?.length || 9;
     const avgRating =
@@ -56,7 +78,7 @@ export default async function HomePage() {
       url: SITE_URL,
       image: R2_IMAGES.boxes,
       telephone: settings?.phone || CONTACT_PHONE,
-      email: settings?.email || "digitalmedia@gmail.com",
+      email: settings?.email || "hello@icebergprints.com",
       address: {
         "@type": "PostalAddress",
         streetAddress:
@@ -67,6 +89,22 @@ export default async function HomePage() {
       },
       areaServed: "NG",
       priceRange: "₦₦",
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ],
+          opens: "08:00",
+          closes: "18:00",
+        },
+      ],
+      ...(socialLinks.length > 0 ? { sameAs: socialLinks } : {}),
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue:
@@ -114,15 +152,15 @@ export default async function HomePage() {
         />
       )}
       <Hero />
-      <TopSellingProducts />
-      <CategoryGrid />
+      <TopSellingProducts initialProducts={initialProducts} />
+      <CategoryGrid initialCategories={initialCategories} />
       <HowOrderingWorks />
       <GoogleReviews />
       <CorporateBanner />
       <StatsSection />
       <AboutSection />
       <BlogPreview />
-      <FaqSection />
+      <FaqSection initialFaqs={initialFaqs} />
     </>
   );
 }

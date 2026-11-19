@@ -31,17 +31,22 @@ const categoryIconMap: Record<string, React.ElementType> = {
   Box: Package,
 };
 
-export function CategoryGrid() {
-  const [categories, setCategories] = useState<any[]>([]);
+export function CategoryGrid({
+  initialCategories,
+}: {
+  initialCategories?: any[];
+}) {
+  const [categories, setCategories] = useState<any[]>(initialCategories || []);
 
   useEffect(() => {
+    if (initialCategories && initialCategories.length > 0) return;
     fetch("/api/categories")
       .then(res => res.json())
       .then(data => {
         if (data.categories) setCategories(data.categories);
       })
       .catch(() => {});
-  }, []);
+  }, [initialCategories]);
 
   return (
     <section className="py-16 md:py-24 bg-canvas-soft border-b border-border/40">

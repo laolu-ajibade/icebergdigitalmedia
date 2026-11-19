@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/models/Product";
 import { SITE_URL } from "@/lib/constants";
@@ -55,9 +56,13 @@ export default async function ProductSlugLayout({
   let productJsonLd: Record<string, any> | null = null;
   let breadcrumbJsonLd: Record<string, any> | null = null;
 
+  let product: any = null;
+  let dbChecked = false;
+
   try {
     await connectDB();
-    const product: any = await Product.findOne({ slug }).lean();
+    product = await Product.findOne({ slug }).lean();
+    dbChecked = true;
     if (product) {
       const images =
         product.gallery && product.gallery.length > 0
@@ -66,10 +71,19 @@ export default async function ProductSlugLayout({
             ? [product.image]
             : [];
 
+      const tierTotals = Array.isArray(product.quantityTiers)
+        ? product.quantityTiers
+            .map((t: any) => Number(t.totalPrice))
+            .filter((n: number) => Number.isFinite(n) && n > 0)
+        : [];
+      const basePrice = Number(product.basePrice || 0);
+      const hasMultipleTiers = tierTotals.length > 1;
+
       productJsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
         name: product.title,
+        sku: product.slug,
         description: product.description,
         image: images,
         category: product.categoryName,
@@ -77,13 +91,23 @@ export default async function ProductSlugLayout({
           "@type": "Brand",
           name: "Iceberg Creative Print Studio",
         },
-        offers: {
-          "@type": "Offer",
-          url: `${SITE_URL}/product/${slug}`,
-          priceCurrency: "NGN",
-          price: Number(product.basePrice || 0),
-          availability: "https://schema.org/InStock",
-        },
+        offers: hasMultipleTiers
+          ? {
+              "@type": "AggregateOffer",
+              url: `${SITE_URL}/product/${slug}`,
+              priceCurrency: "NGN",
+              lowPrice: Math.min(...tierTotals),
+              highPrice: Math.max(...tierTotals),
+              offerCount: tierTotals.length,
+              availability: "https://schema.org/InStock",
+            }
+          : {
+              "@type": "Offer",
+              url: `${SITE_URL}/product/${slug}`,
+              priceCurrency: "NGN",
+              price: basePrice,
+              availability: "https://schema.org/InStock",
+            },
       };
 
       breadcrumbJsonLd = {
@@ -113,6 +137,10 @@ export default async function ProductSlugLayout({
     }
   } catch {
     // Graceful fallback if DB is unreachable
+  }
+
+  if (dbChecked && !product) {
+    notFound();
   }
 
   return (

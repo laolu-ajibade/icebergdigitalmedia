@@ -4,11 +4,15 @@ import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-export function FaqSection() {
+export function FaqSection({
+  initialFaqs,
+}: {
+  initialFaqs?: Array<{ question: string; answer: string }>;
+}) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   const settings = useSiteSettings();
   const faqs: Array<{ question: string; answer: string }> =
-    settings?.faqs || [];
+    settings?.faqs?.length ? settings.faqs : initialFaqs || [];
 
   if (faqs.length === 0) return null;
 

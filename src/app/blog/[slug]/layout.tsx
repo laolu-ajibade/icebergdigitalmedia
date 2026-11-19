@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Blog } from "@/models/Blog";
-import { SITE_URL } from "@/lib/constants";
+import { SITE_URL, R2_IMAGES } from "@/lib/constants";
 
 export async function generateMetadata({
   params,
@@ -54,9 +55,13 @@ export default async function BlogSlugLayout({
   let articleJsonLd: Record<string, any> | null = null;
   let breadcrumbJsonLd: Record<string, any> | null = null;
 
+  let blog: any = null;
+  let dbChecked = false;
+
   try {
     await connectDB();
-    const blog: any = await Blog.findOne({ slug }).lean();
+    blog = await Blog.findOne({ slug }).lean();
+    dbChecked = true;
     if (blog) {
       articleJsonLd = {
         "@context": "https://schema.org",
@@ -67,6 +72,11 @@ export default async function BlogSlugLayout({
         datePublished: blog.publishedAt
           ? new Date(blog.publishedAt).toISOString()
           : undefined,
+        dateModified: blog.updatedAt
+          ? new Date(blog.updatedAt).toISOString()
+          : blog.publishedAt
+            ? new Date(blog.publishedAt).toISOString()
+            : undefined,
         author: {
           "@type": "Organization",
           name: blog.author || "Iceberg Creative Print Studio",
@@ -74,6 +84,10 @@ export default async function BlogSlugLayout({
         publisher: {
           "@type": "Organization",
           name: "Iceberg Creative Print Studio",
+          logo: {
+            "@type": "ImageObject",
+            url: R2_IMAGES.logo,
+          },
         },
         mainEntityOfPage: `${SITE_URL}/blog/${slug}`,
       };
@@ -105,6 +119,10 @@ export default async function BlogSlugLayout({
     }
   } catch {
     // Graceful fallback
+  }
+
+  if (dbChecked && !blog) {
+    notFound();
   }
 
   return (

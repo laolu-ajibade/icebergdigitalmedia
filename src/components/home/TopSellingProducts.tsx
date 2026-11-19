@@ -5,17 +5,22 @@ import Link from "next/link";
 import { ShoppingBag, ArrowRight } from "lucide-react";
 import { ProductImageCarousel } from "@/components/ui/ProductImageCarousel";
 
-export function TopSellingProducts() {
-  const [products, setProducts] = useState<any[]>([]);
+export function TopSellingProducts({
+  initialProducts,
+}: {
+  initialProducts?: any[];
+}) {
+  const [products, setProducts] = useState<any[]>(initialProducts || []);
 
   useEffect(() => {
+    if (initialProducts && initialProducts.length > 0) return;
     fetch("/api/products?topSelling=true")
       .then((res) => res.json())
       .then((data) => {
         if (data.products) setProducts(data.products);
       })
       .catch(() => {});
-  }, []);
+  }, [initialProducts]);
 
   return (
     <section

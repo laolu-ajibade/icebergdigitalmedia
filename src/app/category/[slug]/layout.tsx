@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Category } from "@/models/Category";
+import { Product } from "@/models/Product";
 import { SITE_URL } from "@/lib/constants";
 
 export async function generateMetadata({
@@ -51,10 +53,18 @@ export default async function CategorySlugLayout({
 }) {
   const { slug } = await params;
   let breadcrumbJsonLd: Record<string, any> | null = null;
+  let itemListJsonLd: Record<string, any> | null = null;
+  let category: any = null;
+  let dbChecked = false;
 
   try {
     await connectDB();
-    const category: any = await Category.findOne({ slug }).lean();
+    const [catDoc, categoryProducts] = await Promise.all([
+      Category.findOne({ slug }).lean(),
+      Product.find({ categorySlug: slug }, { title: 1, slug: 1 }).lean(),
+    ]);
+    category = catDoc;
+    dbChecked = true;
     if (category) {
       breadcrumbJsonLd = {
         "@context": "https://schema.org",
@@ -80,9 +90,27 @@ export default async function CategorySlugLayout({
           },
         ],
       };
+
+      if (categoryProducts.length > 0) {
+        itemListJsonLd = {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: `${category.name} Products`,
+          itemListElement: categoryProducts.map((p: any, idx: number) => ({
+            "@type": "ListItem",
+            position: idx + 1,
+            name: p.title,
+            url: `${SITE_URL}/product/${p.slug}`,
+          })),
+        };
+      }
     }
   } catch {
     // Graceful fallback
+  }
+
+  if (dbChecked && !category) {
+    notFound();
   }
 
   return (
@@ -91,6 +119,12 @@ export default async function CategorySlugLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+      )}
+      {itemListJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
         />
       )}
       {children}
