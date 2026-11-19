@@ -42,11 +42,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="iceberg"
+      data-theme="wise"
       className={`${displayFont.variable} ${sansFont.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased flex flex-col min-h-screen">
+      <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
         <ThemeProvider>
           <CartProvider>
             <VisitTracker />

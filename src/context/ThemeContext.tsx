@@ -13,7 +13,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("iceberg");
+  const [theme, setThemeState] = useState<Theme>("wise");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(saved);
       document.documentElement.setAttribute("data-theme", saved);
     } else {
-      document.documentElement.setAttribute("data-theme", "iceberg");
+      setThemeState("wise");
+      document.documentElement.setAttribute("data-theme", "wise");
     }
     setMounted(true);
   }, []);
@@ -34,7 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleTheme = () => {
-    const nextTheme: Theme = theme === "iceberg" ? "wise" : "iceberg";
+    const nextTheme: Theme = theme === "wise" ? "iceberg" : "wise";
     setTheme(nextTheme);
   };
 

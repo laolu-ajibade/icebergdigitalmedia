@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Phone, Clock, MessageSquare, Sparkles } from "lucide-react";
+import { Phone, Clock, MessageSquare } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { CONTACT_PHONE, WHATSAPP_NUMBER, getWhatsAppLink } from "@/lib/constants";
 
@@ -30,11 +30,10 @@ export function TopBanner() {
         <div className="flex items-center gap-4">
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-button bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer text-[11px]"
-            title="Toggle between Iceberg Brand and Wise Canvas design systems"
+            className="flex items-center px-2.5 py-1 rounded-button bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer text-[11px]"
+            title="Toggle between Wise Canvas and Iceberg Brand design systems"
           >
-            <Sparkles className="w-3 h-3 text-secondary" />
-            <span>Theme: {theme === "iceberg" ? "Iceberg Studio" : "Wise Canvas"}</span>
+            <span>Theme: {theme === "wise" ? "Wise Canvas" : "Iceberg Studio"}</span>
           </button>
 
           <a
