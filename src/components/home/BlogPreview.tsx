@@ -5,17 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock, User } from "lucide-react";
 
-export function BlogPreview() {
-  const [blogs, setBlogs] = useState<any[]>([]);
+export function BlogPreview({ initialBlogs }: { initialBlogs?: any[] }) {
+  const [blogs, setBlogs] = useState<any[]>(initialBlogs || []);
 
   useEffect(() => {
+    if (initialBlogs && initialBlogs.length > 0) return;
     fetch("/api/blogs")
       .then(res => res.json())
       .then(data => {
         if (data.blogs) setBlogs(data.blogs);
       })
       .catch(() => {});
-  }, []);
+  }, [initialBlogs]);
 
   return (
     <section className="py-16 md:py-24 bg-canvas-soft border-b border-border/40">

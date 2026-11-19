@@ -14,6 +14,7 @@ import { SiteSettings } from "@/models/SiteSettings";
 import { Review } from "@/models/Review";
 import { Product } from "@/models/Product";
 import { Category } from "@/models/Category";
+import { Blog } from "@/models/Blog";
 import { SITE_URL, CONTACT_PHONE, R2_IMAGES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -34,18 +35,23 @@ export default async function HomePage() {
   let initialProducts: any[] = [];
   let initialCategories: any[] = [];
   let initialFaqs: Array<{ question: string; answer: string }> = [];
+  let initialSettings: any = null;
+  let initialBlogs: any[] = [];
 
   try {
     await connectDB();
-    const [settings, reviews, products, categories] = await Promise.all([
+    const [settings, reviews, products, categories, blogs] = await Promise.all([
       SiteSettings.findOne().lean() as Promise<any>,
       Review.find({ featured: true }, { rating: 1 }).lean() as Promise<any[]>,
       Product.find({ isTopSelling: true }).sort({ createdAt: -1 }).limit(6).lean() as Promise<any[]>,
       Category.find().sort({ order: 1 }).limit(10).lean() as Promise<any[]>,
+      Blog.find({ published: { $ne: false } }).sort({ publishedAt: -1 }).limit(2).lean() as Promise<any[]>,
     ]);
 
+    initialSettings = settings ? JSON.parse(JSON.stringify(settings)) : null;
     initialProducts = JSON.parse(JSON.stringify(products || []));
     initialCategories = JSON.parse(JSON.stringify(categories || []));
+    initialBlogs = JSON.parse(JSON.stringify(blogs || []));
     initialFaqs = Array.isArray(settings?.faqs)
       ? JSON.parse(JSON.stringify(settings.faqs))
       : [];
@@ -153,15 +159,15 @@ export default async function HomePage() {
           }}
         />
       )}
-      <Hero />
+      <Hero initialSettings={initialSettings} />
       <TopSellingProducts initialProducts={initialProducts} />
       <CategoryGrid initialCategories={initialCategories} />
-      <HowOrderingWorks />
+      <HowOrderingWorks initialSteps={initialSettings?.processSteps} />
       <GoogleReviews />
       <CorporateBanner />
       <StatsSection />
-      <AboutSection />
-      <BlogPreview />
+      <AboutSection initialSettings={initialSettings} />
+      <BlogPreview initialBlogs={initialBlogs} />
       <FaqSection initialFaqs={initialFaqs} />
     </>
   );

@@ -44,7 +44,7 @@ export function Footer() {
   const phone = settings?.phone || CONTACT_PHONE;
   const whatsapp =
     (settings?.whatsappRouting || "").replace(/[^0-9]/g, "") || WHATSAPP_NUMBER;
-  const email = settings?.email || "digitalmedia@gmail.com";
+  const email = settings?.email || "icebergcreativeprintstudio@gmail.com";
   const hoursWeekday = settings?.workingHoursWeekday || "09:00 - 18:00";
   const hoursSat = settings?.workingHoursSaturday || "10:00 - 18:00";
   const hoursSun = settings?.workingHoursSunday || "Closed";
@@ -226,7 +226,7 @@ export function Footer() {
                   href="/#about-studio"
                   className="hover:text-primary transition-colors block py-0.5"
                 >
-                  About Studio
+                  About
                 </Link>
               </li>
               <li>
@@ -234,7 +234,7 @@ export function Footer() {
                   href="/#faq-section"
                   className="hover:text-primary transition-colors block py-0.5"
                 >
-                  Contact & FAQ
+                  FAQ
                 </Link>
               </li>
             </ul>

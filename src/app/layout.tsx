@@ -92,12 +92,6 @@ export default function RootLayout({
       className={`${displayFont.variable} ${sansFont.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap"
-        />
-      </head>
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
         <ThemeProvider>
           <ToastProvider>

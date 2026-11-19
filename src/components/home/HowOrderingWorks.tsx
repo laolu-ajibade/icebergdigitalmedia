@@ -6,10 +6,14 @@ import { useSiteSettings } from "@/lib/useSiteSettings";
 
 const STEP_ICONS = [Sliders, FileCheck, CheckCircle2, PackageCheck];
 
-export function HowOrderingWorks() {
+export function HowOrderingWorks({
+  initialSteps,
+}: {
+  initialSteps?: Array<{ stepNumber: string; title: string; description: string }>;
+}) {
   const settings = useSiteSettings();
   const steps: Array<{ stepNumber: string; title: string; description: string }> =
-    settings?.processSteps || [];
+    settings?.processSteps?.length ? settings.processSteps : initialSteps || [];
 
   if (steps.length === 0) return null;
 

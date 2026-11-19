@@ -6,8 +6,9 @@ import { MapPin, Award, CheckCircle2 } from "lucide-react";
 import { R2_IMAGES } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-export function AboutSection() {
-  const settings = useSiteSettings();
+export function AboutSection({ initialSettings }: { initialSettings?: any }) {
+  const clientSettings = useSiteSettings();
+  const settings = clientSettings || initialSettings;
 
   const headline =
     settings?.aboutHeadline ||

@@ -1235,7 +1235,7 @@ export default function AdminSettingsPage() {
         {activeTab === "about" && (
           <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-5">
             <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
-              About Studio Story & Workshop Image
+              About Story & Workshop Image
             </h2>
             <div>
               <label className="block font-bold text-ink mb-1.5">

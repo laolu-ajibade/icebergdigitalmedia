@@ -207,7 +207,7 @@ export function Navbar() {
               href="/#about-studio"
               className="text-sm font-semibold text-ink hover:text-primary transition-colors"
             >
-              About Studio
+              About
             </Link>
 
             <Link

@@ -43,6 +43,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [settings?.defaultTheme, userOverrode]);
 
+  useEffect(() => {
+    if (theme !== "brand") return;
+    if (document.getElementById("montserrat-brand-font")) return;
+    const link = document.createElement("link");
+    link.id = "montserrat-brand-font";
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap";
+    document.head.appendChild(link);
+  }, [theme]);
+
   const setTheme = (newTheme: Theme) => {
     setUserOverrode(true);
     setThemeState(newTheme);

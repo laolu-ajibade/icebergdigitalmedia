@@ -79,6 +79,23 @@ export default async function ProductSlugLayout({
       const basePrice = Number(product.basePrice || 0);
       const hasMultipleTiers = tierTotals.length > 1;
 
+      const specProperties =
+        product.specifications && typeof product.specifications === "object"
+          ? Object.entries(product.specifications).map(([name, value]) => ({
+              "@type": "PropertyValue",
+              name,
+              value: String(value),
+            }))
+          : [];
+
+      if (product.turnaroundDays) {
+        specProperties.push({
+          "@type": "PropertyValue",
+          name: "Turnaround Time",
+          value: String(product.turnaroundDays),
+        });
+      }
+
       productJsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
@@ -91,6 +108,9 @@ export default async function ProductSlugLayout({
           "@type": "Brand",
           name: "Iceberg Creative Print Studio",
         },
+        ...(specProperties.length > 0
+          ? { additionalProperty: specProperties }
+          : {}),
         offers: hasMultipleTiers
           ? {
               "@type": "AggregateOffer",

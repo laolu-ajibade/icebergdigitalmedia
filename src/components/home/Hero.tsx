@@ -6,8 +6,9 @@ import { ArrowRight, ShieldCheck, Truck, Zap, Layers } from "lucide-react";
 import { LivePrintCanvas } from "./LivePrintCanvas";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-export function Hero() {
-  const settings = useSiteSettings();
+export function Hero({ initialSettings }: { initialSettings?: any }) {
+  const clientSettings = useSiteSettings();
+  const settings = clientSettings || initialSettings;
 
   const headline =
     settings?.heroHeadline ||
