@@ -3,7 +3,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-type Theme = "iceberg" | "wise";
+type Theme = "iceberg" | "wise" | "brand";
+
+const VALID_THEMES: Theme[] = ["iceberg", "wise", "brand"];
+const isValidTheme = (value: unknown): value is Theme =>
+  typeof value === "string" && VALID_THEMES.includes(value as Theme);
 
 interface ThemeContextType {
   theme: Theme;
@@ -20,8 +24,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("iceberg-theme") as Theme | null;
-    if (saved === "wise" || saved === "iceberg") {
+    const saved = localStorage.getItem("iceberg-theme");
+    if (isValidTheme(saved)) {
       setThemeState(saved);
       document.documentElement.setAttribute("data-theme", saved);
     } else {
@@ -31,11 +35,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (
-      !userOverrode &&
-      (settings?.defaultTheme === "wise" || settings?.defaultTheme === "iceberg")
-    ) {
-      const dbTheme = settings.defaultTheme as Theme;
+    if (!userOverrode && isValidTheme(settings?.defaultTheme)) {
+      const dbTheme = settings.defaultTheme;
       setThemeState(dbTheme);
       localStorage.setItem("iceberg-theme", dbTheme);
       document.documentElement.setAttribute("data-theme", dbTheme);
@@ -50,7 +51,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleTheme = () => {
-    const nextTheme: Theme = theme === "wise" ? "iceberg" : "wise";
+    const order: Theme[] = ["iceberg", "brand", "wise"];
+    const nextTheme = order[(order.indexOf(theme) + 1) % order.length];
     setTheme(nextTheme);
   };
 

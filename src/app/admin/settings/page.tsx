@@ -301,7 +301,8 @@ export default function AdminSettingsPage() {
         clearSiteSettingsCache();
         if (
           settings.defaultTheme === "wise" ||
-          settings.defaultTheme === "iceberg"
+          settings.defaultTheme === "iceberg" ||
+          settings.defaultTheme === "brand"
         ) {
           setTheme(settings.defaultTheme);
         }
@@ -454,17 +455,23 @@ export default function AdminSettingsPage() {
                     <select
                       value={settings.defaultTheme || "iceberg"}
                       onChange={e => {
-                        const chosen = e.target.value as "wise" | "iceberg";
+                        const chosen = e.target.value as
+                          | "wise"
+                          | "iceberg"
+                          | "brand";
                         setSettings({ ...settings, defaultTheme: chosen });
                         setTheme(chosen);
                       }}
                       className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink cursor-pointer focus:outline-none focus:border-primary"
                     >
-                      <option value="wise">
-                        Wise Canvas (Editorial Light & Lime)
-                      </option>
                       <option value="iceberg">
                         Iceberg Studio (Deep Navy & Cyan)
+                      </option>
+                      <option value="brand">
+                        Iceberg Brand Manual (Deep Blue, Cyan & Gold)
+                      </option>
+                      <option value="wise">
+                        Wise Canvas (Editorial Light & Lime)
                       </option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />

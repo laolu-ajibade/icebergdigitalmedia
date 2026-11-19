@@ -73,6 +73,42 @@
   --shadow-elevation: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
+[data-theme="brand"] {
+  --primary: #0888B1;
+  --primary-hover: #0AA3D3;
+  --primary-active: #066F91;
+  --primary-pale: #EAF2FB;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #123B72;
+  --secondary-hover: #0E2E5A;
+  --secondary-foreground: #FFFFFF;
+
+  --accent: #C2A121;
+  --accent-foreground: #123B72;
+
+  --canvas: #FFFFFF;
+  --canvas-soft: #EAF2FB;
+  --canvas-muted: #F4F7F9;
+
+  --ink: #123B72;
+  --ink-deep: #0B2549;
+  --ink-body: #26323A;
+  --ink-muted: #526370;
+
+  --border: #D5E3F3;
+  --card: #FFFFFF;
+  --card-foreground: #123B72;
+  --card-border: #D5E3F3;
+
+  --radius: 16px;
+  --radius-card: 18px;
+  --radius-button: 12px;
+
+  --shadow-elevation: 0 20px 40px -15px rgba(18, 59, 114, 0.10);
+  --font-display: var(--font-montserrat);
+}
+
 * {
   box-sizing: border-box;
 }

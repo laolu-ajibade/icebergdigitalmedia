@@ -6,7 +6,7 @@ export interface ISiteSettings extends Document {
   footerSummary: string;
   footerDescription: string;
   footerMotto: string;
-  defaultTheme: "wise" | "iceberg";
+  defaultTheme: "wise" | "iceberg" | "brand";
   topBarHoursText: string;
   topBarTagline: string;
   reviewsTrustedCount: string;
@@ -75,7 +75,11 @@ const SiteSettingsSchema: Schema = new Schema(
       type: String,
       default: "Creativity as it speaks excellence!",
     },
-    defaultTheme: { type: String, enum: ["wise", "iceberg"], default: "iceberg" },
+    defaultTheme: {
+      type: String,
+      enum: ["wise", "iceberg", "brand"],
+      default: "iceberg",
+    },
     topBarHoursText: {
       type: String,
       default: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
