@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useRef,
+  useEffect,
 } from "react";
 import {
   AlertCircle,
@@ -112,6 +113,15 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  useEffect(() => {
+    if (!popup.isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closePopup();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [popup.isOpen, closePopup]);
+
   return (
     <ToastContext.Provider
       value={{ showToast, showError, showSuccess, showPopup, closePopup }}
@@ -192,7 +202,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {/* Center Modal Error / Alert Popup */}
       {popup.isOpen && (
         <div
-          className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
         >

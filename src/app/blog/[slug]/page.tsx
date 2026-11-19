@@ -88,12 +88,12 @@ export default function BlogPostReaderPage({
           {blog.content.split("\n\n").map((block: string, idx: number) => {
             if (block.startsWith("### ")) {
               return (
-                <h3
+                <h2
                   key={idx}
                   className="font-display font-bold text-xl sm:text-2xl text-ink pt-4 tracking-tight"
                 >
                   {block.replace("### ", "")}
-                </h3>
+                </h2>
               );
             }
             if (block.startsWith("- ")) {
@@ -122,9 +122,9 @@ export default function BlogPostReaderPage({
           {/* Callout Card */}
           <div className="mt-10 p-6 md:p-8 rounded-theme bg-primary-pale/40 border border-primary/30 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
-              <h4 className="font-display font-bold text-base text-ink">
+              <h3 className="font-display font-bold text-base text-ink">
                 Bring Your Ideas to Life with Iceberg Studio
-              </h4>
+              </h3>
               <p className="text-xs text-ink-muted mt-1 max-w-md">
                 Consult with our master printmakers in Shomolu, Lagos on paper
                 stocks, foil stamping, and bespoke packaging dielines.

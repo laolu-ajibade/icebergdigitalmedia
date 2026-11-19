@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { X, Trash2, ShoppingBag, Send, ArrowRight } from "lucide-react";
@@ -25,6 +25,15 @@ export function CartDrawer() {
   const [orderNotes, setOrderNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (!isCartOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsCartOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isCartOpen, setIsCartOpen]);
 
   if (!isCartOpen || pathname?.startsWith("/admin")) return null;
 
@@ -75,7 +84,7 @@ export function CartDrawer() {
       {/* Backdrop */}
       <div
         onClick={() => setIsCartOpen(false)}
-        className="absolute inset-0 bg-ink/60 backdrop-blur-xs transition-opacity"
+        className="absolute inset-0 bg-ink/60 backdrop-blur-sm transition-opacity"
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">

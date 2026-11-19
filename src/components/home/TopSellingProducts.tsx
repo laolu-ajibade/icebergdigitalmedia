@@ -51,7 +51,7 @@ export function TopSellingProducts() {
             return (
               <div
                 key={prod.slug}
-                className="bg-card rounded-card border border-border/70 overflow-hidden shadow-soft antigravity-card flex flex-col justify-between group"
+                className="bg-card rounded-card border border-card-border overflow-hidden shadow-soft antigravity-card flex flex-col justify-between group"
               >
                 <div>
                   <Link href={`/product/${prod.slug}`} className="block">
@@ -72,11 +72,11 @@ export function TopSellingProducts() {
                         {prod.title}
                       </h3>
                     </Link>
-                    <p className="text-xs text-ink-body mt-2 line-clamp-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-ink-body mt-2 line-clamp-2 leading-relaxed">
                       {prod.description}
                     </p>
 
-                    <div className="mt-4 pt-3 border-t border-border/50 flex items-baseline justify-between">
+                    <div className="mt-4 pt-3 border-t border-card-border flex items-baseline justify-between">
                       <div>
                         <span className="text-[11px] text-ink-muted block">
                           Starting From

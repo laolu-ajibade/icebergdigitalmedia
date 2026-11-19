@@ -37,7 +37,7 @@ export function FaqSection() {
             return (
               <div
                 key={idx}
-                className="bg-card rounded-card border border-border/80 overflow-hidden shadow-soft transition-colors"
+                className="bg-card rounded-card border border-card-border overflow-hidden shadow-soft transition-colors"
               >
                 <button
                   type="button"

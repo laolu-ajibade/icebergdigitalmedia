@@ -71,11 +71,12 @@ export function ProductImageCarousel({
           src={validImages[activeIndex] || validImages[0]}
           alt={`${alt} - View ${activeIndex + 1}`}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-500"
         />
 
         {overlayText && (
-          <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-theme bg-ink/80 text-white text-[11px] font-semibold backdrop-blur-xs z-10">
+          <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-theme bg-ink/80 text-white text-[11px] font-semibold backdrop-blur-sm z-10">
             {overlayText}
           </div>
         )}
@@ -100,7 +101,7 @@ export function ProductImageCarousel({
               <ChevronRight className="w-4 h-4" />
             </button>
 
-            <div className="absolute bottom-3 right-3 px-2 py-0.5 rounded-theme bg-ink/75 text-white text-[10px] font-mono font-semibold backdrop-blur-xs z-10">
+            <div className="absolute bottom-3 right-3 px-2 py-0.5 rounded-theme bg-ink/75 text-white text-[10px] font-mono font-semibold backdrop-blur-sm z-10">
               {activeIndex + 1} / {validImages.length}
             </div>
           </>

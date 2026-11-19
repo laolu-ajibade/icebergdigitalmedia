@@ -81,6 +81,13 @@ export function Footer() {
     tiktokUrl,
   );
 
+  const facebookHandle = (settings?.facebookUrl ?? "")
+    .trim()
+    .replace(/^https?:\/\/(www\.)?facebook\.com\//i, "")
+    .replace(/^@+/, "")
+    .replace(/\/+$/, "");
+  const messengerUrl = facebookHandle ? `https://m.me/${facebookHandle}` : "";
+
   const buildWaLink = (msg: string) =>
     `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`;
 
@@ -325,16 +332,18 @@ export function Footer() {
                   <MessageCircle className="w-4 h-4" />
                   <span>WhatsApp</span>
                 </a>
-                <a
-                  href="https://m.me/digitalmedia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 min-h-[38px] rounded-theme bg-[#0084ff] text-white text-xs font-bold hover:opacity-90 transition-opacity"
-                  aria-label="Chat on Messenger"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Messenger</span>
-                </a>
+                {messengerUrl && (
+                  <a
+                    href={messengerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3 py-2 min-h-[38px] rounded-theme bg-[#0084ff] text-white text-xs font-bold hover:opacity-90 transition-opacity"
+                    aria-label="Chat on Messenger"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Messenger</span>
+                  </a>
+                )}
               </div>
             </div>
 

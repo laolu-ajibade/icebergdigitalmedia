@@ -281,26 +281,59 @@ export function LivePrintCanvas() {
     // Render Product Base Shape
     ctx.fillStyle = selectedBodyColor.hex;
     if (activeProduct === "tshirt") {
+      // Tailored T-shirt silhouette with sleeves and crewneck
       ctx.beginPath();
-      ctx.roundRect(320, 220, 560, 520, 32);
+      ctx.moveTo(490, 175);
+      ctx.lineTo(350, 225);
+      ctx.lineTo(255, 325);
+      ctx.lineTo(335, 395);
+      ctx.lineTo(405, 330);
+      ctx.lineTo(405, 735);
+      ctx.lineTo(795, 735);
+      ctx.lineTo(795, 330);
+      ctx.lineTo(865, 395);
+      ctx.lineTo(945, 325);
+      ctx.lineTo(850, 225);
+      ctx.lineTo(710, 175);
+      ctx.quadraticCurveTo(600, 245, 490, 175);
+      ctx.closePath();
       ctx.fill();
     } else if (activeProduct === "mug") {
-      ctx.beginPath();
-      ctx.roundRect(400, 240, 400, 480, 24);
-      ctx.fill();
-      ctx.lineWidth = 40;
+      // Ergonomic C-handle
+      ctx.lineWidth = 44;
       ctx.strokeStyle = selectedBodyColor.hex;
       ctx.beginPath();
-      ctx.arc(800, 480, 80, -Math.PI / 2, Math.PI / 2);
+      ctx.arc(780, 480, 90, -Math.PI / 2, Math.PI / 2);
       ctx.stroke();
-    } else if (activeProduct === "card") {
+      // Mug cylinder body
       ctx.beginPath();
-      ctx.roundRect(300, 280, 600, 360, 28);
+      ctx.roundRect(390, 230, 390, 490, 28);
+      ctx.fill();
+    } else if (activeProduct === "card") {
+      // Layered backing card + foreground card
+      ctx.save();
+      ctx.globalAlpha = 0.6;
+      ctx.translate(600, 460);
+      ctx.rotate(-0.05);
+      ctx.beginPath();
+      ctx.roundRect(-300, -180, 600, 360, 28);
+      ctx.fill();
+      ctx.restore();
+      ctx.beginPath();
+      ctx.roundRect(300, 270, 600, 360, 28);
       ctx.fill();
     } else {
+      // Spiral Note Jotter cover + metallic wire-o rings
       ctx.beginPath();
-      ctx.roundRect(390, 190, 420, 540, 20);
+      ctx.roundRect(390, 190, 430, 540, 24);
       ctx.fill();
+      ctx.shadowColor = "transparent";
+      ctx.fillStyle = "#cbd5e1";
+      for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.roundRect(365, 220 + i * 48, 42, 16, 8);
+        ctx.fill();
+      }
     }
 
     // Reset shadow
@@ -354,7 +387,7 @@ export function LivePrintCanvas() {
   };
 
   return (
-    <div className="bg-card rounded-card border border-border/80 shadow-elevation overflow-hidden antigravity-card">
+    <div className="bg-card rounded-card border border-card-border shadow-elevation overflow-hidden antigravity-card">
       {/* Product Category Tabs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-border/60 bg-canvas-soft/70 p-1.5 gap-1.5">
         {dynamicProducts.map((p) => {
@@ -995,8 +1028,8 @@ export function LivePrintCanvas() {
               <div className="relative z-30 -mr-2.5 flex flex-col justify-between h-[248px] sm:h-[296px] py-2">
                 {[...Array(10)].map((_, idx) => (
                   <div key={idx} className="space-y-0.5">
-                    <div className="w-5 h-2 rounded-full bg-gradient-to-r from-slate-500 via-white to-slate-600 border border-slate-700/50 shadow-xs" />
-                    <div className="w-5 h-1.5 rounded-full bg-gradient-to-r from-slate-600 via-slate-100 to-slate-500 border border-slate-700/50 shadow-xs" />
+                    <div className="w-5 h-2 rounded-full bg-gradient-to-r from-slate-500 via-white to-slate-600 border border-slate-700/50 shadow-sm" />
+                    <div className="w-5 h-1.5 rounded-full bg-gradient-to-r from-slate-600 via-slate-100 to-slate-500 border border-slate-700/50 shadow-sm" />
                   </div>
                 ))}
               </div>
@@ -1025,7 +1058,7 @@ export function LivePrintCanvas() {
                   {[...Array(10)].map((_, idx) => (
                     <div
                       key={idx}
-                      className="w-2 h-2.5 rounded-xs bg-black/45 border border-white/10"
+                      className="w-2 h-2.5 rounded-sm bg-black/45 border border-white/10"
                     />
                   ))}
                 </div>

@@ -154,7 +154,7 @@ export function GoogleReviews() {
                 .map((rev: any, index: number) => (
                   <div
                     key={rev._id || index}
-                    className="bg-card rounded-card border border-border/80 p-5 sm:p-6 shadow-soft antigravity-card flex flex-col justify-between"
+                    className="bg-card rounded-card border border-card-border p-5 sm:p-6 shadow-soft antigravity-card flex flex-col justify-between"
                   >
                     <div>
                       {/* Rating & Timestamp */}
@@ -173,21 +173,22 @@ export function GoogleReviews() {
                       </div>
 
                       {/* Review Text */}
-                      <p className="text-xs text-ink-body leading-relaxed italic">
+                      <p className="text-xs sm:text-sm text-ink-body leading-relaxed italic">
                         &ldquo;{rev.text}&rdquo;
                       </p>
                     </div>
 
                     {/* Author Info */}
-                    <div className="mt-5 pt-4 border-t border-border/50">
+                    <div className="mt-5 pt-4 border-t border-card-border">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-3 min-w-0">
                           {rev.authorImage || rev.authorPhoto ? (
-                            <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-border/40 shrink-0">
+                            <div className="relative w-9 h-9 rounded-full overflow-hidden bg-canvas-soft border border-card-border shrink-0">
                               <Image
                                 src={rev.authorImage || rev.authorPhoto}
                                 alt={rev.authorName}
                                 fill
+                                sizes="36px"
                                 className="object-cover"
                               />
                             </div>

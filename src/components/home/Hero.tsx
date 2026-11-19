@@ -23,7 +23,7 @@ export function Hero() {
     settings?.heroSecondaryCtaLink || "https://wa.me/2348023093704";
 
   return (
-    <section className="relative pt-8 pb-16 md:pt-14 md:pb-20 overflow-hidden border-b border-border/40">
+    <section className="relative pt-8 pb-16 md:pt-14 md:pb-20 bg-canvas-soft overflow-hidden border-b border-card-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <div className="lg:col-span-5 space-y-6">

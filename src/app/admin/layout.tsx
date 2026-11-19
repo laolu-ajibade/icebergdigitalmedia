@@ -115,6 +115,15 @@ export default function AdminLayout({
   }, [pathname]);
 
   useEffect(() => {
+    if (!isMobileNavOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMobileNavOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMobileNavOpen]);
+
+  useEffect(() => {
     if (pathname === "/admin/login") {
       return;
     }
@@ -338,7 +347,7 @@ export default function AdminLayout({
           {/* Backdrop */}
           <div
             onClick={() => setIsMobileNavOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
           />
 
           {/* Slide-over Drawer Panel */}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
@@ -11,9 +11,9 @@ import { VisitTracker } from "@/components/analytics/VisitTracker";
 import { SITE_URL, R2_IMAGES } from "@/lib/constants";
 import "@/styles/globals.css";
 
-const displayFont = Plus_Jakarta_Sans({
+const displayFont = Inter({
   subsets: ["latin"],
-  weight: ["700", "800"],
+  weight: ["600", "700", "800", "900"],
   variable: "--font-display",
   display: "swap",
 });

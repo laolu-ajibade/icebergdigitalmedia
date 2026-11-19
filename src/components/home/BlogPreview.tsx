@@ -47,13 +47,14 @@ export function BlogPreview() {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="bg-card rounded-card border border-border/80 overflow-hidden shadow-soft antigravity-card flex flex-col group p-6 hover:border-primary/50 transition-colors"
+              className="bg-card rounded-card border border-card-border overflow-hidden shadow-soft antigravity-card flex flex-col group p-6 hover:border-primary/50 transition-colors"
             >
               <div className="relative h-56 w-full rounded-theme overflow-hidden bg-canvas-soft mb-5">
                 <Image
                   src={post.coverImage}
                   alt={post.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
@@ -76,11 +77,11 @@ export function BlogPreview() {
                 {post.title}
               </h3>
 
-              <p className="text-xs text-ink-body mt-2 line-clamp-3 leading-relaxed">
+              <p className="text-xs sm:text-sm text-ink-body mt-2 line-clamp-3 leading-relaxed">
                 {post.excerpt}
               </p>
 
-              <div className="mt-5 pt-3 border-t border-border/50 flex items-center gap-1.5 text-xs font-bold text-primary">
+              <div className="mt-5 pt-3 border-t border-card-border flex items-center gap-1.5 text-xs font-bold text-primary">
                 <span>Read Full Guide</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>

@@ -504,7 +504,7 @@ export default function AdminReviewsPage() {
 
       {/* Modal: Create / Edit Review */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-card w-full max-w-xl rounded-card border border-border shadow-elevation p-6 sm:p-8 space-y-6 my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <h3 className="font-display font-black text-lg text-ink">

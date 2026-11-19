@@ -73,7 +73,7 @@ export function CategoryGrid() {
               <Link
                 key={cat.slug}
                 href={`/category/${cat.slug}`}
-                className="bg-card rounded-card border border-border/80 overflow-hidden shadow-soft antigravity-card flex flex-col group p-4 hover:border-primary/50 transition-colors"
+                className="bg-card rounded-card border border-card-border overflow-hidden shadow-soft antigravity-card flex flex-col group p-4 hover:border-primary/50 transition-colors"
               >
                 <div className="relative h-32 w-full rounded-theme overflow-hidden bg-canvas-soft mb-3">
                   {cat.image ? (
@@ -81,6 +81,7 @@ export function CategoryGrid() {
                       src={cat.image}
                       alt={cat.name}
                       fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (

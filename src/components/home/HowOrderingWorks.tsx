@@ -34,7 +34,7 @@ export function HowOrderingWorks() {
             return (
               <div
                 key={idx}
-                className="bg-card rounded-card border border-border/80 p-5 sm:p-8 shadow-soft antigravity-card flex flex-col justify-between relative group hover:border-primary/40 transition-colors"
+                className="bg-card rounded-card border border-card-border p-5 sm:p-8 shadow-soft antigravity-card flex flex-col justify-between relative group hover:border-primary/40 transition-colors"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">

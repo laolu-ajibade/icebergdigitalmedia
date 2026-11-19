@@ -16,7 +16,7 @@ export function StatsSection() {
           {stats.map((s, idx) => (
             <div
               key={idx}
-              className="p-4 sm:p-6 rounded-card bg-card border border-border/70 shadow-soft text-center antigravity-card flex flex-col items-center justify-center min-h-[112px] sm:min-h-[132px]"
+              className="p-4 sm:p-6 rounded-card bg-card border border-card-border shadow-soft text-center antigravity-card flex flex-col items-center justify-center min-h-[112px] sm:min-h-[132px]"
             >
               <div className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight leading-none">
                 {s.value}

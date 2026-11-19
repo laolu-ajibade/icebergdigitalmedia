@@ -127,7 +127,7 @@ export default function AdminOrdersPage() {
 
       {/* Order Detail Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-ink/60 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
           <div className="bg-card rounded-card border border-border max-w-md w-full p-6 space-y-4 shadow-elevation">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <div>

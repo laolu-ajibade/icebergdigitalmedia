@@ -345,7 +345,7 @@ export default function AdminProductsPage() {
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-ink/60 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
           <div className="bg-card rounded-card border border-border max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-elevation my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border/60 pb-4">
               <h3 className="font-display font-black text-lg text-ink">

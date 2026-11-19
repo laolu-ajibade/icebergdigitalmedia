@@ -49,7 +49,7 @@ export function AboutSection() {
                 {checks.map((check, i) => (
                   <div
                     key={i}
-                    className="p-3.5 rounded-theme bg-card border border-border/80 shadow-soft antigravity-card flex items-start gap-3"
+                    className="p-3.5 rounded-theme bg-card border border-card-border shadow-soft antigravity-card flex items-start gap-3"
                   >
                     <div className="w-6 h-6 rounded-theme bg-primary-pale text-primary flex items-center justify-center shrink-0 mt-0.5">
                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -80,18 +80,19 @@ export function AboutSection() {
 
           {/* Visual Showcase Column */}
           <div className="lg:col-span-5 relative">
-            <div className="relative h-72 sm:h-96 w-full rounded-card overflow-hidden shadow-elevation border border-border/80">
+            <div className="relative h-72 sm:h-96 w-full rounded-card overflow-hidden shadow-elevation border border-card-border">
               <Image
                 src={image}
                 alt="Iceberg Studio Commercial Printing Workshop"
                 fill
+                sizes="(max-width: 1024px) 100vw, 42vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:hidden" />
             </div>
 
             {/* Floating Glassmorphic Craftsmanship Card (Responsive on Mobile & Desktop) */}
-            <div className="mt-3 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-card/95 backdrop-blur-md border border-border/80 p-4 sm:p-5 rounded-card shadow-elevation sm:max-w-xs">
+            <div className="mt-3 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-card/95 backdrop-blur-md border border-card-border p-4 sm:p-5 rounded-card shadow-elevation sm:max-w-xs">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-8 h-8 rounded-theme bg-primary-pale text-primary flex items-center justify-center shrink-0">
                   <Award className="w-4 h-4" />
