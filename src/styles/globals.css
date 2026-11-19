@@ -106,7 +106,7 @@
   --radius-button: 12px;
 
   --shadow-elevation: 0 20px 40px -15px rgba(18, 59, 114, 0.10);
-  --font-display: var(--font-montserrat);
+  --font-display: "Montserrat", system-ui, sans-serif;
 }
 
 * {
