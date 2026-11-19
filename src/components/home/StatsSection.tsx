@@ -3,9 +3,16 @@
 import React from "react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-export function StatsSection() {
+export function StatsSection({
+  initialStats,
+}: {
+  initialStats?: Array<{ value: string; label: string }>;
+}) {
   const settings = useSiteSettings();
-  const stats: Array<{ value: string; label: string }> = settings?.stats || [];
+  const stats: Array<{ value: string; label: string }> =
+    initialStats && initialStats.length > 0
+      ? initialStats
+      : settings?.stats || [];
 
   if (stats.length === 0) return null;
 

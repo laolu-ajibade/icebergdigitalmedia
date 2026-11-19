@@ -77,7 +77,10 @@ export default function BlogListingClient({
               <input
                 type="text"
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={e => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
                 placeholder="Search articles, paper stocks, packaging..."
                 className="w-full pl-10 pr-4 py-3 min-h-[44px] bg-card border border-border rounded-button text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:border-primary shadow-soft"
               />
@@ -86,7 +89,10 @@ export default function BlogListingClient({
             <div className="relative w-full sm:w-60 shrink-0">
               <select
                 value={selectedCategory}
-                onChange={e => setSelectedCategory(e.target.value)}
+                onChange={e => {
+                  setSelectedCategory(e.target.value);
+                  setCurrentPage(1);
+                }}
                 aria-label="Filter articles by category"
                 className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none bg-card border border-border rounded-button text-xs font-bold text-ink shadow-soft cursor-pointer focus:outline-none focus:border-primary"
               >

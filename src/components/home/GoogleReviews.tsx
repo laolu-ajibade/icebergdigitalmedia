@@ -13,18 +13,20 @@ import { Pagination } from "@/components/ui/Pagination";
 const MOBILE_PAGE_SIZE = 3;
 const DESKTOP_PAGE_SIZE = 6;
 
-export function GoogleReviews() {
+export function GoogleReviews({ initialData }: { initialData?: any }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(DESKTOP_PAGE_SIZE);
-  const [reviewsData, setReviewsData] = useState<any>({
-    rating: 5.0,
-    trustedCount: "500+",
-    totalReviews: 0,
-    reviews: [],
-    googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
-    googleMapsUrl:
-      "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA",
-  });
+  const [reviewsData, setReviewsData] = useState<any>(
+    initialData || {
+      rating: 5.0,
+      trustedCount: "500+",
+      totalReviews: 0,
+      reviews: [],
+      googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
+      googleMapsUrl:
+        "https://www.google.com/maps/place/?q=place_id:ChIJvQSY9_iNOxARaGAAOwEgnZA",
+    },
+  );
 
   useEffect(() => {
     const updatePageSize = () => {
@@ -39,6 +41,7 @@ export function GoogleReviews() {
   }, []);
 
   useEffect(() => {
+    if (initialData) return;
     fetch("/api/reviews")
       .then((res) => res.json())
       .then((data) => {
@@ -47,7 +50,7 @@ export function GoogleReviews() {
       .catch((err) => {
         console.error("[Google Reviews] Failed to fetch /api/reviews:", err);
       });
-  }, []);
+  }, [initialData]);
 
   const totalItems = reviewsData.reviews?.length || 0;
   const maxPage = Math.max(1, Math.ceil(totalItems / pageSize));

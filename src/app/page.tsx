@@ -37,12 +37,13 @@ export default async function HomePage() {
   let initialFaqs: Array<{ question: string; answer: string }> = [];
   let initialSettings: any = null;
   let initialBlogs: any[] = [];
+  let initialReviewsData: any = null;
 
   try {
     await connectDB();
     const [settings, reviews, products, categories, blogs] = await Promise.all([
       SiteSettings.findOne().lean() as Promise<any>,
-      Review.find({ featured: true }, { rating: 1 }).lean() as Promise<any[]>,
+      Review.find({ featured: true }).sort({ order: 1, createdAt: -1 }).lean() as Promise<any[]>,
       Product.find({ isTopSelling: true }).sort({ createdAt: -1 }).limit(6).lean() as Promise<any[]>,
       Category.find().sort({ order: 1 }).limit(10).lean() as Promise<any[]>,
       Blog.find({ published: { $ne: false } }).sort({ publishedAt: -1 }).limit(2).lean() as Promise<any[]>,
@@ -67,14 +68,51 @@ export default async function HomePage() {
 
     const reviewCount = reviews?.length || 9;
     const avgRating =
-      reviewCount > 0
+      reviews?.length > 0
         ? Number(
             (
               reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) /
-              reviewCount
+              reviews.length
             ).toFixed(1),
           )
         : 5.0;
+
+    const customRating = Number(settings?.reviewsOverallRating) || 0;
+    const effectiveRating =
+      customRating > 0 && customRating <= 5 ? customRating : avgRating;
+    const googlePlaceId =
+      process.env.GOOGLE_PLACE_ID ||
+      settings?.googlePlaceId ||
+      "ChIJvQSY9_iNOxARaGAAOwEgnZA";
+
+    if (reviews && reviews.length > 0) {
+      initialReviewsData = {
+        rating: effectiveRating,
+        trustedCount: settings?.reviewsTrustedCount || "500+",
+        totalReviews: reviews.length,
+        reviews: reviews.map((r: any) => ({
+          _id: r._id.toString(),
+          id: r._id.toString(),
+          authorName: r.authorName,
+          authorImage: r.authorImage || "",
+          authorPhoto: r.authorImage || "",
+          rating: r.rating || 5,
+          reviewDate: r.reviewDate || "Recently",
+          relativeTimeDescription: r.reviewDate || "Recently",
+          text: r.text,
+          photos: r.photos || [],
+          ownerResponse: r.responseFromOwner || "",
+          responseFromOwner: r.responseFromOwner || "",
+          responseDate: r.responseDate || "",
+          isVerified: r.isVerified !== false,
+          featured: r.featured !== false,
+          order: r.order || 0,
+          source: r.source || "google",
+        })),
+        googleReviewUrl: "https://g.page/r/CWhgADsBIJ2QEBM/review",
+        googleMapsUrl: `https://www.google.com/maps/place/?q=place_id:${googlePlaceId}`,
+      };
+    }
 
     localBusinessJsonLd = {
       "@context": "https://schema.org",
@@ -163,9 +201,9 @@ export default async function HomePage() {
       <TopSellingProducts initialProducts={initialProducts} />
       <CategoryGrid initialCategories={initialCategories} />
       <HowOrderingWorks initialSteps={initialSettings?.processSteps} />
-      <GoogleReviews />
+      <GoogleReviews initialData={initialReviewsData} />
       <CorporateBanner />
-      <StatsSection />
+      <StatsSection initialStats={initialSettings?.stats} />
       <AboutSection initialSettings={initialSettings} />
       <BlogPreview initialBlogs={initialBlogs} />
       <FaqSection initialFaqs={initialFaqs} />
