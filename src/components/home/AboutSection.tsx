@@ -29,9 +29,6 @@ export function AboutSection() {
           {/* Content Column */}
           <div className="lg:col-span-7 space-y-5">
             <div>
-              <span className="text-[11px] sm:text-xs font-bold tracking-widest uppercase text-primary block mb-2">
-                About Iceberg Creative Print Studio
-              </span>
               <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight leading-tight">
                 {headline}
               </h2>

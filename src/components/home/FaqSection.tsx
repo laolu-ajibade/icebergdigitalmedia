@@ -19,9 +19,6 @@ export function FaqSection() {
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <span className="text-xs font-bold tracking-widest uppercase text-primary block mb-2">
-            Frequently Asked Questions
-          </span>
           <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight">
             Commercial Print & Production Specifications
           </h2>
