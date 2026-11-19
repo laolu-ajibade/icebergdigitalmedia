@@ -1,7 +1,7 @@
 # Iceberg Creative Print Studio
 
 > **"Turning Ideas Into Impressions...."**  
-> Commercial-grade digital printing press studio web application with an interactive public storefront, instant print cost estimator, slide-over cart, WhatsApp order dispatch, and a comprehensive authenticated Admin Control Center.
+> Commercial-grade digital printing press studio web application with an interactive public storefront, instant print cost estimator, slide-over cart, WhatsApp order dispatch, and a comprehensive authenticated Admin Control Center...
 
 ---
 
