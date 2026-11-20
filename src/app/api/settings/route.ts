@@ -38,9 +38,24 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
-    delete data.googlePlaceId;
-    delete data.googleApiKey;
+    const raw = await request.json();
+    const protectedFields = new Set([
+      "_id",
+      "__v",
+      "createdAt",
+      "updatedAt",
+      "googlePlaceId",
+      "googleApiKey",
+    ]);
+    const allowedKeys = Object.keys(SiteSettings.schema.paths).filter(
+      (k) => !protectedFields.has(k) && !k.includes(".")
+    );
+    const data: Record<string, any> = {};
+    for (const key of allowedKeys) {
+      if (Object.prototype.hasOwnProperty.call(raw, key) && raw[key] !== undefined) {
+        data[key] = raw[key];
+      }
+    }
     await connectDB();
 
     const updated = await SiteSettings.findOneAndUpdate({}, data, {

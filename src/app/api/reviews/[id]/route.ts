@@ -2,8 +2,24 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Review } from "@/models/Review";
 import { getAdminSession } from "@/lib/auth";
+import { pickFields } from "@/lib/pick";
 
 export const dynamic = "force-dynamic";
+
+const REVIEW_FIELDS = [
+  "authorName",
+  "authorImage",
+  "rating",
+  "reviewDate",
+  "text",
+  "photos",
+  "responseFromOwner",
+  "responseDate",
+  "isVerified",
+  "featured",
+  "order",
+  "source",
+] as const;
 
 export async function PUT(
   request: Request,
@@ -16,7 +32,8 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const data = await request.json();
+    const raw = await request.json();
+    const data = pickFields(raw, REVIEW_FIELDS);
 
     await connectDB();
     const updated = await Review.findByIdAndUpdate(id, { $set: data }, { new: true });

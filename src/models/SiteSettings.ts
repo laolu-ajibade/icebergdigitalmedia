@@ -37,8 +37,10 @@ export interface ISiteSettings extends Document {
   heroImage: string;
   heroImageFocusDesktop: string;
   heroImageFocusMobile: string;
+  servicesIntroLabel: string;
   servicesIntroHeadline: string;
   servicesIntroSubtext: string;
+  servicesIntroLink: string;
   servicesCards: Array<{
     iconName: string;
     title: string;
@@ -180,6 +182,10 @@ const SiteSettingsSchema: Schema = new Schema(
       type: String,
       default: "50% 50%",
     },
+    servicesIntroLabel: {
+      type: String,
+      default: "Our services",
+    },
     servicesIntroHeadline: {
       type: String,
       default:
@@ -189,6 +195,10 @@ const SiteSettingsSchema: Schema = new Schema(
       type: String,
       default:
         "We combine precision commercial press engineering with studio-grade design direction for brands across Nigeria.",
+    },
+    servicesIntroLink: {
+      type: String,
+      default: "/categories",
     },
     servicesCards: {
       type: [

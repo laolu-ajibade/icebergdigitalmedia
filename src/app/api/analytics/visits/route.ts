@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { VisitLog } from "@/models/VisitLog";
 import { getAdminSession } from "@/lib/auth";
+import { checkRateLimit, getClientIp, recordFailedAttempt } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
+
+const MAX_VISITS_PER_WINDOW = 10;
+const VISIT_WINDOW_MS = 10 * 60 * 1000;
 
 export async function GET() {
   try {
@@ -24,8 +28,7 @@ export async function GET() {
     return NextResponse.json({
       currentMonthKey,
       currentMonthHits: currentMonth.hits,
-      currentMonthUniques:
-        (currentMonth as any).uniqueVisitors || Math.round(currentMonth.hits * 0.65),
+      currentMonthUniques: Number((currentMonth as any).uniqueVisitors) || 0,
       history: logs,
     });
   } catch (error: any) {
@@ -33,8 +36,16 @@ export async function GET() {
   }
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    const rateLimitKey = `visit-log:${ip}`;
+    const { allowed } = checkRateLimit(rateLimitKey, MAX_VISITS_PER_WINDOW);
+    if (!allowed) {
+      return NextResponse.json({ success: true, rateLimited: true });
+    }
+    recordFailedAttempt(rateLimitKey, VISIT_WINDOW_MS);
+
     await connectDB();
     const currentMonthKey = new Date().toISOString().slice(0, 7);
     const log = await VisitLog.findOneAndUpdate(

@@ -2,8 +2,28 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
+import { pickFields } from "@/lib/pick";
 
 export const dynamic = "force-dynamic";
+
+const PRODUCT_FIELDS = [
+  "title",
+  "slug",
+  "categorySlug",
+  "categoryName",
+  "description",
+  "basePrice",
+  "minQuantity",
+  "deliveryDays",
+  "image",
+  "gallery",
+  "paperStocks",
+  "finishes",
+  "quantityTiers",
+  "isPopular",
+  "isTopSelling",
+  "specifications",
+] as const;
 
 export async function GET(request: Request) {
   try {
@@ -32,7 +52,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
+    const raw = await request.json();
+    const data = pickFields(raw, PRODUCT_FIELDS);
     if (!data.title || !data.slug || !data.categorySlug) {
       return NextResponse.json(
         { error: "Title, slug, and category are required" },

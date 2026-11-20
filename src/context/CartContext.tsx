@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { WHATSAPP_NUMBER } from "@/lib/constants";
 
 export interface CartItem {
@@ -30,11 +30,18 @@ interface CartContextType {
   generateWhatsAppUrl: (customerName: string, customerPhone: string, deliveryAddress: string, routingNumber?: string) => string;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+const globalForCart = globalThis as unknown as {
+  __icebergCartContext?: React.Context<CartContextType | undefined>;
+};
+
+const CartContext =
+  globalForCart.__icebergCartContext ??
+  (globalForCart.__icebergCartContext = createContext<CartContextType | undefined>(undefined));
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const hasHydrated = useRef(false);
 
   useEffect(() => {
     try {
@@ -44,10 +51,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       // Ignore
+    } finally {
+      hasHydrated.current = true;
     }
   }, []);
 
   useEffect(() => {
+    if (!hasHydrated.current) return;
     try {
       localStorage.setItem("iceberg-cart", JSON.stringify(items));
     } catch {

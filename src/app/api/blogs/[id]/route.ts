@@ -3,8 +3,23 @@ import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import { Blog } from "@/models/Blog";
 import { getAdminSession } from "@/lib/auth";
+import { pickFields } from "@/lib/pick";
 
 export const dynamic = "force-dynamic";
+
+const BLOG_FIELDS = [
+  "title",
+  "slug",
+  "excerpt",
+  "content",
+  "coverImage",
+  "author",
+  "readTime",
+  "category",
+  "tags",
+  "published",
+  "publishedAt",
+] as const;
 
 const byIdOrSlug = (id: string) =>
   mongoose.isValidObjectId(id) ? { $or: [{ _id: id }, { slug: id }] } : { slug: id };
@@ -15,9 +30,12 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const session = await getAdminSession();
     await connectDB();
 
-    const blog = await Blog.findOne(byIdOrSlug(id));
+    const baseFilter = byIdOrSlug(id);
+    const filter = session ? baseFilter : { $and: [baseFilter, { published: { $ne: false } }] };
+    const blog = await Blog.findOne(filter);
     if (!blog) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
@@ -38,7 +56,8 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const data = await request.json();
+    const raw = await request.json();
+    const data = pickFields(raw, BLOG_FIELDS);
     await connectDB();
 
     const updated = await Blog.findOneAndUpdate(byIdOrSlug(id), data, { new: true });

@@ -76,12 +76,14 @@ export function ServicesBentoSection({
   const clientSettings = useSiteSettings();
   const settings = clientSettings || initialSettings;
 
+  const introLabel = settings?.servicesIntroLabel || "Our services";
   const introHeadline =
     settings?.servicesIntroHeadline ||
     "Creative Design, Digital Printing & Brand Identity.";
   const introSubtext =
     settings?.servicesIntroSubtext ||
     "We create quality prints, packaging, and brand designs for businesses and events across Nigeria.";
+  const introLink = settings?.servicesIntroLink || "/categories";
   const cards: Array<{
     iconName?: string;
     title: string;
@@ -90,7 +92,7 @@ export function ServicesBentoSection({
     href?: string;
   }> =
     Array.isArray(settings?.servicesCards) && settings.servicesCards.length > 0
-      ? settings.servicesCards.slice(0, 5)
+      ? settings.servicesCards
       : DEFAULT_CARDS;
 
   return (
@@ -98,17 +100,25 @@ export function ServicesBentoSection({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {/* Tile 1: Editorial Intro Block */}
-          <div className="flex flex-col justify-center pr-2 lg:pr-6 py-2">
-            <span className="text-xs font-semibold text-primary block mb-2.5">
-              Our services
-            </span>
-            <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-ink tracking-tight leading-[1.15]">
-              {introHeadline}
-            </h2>
-            <p className="text-sm text-ink-body mt-4 leading-relaxed">
-              {introSubtext}
-            </p>
-          </div>
+          <Link
+            href={introLink}
+            className="h-full rounded-card p-7 sm:p-8 border bg-canvas-soft/80 hover:bg-card text-ink border-card-border shadow-soft transition-all duration-300 antigravity-card flex flex-col justify-between group"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-xs font-semibold text-primary block">
+                  {introLabel}
+                </span>
+                <ArrowUpRight className="w-4 h-4 text-ink-muted group-hover:text-primary transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </div>
+              <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-ink group-hover:text-primary transition-colors tracking-tight leading-[1.15]">
+                {introHeadline}
+              </h2>
+              <p className="text-sm text-ink-body mt-4 leading-relaxed">
+                {introSubtext}
+              </p>
+            </div>
+          </Link>
 
           {/* Tiles 2-6: Service Cards */}
           {cards.map((card, idx) => {

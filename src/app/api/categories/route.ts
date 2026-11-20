@@ -2,8 +2,20 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Category } from "@/models/Category";
 import { getAdminSession } from "@/lib/auth";
+import { pickFields } from "@/lib/pick";
 
 export const dynamic = "force-dynamic";
+
+const CATEGORY_FIELDS = [
+  "name",
+  "slug",
+  "description",
+  "iconName",
+  "image",
+  "order",
+  "featured",
+  "tags",
+] as const;
 
 export async function GET() {
   try {
@@ -22,23 +34,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
-    if (!data.name || !data.slug) {
+    const raw = await request.json();
+    const updateFields = pickFields(raw, CATEGORY_FIELDS);
+    if (!updateFields.name || !updateFields.slug) {
       return NextResponse.json({ error: "Name and slug are required" }, { status: 400 });
     }
 
-    let tags = Array.isArray(data.tags) ? data.tags : ["Print"];
-    if (typeof data.tags === "string") {
-      tags = data.tags
+    let tags = Array.isArray(updateFields.tags) ? updateFields.tags : ["Print"];
+    if (typeof raw.tags === "string") {
+      tags = raw.tags
         .split(",")
         .map((t: string) => t.trim())
         .filter(Boolean);
     }
-    data.tags = tags;
+    updateFields.tags = tags;
 
     await connectDB();
-    const filter = data._id ? { _id: data._id } : { slug: data.slug };
-    const { _id, ...updateFields } = data;
+    const filter = raw._id ? { _id: raw._id } : { slug: updateFields.slug };
     const savedCategory = await Category.findOneAndUpdate(
       filter,
       updateFields,

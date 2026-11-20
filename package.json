@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "seed": "npx tsx --env-file=.env.local scripts/seed.ts",
     "r2:sync": "node scripts/sync-images-to-r2.mjs"
   },
   "dependencies": {

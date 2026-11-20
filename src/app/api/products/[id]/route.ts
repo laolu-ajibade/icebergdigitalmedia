@@ -3,8 +3,28 @@ import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import { Product } from "@/models/Product";
 import { getAdminSession } from "@/lib/auth";
+import { pickFields } from "@/lib/pick";
 
 export const dynamic = "force-dynamic";
+
+const PRODUCT_FIELDS = [
+  "title",
+  "slug",
+  "categorySlug",
+  "categoryName",
+  "description",
+  "basePrice",
+  "minQuantity",
+  "deliveryDays",
+  "image",
+  "gallery",
+  "paperStocks",
+  "finishes",
+  "quantityTiers",
+  "isPopular",
+  "isTopSelling",
+  "specifications",
+] as const;
 
 const byIdOrSlug = (id: string) =>
   mongoose.isValidObjectId(id) ? { $or: [{ _id: id }, { slug: id }] } : { slug: id };
@@ -38,7 +58,8 @@ export async function PUT(
     }
 
     const { id } = await params;
-    const data = await request.json();
+    const raw = await request.json();
+    const data = pickFields(raw, PRODUCT_FIELDS);
     await connectDB();
 
     const updated = await Product.findOneAndUpdate(byIdOrSlug(id), data, { new: true });

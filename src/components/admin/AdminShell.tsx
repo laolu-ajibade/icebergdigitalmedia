@@ -122,11 +122,14 @@ export default function AdminLayout({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isMobileNavOpen]);
 
+  const isLoginPage = pathname?.startsWith("/admin/login");
+
   useEffect(() => {
-    if (pathname === "/admin/login") {
+    if (isLoginPage) {
       return;
     }
 
+    setAuthStatus("checking");
     let isMounted = true;
     const verifySession = async () => {
       try {
@@ -163,9 +166,9 @@ export default function AdminLayout({
     return () => {
       isMounted = false;
     };
-  }, [pathname, router, showError]);
+  }, [isLoginPage, pathname, router, showError]);
 
-  if (pathname === "/admin/login") {
+  if (isLoginPage) {
     return <>{children}</>;
   }
 
@@ -204,10 +207,8 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     await fetch("/api/admin/auth", { method: "DELETE" });
-    setAuthStatus("unauthenticated");
     showSuccess("You have been safely signed out.", "Signed Out");
     router.replace("/admin/login");
-    router.refresh();
   };
 
   const activeNavItem =

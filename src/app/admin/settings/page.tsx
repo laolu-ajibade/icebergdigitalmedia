@@ -203,8 +203,10 @@ export default function AdminSettingsPage() {
     heroImage: "",
     heroImageFocusDesktop: "50% 50%",
     heroImageFocusMobile: "50% 50%",
+    servicesIntroLabel: "Our services",
     servicesIntroHeadline: "",
     servicesIntroSubtext: "",
+    servicesIntroLink: "/categories",
     servicesCards: [],
     collageStatTitle: "",
     collageStatSubtext: "",
@@ -1052,10 +1054,66 @@ export default function AdminSettingsPage() {
 
             {/* Services Bento Grid */}
             <div className="pt-6 border-t border-border/60 space-y-4">
-              <h3 className="font-display font-bold text-base text-ink">
-                Services Bento Grid (6-Tile Section)
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="font-display font-bold text-base text-ink">
+                  Services Bento Grid (Intro + Service Cards)
+                </h3>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSettings({
+                      ...settings,
+                      servicesCards: [
+                        ...(settings.servicesCards || []),
+                        {
+                          iconName: "Printer",
+                          title: "New Service",
+                          description: "Short description of this service.",
+                          isDark: false,
+                          href: "/categories",
+                        },
+                      ],
+                    })
+                  }
+                  className="px-3 py-1.5 rounded-button bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  + Add Service Card
+                </button>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Intro Eyebrow Label
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.servicesIntroLabel ?? "Our services"}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        servicesIntroLabel: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Intro Card Link
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.servicesIntroLink ?? "/categories"}
+                    placeholder="/categories"
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        servicesIntroLink: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
                 <div>
                   <label className="block font-bold text-ink mb-1.5">
                     Services Intro Headline
@@ -1096,6 +1154,23 @@ export default function AdminSettingsPage() {
                     key={idx}
                     className="p-4 rounded-theme bg-canvas-soft border border-border/70 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
                   >
+                    <select
+                      value={card.iconName || "Printer"}
+                      onChange={e => {
+                        const updated = [...(settings.servicesCards || [])];
+                        updated[idx] = { ...card, iconName: e.target.value };
+                        setSettings({ ...settings, servicesCards: updated });
+                      }}
+                      className="sm:col-span-2 px-2.5 py-2 bg-card border border-border rounded-button text-ink text-xs font-semibold"
+                    >
+                      {["Printer", "Package", "Palette", "Shirt", "Flag", "Layers", "Sparkles"].map(
+                        icon => (
+                          <option key={icon} value={icon}>
+                            {icon}
+                          </option>
+                        )
+                      )}
+                    </select>
                     <input
                       type="text"
                       value={card.title || ""}
@@ -1105,7 +1180,7 @@ export default function AdminSettingsPage() {
                         updated[idx] = { ...card, title: e.target.value };
                         setSettings({ ...settings, servicesCards: updated });
                       }}
-                      className="sm:col-span-4 px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
+                      className="sm:col-span-3 px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
                     />
                     <input
                       type="text"
@@ -1116,20 +1191,49 @@ export default function AdminSettingsPage() {
                         updated[idx] = { ...card, description: e.target.value };
                         setSettings({ ...settings, servicesCards: updated });
                       }}
-                      className="sm:col-span-6 px-3 py-2 bg-card border border-border rounded-button text-ink"
+                      className="sm:col-span-4 px-3 py-2 bg-card border border-border rounded-button text-ink"
                     />
-                    <label className="sm:col-span-2 flex items-center gap-2 text-xs font-semibold text-ink cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={Boolean(card.isDark)}
-                        onChange={e => {
-                          const updated = [...(settings.servicesCards || [])];
-                          updated[idx] = { ...card, isDark: e.target.checked };
+                    <input
+                      type="text"
+                      value={card.href || "/categories"}
+                      placeholder="/categories"
+                      onChange={e => {
+                        const updated = [...(settings.servicesCards || [])];
+                        updated[idx] = { ...card, href: e.target.value };
+                        setSettings({ ...settings, servicesCards: updated });
+                      }}
+                      className="sm:col-span-2 px-2.5 py-2 bg-card border border-border rounded-button text-ink text-xs"
+                    />
+                    <div className="sm:col-span-1 flex items-center justify-end gap-2">
+                      <label
+                        title="Dark Card"
+                        className="flex items-center gap-1 text-xs font-semibold text-ink cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(card.isDark)}
+                          onChange={e => {
+                            const updated = [...(settings.servicesCards || [])];
+                            updated[idx] = { ...card, isDark: e.target.checked };
+                            setSettings({ ...settings, servicesCards: updated });
+                          }}
+                        />
+                        <span>Dark</span>
+                      </label>
+                      <button
+                        type="button"
+                        title="Remove card"
+                        onClick={() => {
+                          const updated = (settings.servicesCards || []).filter(
+                            (_: any, i: number) => i !== idx
+                          );
                           setSettings({ ...settings, servicesCards: updated });
                         }}
-                      />
-                      <span>Dark Card</span>
-                    </label>
+                        className="text-xs font-bold text-red-600 hover:text-red-700 px-1.5 py-1 cursor-pointer"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
