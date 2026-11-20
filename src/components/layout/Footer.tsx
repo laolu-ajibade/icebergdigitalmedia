@@ -105,10 +105,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-white/10">
           {/* Column 1: Brand Identity */}
           <div className="space-y-3.5">
-            <Link
-              href="/"
-              className="inline-flex items-center"
-            >
+            <Link href="/" className="inline-flex items-center">
               <Image
                 src="/logo.png?v=3"
                 alt={companyName}
@@ -212,7 +209,7 @@ export function Footer() {
                   href="/categories"
                   className="hover:text-primary transition-colors block py-0.5"
                 >
-                  Print Categories
+                  Categories
                 </Link>
               </li>
               <li>

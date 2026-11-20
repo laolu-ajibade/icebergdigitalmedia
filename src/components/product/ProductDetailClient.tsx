@@ -30,16 +30,16 @@ export default function ProductDetailClient({
 }) {
   const [product, setProduct] = useState<any | null>(initialProduct || null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>(
-    initialRelatedProducts || []
+    initialRelatedProducts || [],
   );
   const [loading, setLoading] = useState(!initialProduct);
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [selectedStock, setSelectedStock] = useState(
-    initialProduct?.paperStocks?.[0] || "Standard Commercial Stock"
+    initialProduct?.paperStocks?.[0] || "Standard Commercial Stock",
   );
   const [selectedFinish, setSelectedFinish] = useState(
-    initialProduct?.finishes?.[0] || "Standard Matte Finish"
+    initialProduct?.finishes?.[0] || "Standard Matte Finish",
   );
 
   const { addItem, setIsCartOpen } = useCart();
@@ -51,8 +51,8 @@ export default function ProductDetailClient({
     if (initialProduct) return;
     setLoading(true);
     Promise.all([
-      fetch(`/api/products/${slug}`).then((r) => r.json()),
-      fetch("/api/products").then((r) => r.json()),
+      fetch(`/api/products/${slug}`).then(r => r.json()),
+      fetch("/api/products").then(r => r.json()),
     ])
       .then(([prodData, allData]) => {
         if (prodData.product) {
@@ -63,9 +63,15 @@ export default function ProductDetailClient({
           setSelectedFinish(p.finishes?.[0] || "Standard Matte Finish");
 
           if (allData.products) {
-            const others = allData.products.filter((item: any) => item.slug !== p.slug);
-            const sameCat = others.filter((item: any) => item.categorySlug === p.categorySlug);
-            const diffCat = others.filter((item: any) => item.categorySlug !== p.categorySlug);
+            const others = allData.products.filter(
+              (item: any) => item.slug !== p.slug,
+            );
+            const sameCat = others.filter(
+              (item: any) => item.categorySlug === p.categorySlug,
+            );
+            const diffCat = others.filter(
+              (item: any) => item.categorySlug !== p.categorySlug,
+            );
             setRelatedProducts([...sameCat, ...diffCat].slice(0, 3));
           }
         }
@@ -88,16 +94,19 @@ export default function ProductDetailClient({
   if (!product) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center bg-canvas-soft p-6 text-center space-y-4">
-        <h1 className="font-display font-black text-2xl text-ink">Product Not Found</h1>
+        <h1 className="font-display font-black text-2xl text-ink">
+          Product Not Found
+        </h1>
         <p className="text-xs text-ink-muted max-w-md">
-          The print specification you requested could not be found in our catalog.
+          The print specification you requested could not be found in our
+          catalog.
         </p>
         <Link
           href="/categories"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-button bg-primary text-primary-foreground font-bold text-xs"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Browse All Print Categories</span>
+          <span>Browse All Categories</span>
         </Link>
       </div>
     );
@@ -110,7 +119,9 @@ export default function ProductDetailClient({
 
   const activeTier = product.quantityTiers?.[selectedTierIdx] || {
     quantity: product.minQuantity || 1,
-    pricePerUnit: Math.round((product.basePrice || 0) / (product.minQuantity || 1)),
+    pricePerUnit: Math.round(
+      (product.basePrice || 0) / (product.minQuantity || 1),
+    ),
     totalPrice: product.basePrice || 0,
   };
 
@@ -145,7 +156,7 @@ export default function ProductDetailClient({
 
     window.open(
       `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -158,7 +169,10 @@ export default function ProductDetailClient({
             Home
           </Link>
           <span>/</span>
-          <Link href="/categories" className="hover:text-primary transition-colors">
+          <Link
+            href="/categories"
+            className="hover:text-primary transition-colors"
+          >
             Categories
           </Link>
           <span>/</span>
@@ -169,7 +183,9 @@ export default function ProductDetailClient({
             {product.categoryName}
           </Link>
           <span>/</span>
-          <span className="text-ink font-semibold line-clamp-1">{product.title}</span>
+          <span className="text-ink font-semibold line-clamp-1">
+            {product.title}
+          </span>
         </div>
 
         {/* Main 2-Column Studio Configuration Stage */}
@@ -191,19 +207,24 @@ export default function ProductDetailClient({
                   Technical Print & Material Specifications
                 </h2>
                 <p className="text-xs text-ink-muted mt-1">
-                  Calibrated production standards at our Shomolu, Lagos printing facility.
+                  Calibrated production standards at our Shomolu, Lagos printing
+                  facility.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="p-3.5 rounded-theme bg-canvas-soft border border-border/60">
-                  <span className="text-ink-muted block mb-1">Minimum Order Run</span>
+                  <span className="text-ink-muted block mb-1">
+                    Minimum Order Run
+                  </span>
                   <span className="font-bold text-ink text-sm">
                     {product.minQuantity.toLocaleString()} Pieces
                   </span>
                 </div>
                 <div className="p-3.5 rounded-theme bg-canvas-soft border border-border/60">
-                  <span className="text-ink-muted block mb-1">Production Turnaround</span>
+                  <span className="text-ink-muted block mb-1">
+                    Production Turnaround
+                  </span>
                   <span className="font-bold text-ink text-sm">
                     {product.turnaroundDays}
                   </span>
@@ -214,7 +235,9 @@ export default function ProductDetailClient({
                     className="p-3.5 rounded-theme bg-canvas-soft border border-border/60"
                   >
                     <span className="text-ink-muted block mb-1">{key}</span>
-                    <span className="font-bold text-ink text-sm">{String(val)}</span>
+                    <span className="font-bold text-ink text-sm">
+                      {String(val)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -279,7 +302,9 @@ export default function ProductDetailClient({
                         <span className="font-bold text-xs text-ink">
                           {t.quantity.toLocaleString()} pcs
                         </span>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
+                        {isSelected && (
+                          <Check className="w-3.5 h-3.5 text-primary" />
+                        )}
                       </div>
                       <div className="font-display font-black text-base text-ink mt-1">
                         ₦{t.totalPrice.toLocaleString()}
@@ -302,7 +327,7 @@ export default function ProductDetailClient({
                 <div className="relative">
                   <select
                     value={selectedStock}
-                    onChange={(e) => setSelectedStock(e.target.value)}
+                    onChange={e => setSelectedStock(e.target.value)}
                     className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer"
                   >
                     {product.paperStocks.map((stock: string) => (
@@ -325,7 +350,7 @@ export default function ProductDetailClient({
                 <div className="relative">
                   <select
                     value={selectedFinish}
-                    onChange={(e) => setSelectedFinish(e.target.value)}
+                    onChange={e => setSelectedFinish(e.target.value)}
                     className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer"
                   >
                     {product.finishes.map((finish: string) => (
@@ -355,7 +380,9 @@ export default function ProductDetailClient({
                 </span>
               </div>
               <div className="pt-2 border-t border-border/60 flex items-baseline justify-between">
-                <span className="font-bold text-ink">Total Production Cost:</span>
+                <span className="font-bold text-ink">
+                  Total Production Cost:
+                </span>
                 <span className="font-display font-black text-2xl text-ink">
                   ₦{activeTier.totalPrice.toLocaleString()}
                 </span>
@@ -406,9 +433,11 @@ export default function ProductDetailClient({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {relatedProducts.map((rel) => {
+              {relatedProducts.map(rel => {
                 const relImages =
-                  rel.gallery && rel.gallery.length > 0 ? rel.gallery : [rel.image];
+                  rel.gallery && rel.gallery.length > 0
+                    ? rel.gallery
+                    : [rel.image];
                 return (
                   <div
                     key={rel.slug}

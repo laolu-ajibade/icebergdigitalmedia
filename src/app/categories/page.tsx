@@ -8,14 +8,14 @@ import CategoriesClient from "@/components/categories/CategoriesClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Commercial Print Categories",
+  title: "Commercial Categories",
   description:
     "Browse all commercial printing and bespoke packaging categories from Iceberg Creative Print Studio in Shomolu, Lagos — rigid boxes, business cards, branded apparel, mugs, jotters, and wide-format banners.",
   alternates: {
     canonical: "/categories",
   },
   openGraph: {
-    title: "Commercial Print Categories | Iceberg Creative Print Studio",
+    title: "Commercial Categories | Iceberg Creative Print Studio",
     description:
       "Explore custom rigid boxes, luxury business cards, branded apparel, drinkware, jotters, and exhibition banners.",
     url: `${SITE_URL}/categories`,
@@ -40,7 +40,7 @@ export default async function CategoriesPage() {
       itemListJsonLd = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        name: "Commercial Print Categories",
+        name: "Commercial Categories",
         url: `${SITE_URL}/categories`,
         mainEntity: {
           "@type": "ItemList",

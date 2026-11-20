@@ -86,8 +86,14 @@ export function Navbar() {
     return handle ? `${prefix}${handle}` : "";
   };
 
-  const instagramUrl = resolveSocialUrl(settings?.instagramUrl, "https://instagram.com/");
-  const facebookUrl = resolveSocialUrl(settings?.facebookUrl, "https://facebook.com/");
+  const instagramUrl = resolveSocialUrl(
+    settings?.instagramUrl,
+    "https://instagram.com/",
+  );
+  const facebookUrl = resolveSocialUrl(
+    settings?.facebookUrl,
+    "https://facebook.com/",
+  );
   const twitterUrl = resolveSocialUrl(settings?.twitterUrl, "https://x.com/");
 
   const navLinkClass = (active: boolean) =>
@@ -104,7 +110,10 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 sm:h-24 gap-2">
           {/* Logo & Brand Identity */}
-          <Link href="/" className="flex items-center group min-w-0 shrink-0 py-1">
+          <Link
+            href="/"
+            className="flex items-center group min-w-0 shrink-0 py-1"
+          >
             <div className="relative h-16 sm:h-[72px] lg:h-20 w-[230px] sm:w-[270px] lg:w-[280px] shrink-0">
               <Image
                 src="/logo.png?v=3"
@@ -129,7 +138,9 @@ export function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 onMouseEnter={() => setIsDropdownOpen(true)}
                 className={`flex items-center gap-1 cursor-pointer py-2 ${navLinkClass(
-                  pathname?.startsWith("/categories") || pathname?.startsWith("/category") || pathname?.startsWith("/product"),
+                  pathname?.startsWith("/categories") ||
+                    pathname?.startsWith("/category") ||
+                    pathname?.startsWith("/product"),
                 )}`}
                 aria-expanded={isDropdownOpen}
               >
@@ -152,7 +163,7 @@ export function Navbar() {
                   <div className="col-span-2 pb-3.5 border-b border-border/60 flex items-start justify-between gap-6">
                     <div>
                       <h4 className="font-display font-bold text-sm text-ink">
-                        Commercial Print Categories
+                        Commercial Categories
                       </h4>
                       <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
                         Select a category to view bespoke specifications, volume
@@ -321,7 +332,7 @@ export function Navbar() {
           </Link>
           <div className="pl-3 py-1 space-y-1.5 border-l-2 border-primary/30 my-1">
             <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">
-              Print Categories
+              Categories
             </span>
             {printCategories.slice(0, 10).map(cat => (
               <Link
