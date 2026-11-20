@@ -4,7 +4,6 @@ import { ClientBrandsStrip } from "@/components/home/ClientBrandsStrip";
 import { ServicesBentoSection } from "@/components/home/ServicesBentoSection";
 import { CollageInquirySection } from "@/components/home/CollageInquirySection";
 import { PortfolioShowcase } from "@/components/home/PortfolioShowcase";
-import { LiveStudioSection } from "@/components/home/LiveStudioSection";
 import { HowOrderingWorks } from "@/components/home/HowOrderingWorks";
 import { GoogleReviews } from "@/components/home/GoogleReviews";
 import { CorporateBanner } from "@/components/home/CorporateBanner";
@@ -210,7 +209,6 @@ export default async function HomePage() {
         initialCategories={initialCategories}
         initialSettings={initialSettings}
       />
-      {/* <LiveStudioSection /> */}
       <TeamSection initialSettings={initialSettings} />
       <StatsSection initialStats={initialSettings?.stats} />
       <GoogleReviews initialData={initialReviewsData} />

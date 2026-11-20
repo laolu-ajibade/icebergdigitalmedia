@@ -198,6 +198,13 @@ export function Navbar() {
             </div>
 
             <Link
+              href="/brand-studio"
+              className={navLinkClass(pathname?.startsWith("/brand-studio"))}
+            >
+              Brand Studio
+            </Link>
+
+            <Link
               href="/blog"
               className={navLinkClass(pathname?.startsWith("/blog"))}
             >
@@ -327,6 +334,13 @@ export function Navbar() {
               </Link>
             ))}
           </div>
+          <Link
+            href="/brand-studio"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+          >
+            Brand Studio
+          </Link>
           <Link
             href="/portfolio"
             onClick={() => setIsMobileMenuOpen(false)}
