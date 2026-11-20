@@ -277,46 +277,79 @@ export default function ProductDetailClient({
             </div>
 
             {/* 1. Quantity Tier & Volume Discount Selector */}
-            <div className="space-y-2.5">
-              <label className="block text-xs font-bold text-ink">
-                1. Select Quantity Tier (Volume Discount Pricing)
-              </label>
-              <div className="grid grid-cols-2 gap-2.5">
-                {(product.quantityTiers && product.quantityTiers.length > 0
+            {(() => {
+              const tiers =
+                product.quantityTiers && product.quantityTiers.length > 0
                   ? product.quantityTiers
-                  : [activeTier]
-                ).map((t: any, idx: number) => {
-                  const isSelected = selectedTierIdx === idx;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setSelectedTierIdx(idx)}
-                      className={`p-3.5 rounded-button border text-left transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-primary-pale border-primary text-ink shadow-soft"
-                          : "bg-canvas-soft border-border text-ink-body hover:border-ink/40"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-ink">
-                          {t.quantity.toLocaleString()} pcs
-                        </span>
-                        {isSelected && (
-                          <Check className="w-3.5 h-3.5 text-primary" />
-                        )}
-                      </div>
-                      <div className="font-display font-black text-base text-ink mt-1">
-                        ₦{t.totalPrice.toLocaleString()}
-                      </div>
-                      <div className="text-[11px] text-ink-muted">
-                        ₦{t.pricePerUnit?.toLocaleString()} / unit
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                  : [activeTier];
+              const isSingleTier = tiers.length === 1;
+              return (
+                <div className="space-y-2.5">
+                  <label className="block text-xs font-bold text-ink">
+                    1. Select Quantity Tier (Volume Discount Pricing)
+                  </label>
+                  <div
+                    className={`grid gap-2.5 ${
+                      isSingleTier ? "grid-cols-1" : "grid-cols-2"
+                    }`}
+                  >
+                    {tiers.map((t: any, idx: number) => {
+                      const isSelected = selectedTierIdx === idx;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedTierIdx(idx)}
+                          className={`p-4 rounded-theme border text-left transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? "bg-primary-pale border-primary text-ink shadow-soft ring-1 ring-primary/20"
+                              : "bg-canvas-soft border-border text-ink-body hover:border-ink/40 hover:bg-card"
+                          }`}
+                        >
+                          {isSingleTier ? (
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <span className="font-bold text-xs text-ink block">
+                                  {t.quantity.toLocaleString()} pcs
+                                </span>
+                                <span className="text-[11px] text-ink-muted">
+                                  ₦{t.pricePerUnit?.toLocaleString()} / unit
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2.5">
+                                <span className="font-display font-black text-lg text-ink">
+                                  ₦{t.totalPrice.toLocaleString()}
+                                </span>
+                                {isSelected && (
+                                  <Check className="w-4 h-4 text-primary shrink-0" />
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-xs text-ink">
+                                  {t.quantity.toLocaleString()} pcs
+                                </span>
+                                {isSelected && (
+                                  <Check className="w-3.5 h-3.5 text-primary" />
+                                )}
+                              </div>
+                              <div className="font-display font-black text-base text-ink mt-1">
+                                ₦{t.totalPrice.toLocaleString()}
+                              </div>
+                              <div className="text-[11px] text-ink-muted">
+                                ₦{t.pricePerUnit?.toLocaleString()} / unit
+                              </div>
+                            </>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* 2. Paper Stock / Material Dropdown */}
             {product.paperStocks && product.paperStocks.length > 0 && (
@@ -365,23 +398,33 @@ export default function ProductDetailClient({
             )}
 
             {/* Live Order Summary Box */}
-            <div className="p-4 rounded-theme bg-canvas-soft border border-border space-y-2 text-xs">
-              <div className="flex items-center justify-between text-ink-muted">
-                <span>Selected Run:</span>
-                <span className="font-bold text-ink">
+            <div className="p-4 sm:p-5 rounded-theme bg-canvas-soft border border-border/80 shadow-soft space-y-2.5 text-xs">
+              <div className="flex items-baseline justify-between gap-4 text-ink-muted">
+                <span className="shrink-0">Selected Run</span>
+                <span className="font-bold text-ink text-right">
                   {activeTier.quantity.toLocaleString()} pcs (₦
                   {activeTier.pricePerUnit?.toLocaleString()}/unit)
                 </span>
               </div>
-              <div className="flex items-center justify-between text-ink-muted">
-                <span>Material & Finish:</span>
-                <span className="font-semibold text-ink text-right max-w-[200px] truncate">
-                  {selectedStock} · {selectedFinish}
-                </span>
-              </div>
-              <div className="pt-2 border-t border-border/60 flex items-baseline justify-between">
+              {selectedStock && (
+                <div className="flex items-baseline justify-between gap-4 text-ink-muted">
+                  <span className="shrink-0">Material</span>
+                  <span className="font-semibold text-ink text-right">
+                    {selectedStock}
+                  </span>
+                </div>
+              )}
+              {selectedFinish && (
+                <div className="flex items-baseline justify-between gap-4 text-ink-muted">
+                  <span className="shrink-0">Finishing</span>
+                  <span className="font-semibold text-ink text-right">
+                    {selectedFinish}
+                  </span>
+                </div>
+              )}
+              <div className="pt-3 mt-1 border-t border-border/60 flex items-baseline justify-between gap-4">
                 <span className="font-bold text-ink">
-                  Total Production Cost:
+                  Total Production Cost
                 </span>
                 <span className="font-display font-black text-2xl text-ink">
                   ₦{activeTier.totalPrice.toLocaleString()}
@@ -394,7 +437,7 @@ export default function ProductDetailClient({
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="w-full py-3.5 px-4 min-h-[44px] rounded-button bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-soft"
+                className="w-full py-3.5 px-4 min-h-[48px] rounded-button bg-primary hover:bg-primary-hover text-primary-foreground font-bold text-xs transition-all duration-200 hover:-translate-y-0.5 motion-reduce:transform-none flex items-center justify-center gap-2 cursor-pointer shadow-soft"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Add to Print Cart</span>
