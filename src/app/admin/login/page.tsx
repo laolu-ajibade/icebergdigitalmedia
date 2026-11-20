@@ -85,7 +85,7 @@ function AdminLoginForm() {
         <div className="text-center space-y-2">
           <div className="relative w-12 h-12 rounded-theme mx-auto overflow-hidden bg-white shadow-soft p-1 border border-border/40">
             <Image
-              src="/logo-icon.jpg"
+              src="/logo-icon.png?v=2"
               alt="Iceberg Studio"
               fill
               className="object-contain"

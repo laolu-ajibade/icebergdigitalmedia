@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Syne, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Montserrat, Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
@@ -11,14 +11,14 @@ import { VisitTracker } from "@/components/analytics/VisitTracker";
 import { SITE_URL, R2_IMAGES } from "@/lib/constants";
 import "@/styles/globals.css";
 
-const displayFont = Syne({
+const displayFont = Montserrat({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700", "800"],
   variable: "--font-display",
   display: "swap",
 });
 
-const sansFont = Plus_Jakarta_Sans({
+const sansFont = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
@@ -81,9 +81,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/logo-icon.jpg",
-    shortcut: "/logo-icon.jpg",
-    apple: "/logo-icon.jpg",
+    icon: "/logo-icon.png?v=2",
+    shortcut: "/logo-icon.png?v=2",
+    apple: "/logo-icon.png?v=2",
   },
 };
 
@@ -95,7 +95,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="iceberg"
+      data-theme="editorial"
       className={`${displayFont.variable} ${sansFont.variable} ${monoFont.variable}`}
       suppressHydrationWarning
     >

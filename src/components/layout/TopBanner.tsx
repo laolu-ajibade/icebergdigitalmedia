@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 import { Phone, Clock, MessageSquare } from "lucide-react";
 import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { useTheme } from "@/context/ThemeContext";
 
 export function TopBanner() {
   const pathname = usePathname();
   const settings = useSiteSettings();
+  const { theme } = useTheme();
 
-  if (pathname?.startsWith("/admin")) {
+  if (pathname?.startsWith("/admin") || theme === "editorial") {
     return null;
   }
 

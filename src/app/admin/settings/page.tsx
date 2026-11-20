@@ -169,16 +169,18 @@ export default function AdminSettingsPage() {
   const { setTheme } = useTheme();
   const { showError, showSuccess, showPopup } = useToast();
   const [activeTab, setActiveTab] = useState<TabKey>("contact");
+  const [heroPreviewMode, setHeroPreviewMode] = useState<"desktop" | "mobile">("desktop");
   const [settings, setSettings] = useState<any>({
     companyName: "",
     tagline: "",
     footerSummary: "",
     footerDescription: "",
     footerMotto: "",
-    defaultTheme: "iceberg",
+    defaultTheme: "editorial",
     topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
     topBarTagline: "Commercial Grade Print Press & Packaging Studio",
     address: "",
+    address2: "",
     phone: CONTACT_PHONE,
     whatsappRouting: `+${WHATSAPP_NUMBER}`,
     email: "",
@@ -198,6 +200,35 @@ export default function AdminSettingsPage() {
     heroSubtext: "",
     heroPrimaryCtaText: "",
     heroPrimaryCtaLink: "",
+    heroImage: "",
+    heroImageFocusDesktop: "50% 50%",
+    heroImageFocusMobile: "50% 50%",
+    servicesIntroHeadline: "",
+    servicesIntroSubtext: "",
+    servicesCards: [],
+    collageStatTitle: "",
+    collageStatSubtext: "",
+    collageImages: [],
+    inquiryHeadline: "",
+    inquirySubtext: "",
+    portfolioHeadline: "",
+    portfolioSubtext: "",
+    portfolioPageHeadline: "",
+    portfolioPageSubtext: "",
+    portfolioProjectTitle: "",
+    portfolioProjectDesc: "",
+    portfolioSolutionTitle: "",
+    portfolioSolutionDesc: "",
+    portfolioProjectChecks: [],
+    portfolioSolutionChecks: [],
+    portfolioImages: [],
+    aboutFounderName: "",
+    aboutFounderBio: "",
+    aboutSkills: [],
+    contactHeadline: "",
+    contactSubtext: "",
+    contactFormHeadline: "",
+    contactFormSubtext: "",
     marqueeItems: [
       "600GSM COTTON BOARDS",
       "METALLIC FOIL STAMPING",
@@ -216,6 +247,10 @@ export default function AdminSettingsPage() {
     aboutStory: "",
     aboutChecks: [],
     aboutImage: "",
+    teamImage: "",
+    teamPillars: [],
+    teamCtaText: "",
+    clientBrands: [],
     faqs: [],
     processSteps: [],
     studioItems: DEFAULT_STUDIO_ITEMS,
@@ -311,7 +346,8 @@ export default function AdminSettingsPage() {
         if (
           settings.defaultTheme === "wise" ||
           settings.defaultTheme === "iceberg" ||
-          settings.defaultTheme === "brand"
+          settings.defaultTheme === "brand" ||
+          settings.defaultTheme === "editorial"
         ) {
           setTheme(settings.defaultTheme);
         }
@@ -398,7 +434,7 @@ export default function AdminSettingsPage() {
   const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
     { key: "contact", label: "Studio & Socials", icon: Building },
     { key: "hero", label: "Hero & Intro", icon: Layers },
-    { key: "mockup", label: "3D Mockup Pricing", icon: Layers },
+    // { key: "mockup", label: "3D Mockup Pricing", icon: Layers },
     { key: "stats", label: "Studio Stats", icon: BarChart3 },
     { key: "corporate", label: "Corporate Perks", icon: Briefcase },
     { key: "about", label: "About Studio", icon: Info },
@@ -462,17 +498,21 @@ export default function AdminSettingsPage() {
                   </label>
                   <div className="relative">
                     <select
-                      value={settings.defaultTheme || "iceberg"}
+                      value={settings.defaultTheme || "editorial"}
                       onChange={e => {
                         const chosen = e.target.value as
                           | "wise"
                           | "iceberg"
-                          | "brand";
+                          | "brand"
+                          | "editorial";
                         setSettings({ ...settings, defaultTheme: chosen });
                         setTheme(chosen);
                       }}
                       className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink cursor-pointer focus:outline-none focus:border-primary"
                     >
+                      <option value="editorial">
+                        Editorial Studio (Crimson, Obsidian & Crisp White)
+                      </option>
                       <option value="iceberg">
                         Iceberg Studio (Deep Navy & Cyan)
                       </option>
@@ -621,7 +661,7 @@ export default function AdminSettingsPage() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block font-bold text-ink mb-1.5">
-                    Physical Studio Address
+                    Location 1 (Primary Studio Address)
                   </label>
                   <input
                     type="text"
@@ -629,6 +669,21 @@ export default function AdminSettingsPage() {
                     onChange={e =>
                       setSettings({ ...settings, address: e.target.value })
                     }
+                    placeholder="Somolu, Lagos"
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Location 2 (Secondary Studio Address)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.address2 || ""}
+                    onChange={e =>
+                      setSettings({ ...settings, address2: e.target.value })
+                    }
+                    placeholder="14/17 Lateef Eletu Street, Awoyaya, Lagos"
                     className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                   />
                 </div>
@@ -766,6 +821,56 @@ export default function AdminSettingsPage() {
                 })}
               </div>
             </div>
+
+            <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-4">
+              <h2 className="font-display font-bold text-base text-ink border-b border-border/60 pb-3">
+                Contact Page Copy
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Contact Intro Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.contactHeadline || ""}
+                    onChange={e =>
+                      setSettings({ ...settings, contactHeadline: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Contact Form Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.contactFormHeadline || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        contactFormHeadline: e.target.value,
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-ink mb-1.5">
+                    Contact Intro Subtext
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.contactSubtext || ""}
+                    onChange={e =>
+                      setSettings({ ...settings, contactSubtext: e.target.value })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -838,6 +943,445 @@ export default function AdminSettingsPage() {
               </div>
             </div>
 
+            <div className="pt-4 border-t border-border/60 space-y-4">
+              <label className="block font-bold text-ink">
+                Full-Bleed Hero Background Image
+              </label>
+              <R2ImageUpload
+                label="Upload Hero Studio Photo"
+                value={settings.heroImage || ""}
+                onChange={url => setSettings({ ...settings, heroImage: url })}
+                folder="studio"
+              />
+
+              {settings.heroImage && (
+                <div className="p-4 rounded-theme bg-canvas-soft border border-border/80 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <span className="font-bold text-xs text-ink block">
+                        Adjust Visible Crop Area (Click Image to Set Focus)
+                      </span>
+                      <span className="text-[11px] text-ink-muted">
+                        Choose which part of the photo stays centered on Desktop and Mobile.
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setHeroPreviewMode("desktop")}
+                        className={`px-3 py-1.5 rounded-button text-[11px] font-bold transition-colors cursor-pointer ${
+                          heroPreviewMode === "desktop"
+                            ? "bg-ink text-canvas"
+                            : "bg-card text-ink-muted border border-border"
+                        }`}
+                      >
+                        Desktop
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setHeroPreviewMode("mobile")}
+                        className={`px-3 py-1.5 rounded-button text-[11px] font-bold transition-colors cursor-pointer ${
+                          heroPreviewMode === "mobile"
+                            ? "bg-ink text-canvas"
+                            : "bg-card text-ink-muted border border-border"
+                        }`}
+                      >
+                        Mobile
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const key =
+                            heroPreviewMode === "desktop"
+                              ? "heroImageFocusDesktop"
+                              : "heroImageFocusMobile";
+                          setSettings({ ...settings, [key]: "50% 50%" });
+                        }}
+                        className="px-2.5 py-1.5 rounded-button text-[11px] font-semibold bg-card text-ink border border-border hover:border-ink cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+
+                  {(() => {
+                    const activeFocus =
+                      (heroPreviewMode === "desktop"
+                        ? settings.heroImageFocusDesktop
+                        : settings.heroImageFocusMobile) || "50% 50%";
+                    const [fx = "50%", fy = "50%"] = activeFocus.split(" ");
+                    return (
+                      <div
+                        onClick={e => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const x = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+                          const y = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+                          const nextFocus = `${Math.max(0, Math.min(100, x))}% ${Math.max(0, Math.min(100, y))}%`;
+                          const key =
+                            heroPreviewMode === "desktop"
+                              ? "heroImageFocusDesktop"
+                              : "heroImageFocusMobile";
+                          setSettings({ ...settings, [key]: nextFocus });
+                        }}
+                        className={`relative mx-auto rounded-card overflow-hidden border border-border cursor-crosshair select-none bg-ink ${
+                          heroPreviewMode === "desktop"
+                            ? "w-full h-52"
+                            : "w-56 h-72"
+                        }`}
+                      >
+                        <img
+                          src={settings.heroImage}
+                          alt="Hero Crop Preview"
+                          style={{ objectPosition: activeFocus }}
+                          className="w-full h-full object-cover opacity-85 pointer-events-none"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent pointer-events-none" />
+                        <div
+                          style={{ left: fx, top: fy }}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 border-white bg-primary/80 shadow-md pointer-events-none"
+                        />
+                        <span className="absolute bottom-2 right-2.5 px-2 py-0.5 rounded bg-black/60 text-white font-mono text-[10px] pointer-events-none">
+                          {heroPreviewMode === "desktop" ? "Desktop" : "Mobile"}: {activeFocus}
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+
+            {/* Services Bento Grid */}
+            <div className="pt-6 border-t border-border/60 space-y-4">
+              <h3 className="font-display font-bold text-base text-ink">
+                Services Bento Grid (6-Tile Section)
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Services Intro Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.servicesIntroHeadline || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        servicesIntroHeadline: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Services Intro Subtext
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.servicesIntroSubtext || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        servicesIntroSubtext: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {(settings.servicesCards || []).map((card: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-theme bg-canvas-soft border border-border/70 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
+                  >
+                    <input
+                      type="text"
+                      value={card.title || ""}
+                      placeholder="Service Title"
+                      onChange={e => {
+                        const updated = [...(settings.servicesCards || [])];
+                        updated[idx] = { ...card, title: e.target.value };
+                        setSettings({ ...settings, servicesCards: updated });
+                      }}
+                      className="sm:col-span-4 px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
+                    />
+                    <input
+                      type="text"
+                      value={card.description || ""}
+                      placeholder="Short description"
+                      onChange={e => {
+                        const updated = [...(settings.servicesCards || [])];
+                        updated[idx] = { ...card, description: e.target.value };
+                        setSettings({ ...settings, servicesCards: updated });
+                      }}
+                      className="sm:col-span-6 px-3 py-2 bg-card border border-border rounded-button text-ink"
+                    />
+                    <label className="sm:col-span-2 flex items-center gap-2 text-xs font-semibold text-ink cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(card.isDark)}
+                        onChange={e => {
+                          const updated = [...(settings.servicesCards || [])];
+                          updated[idx] = { ...card, isDark: e.target.checked };
+                          setSettings({ ...settings, servicesCards: updated });
+                        }}
+                      />
+                      <span>Dark Card</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Collage & Inquiry Section */}
+            <div className="pt-6 border-t border-border/60 space-y-4">
+              <h3 className="font-display font-bold text-base text-ink">
+                Collage Callout &amp; Quick Inquiry Desk
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Dark Collage Stat Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.collageStatTitle || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        collageStatTitle: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Dark Collage Stat Subtext
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.collageStatSubtext || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        collageStatSubtext: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Inquiry Desk Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.inquiryHeadline || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        inquiryHeadline: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Inquiry Desk Subtext
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.inquirySubtext || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        inquirySubtext: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                {[0, 1, 2].map(idx => (
+                  <R2ImageUpload
+                    key={idx}
+                    folder="studio"
+                    label={`Collage Photo 0${idx + 1}`}
+                    value={(settings.collageImages && settings.collageImages[idx]) || ""}
+                    onChange={url => {
+                      const next = [...(settings.collageImages || ["", "", ""])];
+                      next[idx] = url;
+                      setSettings({ ...settings, collageImages: next });
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Portfolio Showcase Heading */}
+            <div className="pt-6 border-t border-border/60 space-y-4">
+              <h3 className="font-display font-bold text-base text-ink">
+                Portfolio Showcase Heading
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioHeadline || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioHeadline: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Subtext
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioSubtext || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioSubtext: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Page Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioPageHeadline || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioPageHeadline: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Page Subtext
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioPageSubtext || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioPageSubtext: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Project Showcase Title
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioProjectTitle || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioProjectTitle: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Solution Section Title
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioSolutionTitle || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioSolutionTitle: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Project Description
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioProjectDesc || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioProjectDesc: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-ink mb-1.5">
+                    Portfolio Solution Description
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.portfolioSolutionDesc || ""}
+                    onChange={e =>
+                      setSettings({
+                        ...settings,
+                        portfolioSolutionDesc: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 space-y-2">
+                <label className="block font-bold text-ink">
+                  Portfolio Showcase Images (5 Stacked Photos)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[0, 1, 2, 3, 4].map(idx => (
+                    <R2ImageUpload
+                      key={idx}
+                      folder="studio"
+                      label={`Portfolio Photo 0${idx + 1}`}
+                      value={(settings.portfolioImages && settings.portfolioImages[idx]) || ""}
+                      onChange={url => {
+                        const next = [...(settings.portfolioImages || ["", "", "", "", ""])];
+                        next[idx] = url;
+                        setSettings({ ...settings, portfolioImages: next });
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Marquee Ticker Items */}
             <div className="pt-6 border-t border-border/60 space-y-3">
               <div className="flex items-center justify-between gap-4">
@@ -896,6 +1440,7 @@ export default function AdminSettingsPage() {
               </div>
             </div>
 
+            {/* 3D Print Studio Canvas Pricing (Commented out)
             <div className="pt-6 border-t border-border/60 space-y-4">
               <div>
                 <h3 className="font-display font-bold text-base text-ink">
@@ -992,10 +1537,11 @@ export default function AdminSettingsPage() {
                 ))}
               </div>
             </div>
+            */}
           </div>
         )}
 
-        {activeTab === "mockup" && (
+        {/* {activeTab === "mockup" && (
           <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-5">
             <div className="border-b border-border/60 pb-3">
               <h2 className="font-display font-bold text-base text-ink">
@@ -1103,7 +1649,7 @@ export default function AdminSettingsPage() {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {activeTab === "stats" && (
           <div className="bg-card rounded-card border border-border p-6 md:p-8 shadow-soft space-y-6">
@@ -1304,8 +1850,156 @@ export default function AdminSettingsPage() {
                 folder="products"
                 value={settings.aboutImage || ""}
                 onChange={url => setSettings({ ...settings, aboutImage: url })}
-                label="Studio Workshop Image"
+                label="Studio Workshop / Portrait Image"
               />
+            </div>
+
+            <div>
+              <R2ImageUpload
+                folder="studio"
+                value={settings.teamImage || ""}
+                onChange={url => setSettings({ ...settings, teamImage: url })}
+                label="Homepage Team Photo (R2 URL)"
+              />
+            </div>
+
+            <div className="pt-2 space-y-3">
+              <label className="block font-bold text-ink">
+                Homepage Team Section 3 Pillars &amp; Button
+              </label>
+              {(settings.teamPillars || [
+                { title: "Our Mission", description: "" },
+                { title: "Fast Support", description: "" },
+                { title: "Client Satisfaction", description: "" },
+              ]).map((pillar: any, idx: number) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-theme bg-canvas-soft border border-border grid grid-cols-1 sm:grid-cols-3 gap-3"
+                >
+                  <input
+                    type="text"
+                    value={pillar.title || ""}
+                    placeholder={`Pillar ${idx + 1} Title`}
+                    onChange={e => {
+                      const next = [...(settings.teamPillars || [])];
+                      next[idx] = { ...pillar, title: e.target.value };
+                      setSettings({ ...settings, teamPillars: next });
+                    }}
+                    className="px-3 py-2 bg-card border border-border rounded-button text-ink font-semibold"
+                  />
+                  <input
+                    type="text"
+                    value={pillar.description || ""}
+                    placeholder={`Pillar ${idx + 1} Description`}
+                    onChange={e => {
+                      const next = [...(settings.teamPillars || [])];
+                      next[idx] = { ...pillar, description: e.target.value };
+                      setSettings({ ...settings, teamPillars: next });
+                    }}
+                    className="sm:col-span-2 px-3 py-2 bg-card border border-border rounded-button text-ink"
+                  />
+                </div>
+              ))}
+              <div>
+                <label className="block font-semibold text-ink mb-1">
+                  Team Section Button Label
+                </label>
+                <input
+                  type="text"
+                  value={settings.teamCtaText || ""}
+                  placeholder="View other feature"
+                  onChange={e =>
+                    setSettings({ ...settings, teamCtaText: e.target.value })
+                  }
+                  className="w-full sm:w-72 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                />
+              </div>
+
+              <div className="pt-2">
+                <label className="block font-semibold text-ink mb-1">
+                  Client Brands Strip (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={(settings.clientBrands || []).join(", ")}
+                  placeholder="Access Bank, GTCO, Flutterwave, Paystack, MTN Nigeria, Zenith Bank"
+                  onChange={e =>
+                    setSettings({
+                      ...settings,
+                      clientBrands: e.target.value
+                        .split(",")
+                        .map(s => s.trim())
+                        .filter(Boolean),
+                    })
+                  }
+                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label className="block font-bold text-ink mb-1.5">
+                  Portrait / Studio Overlay Title
+                </label>
+                <input
+                  type="text"
+                  value={settings.aboutFounderName || ""}
+                  onChange={e =>
+                    setSettings({ ...settings, aboutFounderName: e.target.value })
+                  }
+                  className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-ink mb-1.5">
+                  Portrait / Studio Overlay Bio
+                </label>
+                <input
+                  type="text"
+                  value={settings.aboutFounderBio || ""}
+                  onChange={e =>
+                    setSettings({ ...settings, aboutFounderBio: e.target.value })
+                  }
+                  className="w-full px-3.5 py-2.5 bg-canvas-soft border border-border rounded-button text-ink"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 space-y-2">
+              <label className="block font-bold text-ink">
+                Professional Capabilities Bars
+              </label>
+              {(settings.aboutSkills || []).map((skill: any, idx: number) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={skill.label || ""}
+                    placeholder="Capability Name"
+                    onChange={e => {
+                      const updated = [...(settings.aboutSkills || [])];
+                      updated[idx] = { ...skill, label: e.target.value };
+                      setSettings({ ...settings, aboutSkills: updated });
+                    }}
+                    className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={skill.percentage ?? 90}
+                    onChange={e => {
+                      const updated = [...(settings.aboutSkills || [])];
+                      updated[idx] = {
+                        ...skill,
+                        percentage: Number(e.target.value),
+                      };
+                      setSettings({ ...settings, aboutSkills: updated });
+                    }}
+                    className="w-24 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink tabular-nums"
+                  />
+                </div>
+              ))}
             </div>
 
             <div>

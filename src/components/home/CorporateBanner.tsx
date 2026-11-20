@@ -11,10 +11,10 @@ export function CorporateBanner() {
 
   const headline =
     settings?.corporateHeadline ||
-    "Big Order or a Full Brand Rollout Across Nigeria?";
+    "Need Bulk Printing or Corporate Branding?";
   const subtext =
     settings?.corporateSubtext ||
-    "Send us your quantities and specifications for souvenirs, annual corporate gifts, branch signage, packaging boxes, or national event branding. Our Shomolu central factory serves the entire commercial scope with contractual SLA terms.";
+    "Send us your quantities for souvenirs, corporate gifts, packaging boxes, or event branding. We offer bulk pricing and fast delivery across Nigeria.";
   const perks: string[] = settings?.corporatePerks || [];
   const phone = settings?.phone || CONTACT_PHONE;
   const whatsapp =
