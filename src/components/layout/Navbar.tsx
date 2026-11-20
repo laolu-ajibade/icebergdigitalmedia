@@ -258,7 +258,7 @@ export function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="X (Twitter)"
-                  className="w-7 h-7 rounded-theme bg-ink text-canvas flex items-center justify-center hover:opacity-90 transition-opacity font-bold text-[11px] leading-none"
+                  className="w-7 h-7 rounded-theme bg-black text-white flex items-center justify-center hover:opacity-90 transition-opacity font-bold text-[11px] leading-none"
                 >
                   𝕏
                 </a>
