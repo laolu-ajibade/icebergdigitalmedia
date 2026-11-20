@@ -14,11 +14,11 @@ import {
 
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState({
-    monthlyVisits: 1480,
-    uniqueVisitors: 960,
+    monthlyVisits: 0,
+    uniqueVisitors: 0,
     monthKey: "Current Month",
-    totalProducts: 7,
-    totalCategories: 10,
+    totalProducts: 0,
+    totalCategories: 0,
     totalOrders: 0,
     recentOrders: [] as any[],
   });
@@ -39,11 +39,11 @@ export default function AdminDashboardPage() {
         const ordersData = await ordersRes.json();
 
         setMetrics({
-          monthlyVisits: visitsData.currentMonthHits || 1480,
-          uniqueVisitors: visitsData.currentMonthUniques || 960,
+          monthlyVisits: visitsData.currentMonthHits || 0,
+          uniqueVisitors: visitsData.currentMonthUniques || 0,
           monthKey: visitsData.currentMonthKey || "2026-11",
           totalProducts: prodsData.products?.length || 0,
-          totalCategories: catsData.categories?.length || 10,
+          totalCategories: catsData.categories?.length || 0,
           totalOrders: ordersData.orders?.length || 0,
           recentOrders: ordersData.orders?.slice(0, 5) || [],
         });
@@ -103,7 +103,15 @@ export default function AdminDashboardPage() {
             </div>
             <div className="text-[11px] text-ink-muted mt-1 flex items-center gap-1">
               <span className="text-emerald-600 font-bold">Active</span>
-              <span>Month ({metrics.monthKey})</span>
+              <span>
+                {(() => {
+                  const [year, month] = String(metrics.monthKey || "").split("-");
+                  const date = new Date(Number(year), Number(month) - 1);
+                  return isNaN(date.getTime())
+                    ? metrics.monthKey
+                    : `${date.toLocaleString("en-US", { month: "short" }).toUpperCase()} ${year}`;
+                })()}
+              </span>
             </div>
           </div>
           <div className="pt-2 border-t border-border/40 text-[11px] text-ink-muted">
@@ -124,7 +132,7 @@ export default function AdminDashboardPage() {
               {metrics.totalProducts}
             </div>
             <div className="text-[11px] text-ink-muted mt-1">
-              Active commercial print SKUs
+              Active products
             </div>
           </div>
           <div className="pt-2 border-t border-border/40">
@@ -141,7 +149,7 @@ export default function AdminDashboardPage() {
         {/* Categories Count */}
         <div className="p-6 rounded-card bg-card border border-border/80 shadow-soft space-y-3">
           <div className="flex items-center justify-between text-ink-muted">
-            <span className="text-xs font-semibold">Print Categories</span>
+            <span className="text-xs font-semibold">Categories</span>
             <div className="w-8 h-8 rounded-theme bg-primary-pale text-primary flex items-center justify-center">
               <Layers className="w-4 h-4" />
             </div>
@@ -151,7 +159,7 @@ export default function AdminDashboardPage() {
               {metrics.totalCategories}
             </div>
             <div className="text-[11px] text-ink-muted mt-1">
-              Featured in header dropdown
+              All Featured Categories
             </div>
           </div>
           <div className="pt-2 border-t border-border/40">
