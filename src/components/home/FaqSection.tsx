@@ -24,11 +24,10 @@ export function FaqSection({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight">
-            Commercial Print & Production Specifications
+            Frequently Asked Questions
           </h2>
           <p className="text-sm text-ink-muted mt-2">
-            Essential information on proofing, delivery times, file specs, and
-            logistics.
+            Quick answers on delivery times, proofing, and print orders.
           </p>
         </div>
 

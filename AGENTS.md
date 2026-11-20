@@ -115,3 +115,11 @@ Leverage the `antigravity-design-expert` principles:
 - The project uses **MongoDB Persistence**:
   - `MONGODB_URI` is **compulsory** and must be defined in `.env.local` (e.g. `MONGODB_URI=mongodb://localhost:27017/iceberg_print_studio`).
   - Seed script runs automatically on boot to ensure at least 10 categories, top-selling products, 2 blog posts, default Haz-Ken studio settings, and the default admin account exist immediately upon first launch.
+
+---
+
+## 5. Image & Asset Hosting Policy (Cloudflare R2 URLs)
+
+- **All images must be hosted and referenced as full `https://` URLs** (uploaded to Cloudflare R2 under `iceberg/...` and mapped in `src/lib/constants.ts`, `SiteSettings`, or `Product`/`Category`/`Blog` records) rather than local `/images/...` paths.
+- **Exceptions:** Only `favicon.ico`, `logo.png` / `logo-icon.jpg`, and assets explicitly required for offline mode should remain as local files in `public/`.
+- Whenever new images are generated or added (products, hero backgrounds, team photos, blog covers), upload them to Cloudflare R2 and save their full `https://` R2 URLs in code, seed data, and MongoDB.

@@ -265,6 +265,8 @@ export default function AdminLayout({
         <div className="p-2.5 rounded-card bg-canvas-soft border border-border/80 space-y-2">
           <Link
             href="/"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={onItemClick}
             className="w-full flex items-center justify-between px-3 py-2.5 min-h-[42px] rounded-button bg-card border border-border text-xs font-bold text-ink hover:border-primary/50 hover:text-primary transition-colors shadow-soft"
           >
@@ -292,7 +294,7 @@ export default function AdminLayout({
         <Link href="/admin" className="flex items-center gap-2.5 min-w-0">
           <div className="relative w-9 h-9 rounded-theme overflow-hidden bg-white p-0.5 border border-border/60 shadow-soft shrink-0">
             <Image
-              src="/logo-icon.jpg"
+              src="/logo-icon.png?v=2"
               alt="Iceberg"
               fill
               className="object-contain"
@@ -343,7 +345,7 @@ export default function AdminLayout({
               >
                 <div className="relative w-9 h-9 rounded-theme overflow-hidden bg-white shadow-soft p-0.5 border border-border/50 shrink-0">
                   <Image
-                    src="/logo-icon.jpg"
+                    src="/logo-icon.png?v=2"
                     alt="Iceberg"
                     fill
                     className="object-contain"
@@ -380,7 +382,7 @@ export default function AdminLayout({
           <Link href="/admin" className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-theme overflow-hidden bg-white shadow-soft p-0.5 border border-border/50 shrink-0">
               <Image
-                src="/logo-icon.jpg"
+                src="/logo-icon.png?v=2"
                 alt="Iceberg"
                 fill
                 className="object-contain"

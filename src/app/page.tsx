@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
-import { TopSellingProducts } from "@/components/home/TopSellingProducts";
+import { ClientBrandsStrip } from "@/components/home/ClientBrandsStrip";
+import { ServicesBentoSection } from "@/components/home/ServicesBentoSection";
+import { CollageInquirySection } from "@/components/home/CollageInquirySection";
+import { PortfolioShowcase } from "@/components/home/PortfolioShowcase";
 import { LiveStudioSection } from "@/components/home/LiveStudioSection";
-import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { HowOrderingWorks } from "@/components/home/HowOrderingWorks";
 import { GoogleReviews } from "@/components/home/GoogleReviews";
 import { CorporateBanner } from "@/components/home/CorporateBanner";
 import { StatsSection } from "@/components/home/StatsSection";
-import { AboutSection } from "@/components/home/AboutSection";
+import { TeamSection } from "@/components/home/TeamSection";
 import { BlogPreview } from "@/components/home/BlogPreview";
 import { FaqSection } from "@/components/home/FaqSection";
 import { connectDB } from "@/lib/db";
@@ -45,7 +47,7 @@ export default async function HomePage() {
     const [settings, reviews, products, categories, blogs] = await Promise.all([
       SiteSettings.findOne().lean() as Promise<any>,
       Review.find({ featured: true }).sort({ order: 1, createdAt: -1 }).lean() as Promise<any[]>,
-      Product.find({ isTopSelling: true }).sort({ createdAt: -1 }).limit(6).lean() as Promise<any[]>,
+      Product.find().sort({ isTopSelling: -1, createdAt: -1 }).limit(40).lean() as Promise<any[]>,
       Category.find().sort({ order: 1 }).limit(10).lean() as Promise<any[]>,
       Blog.find({ published: { $ne: false } }).sort({ publishedAt: -1 }).limit(2).lean() as Promise<any[]>,
     ]);
@@ -199,16 +201,22 @@ export default async function HomePage() {
         />
       )}
       <Hero initialSettings={initialSettings} />
-      <TopSellingProducts initialProducts={initialProducts} />
-      <LiveStudioSection />
-      <CategoryGrid initialCategories={initialCategories} />
+      <ClientBrandsStrip initialSettings={initialSettings} />
+      <ServicesBentoSection initialSettings={initialSettings} />
+      <CollageInquirySection initialSettings={initialSettings} />
       <HowOrderingWorks initialSteps={initialSettings?.processSteps} />
-      <GoogleReviews initialData={initialReviewsData} />
-      <CorporateBanner />
+      <PortfolioShowcase
+        initialProducts={initialProducts}
+        initialCategories={initialCategories}
+        initialSettings={initialSettings}
+      />
+      {/* <LiveStudioSection /> */}
+      <TeamSection initialSettings={initialSettings} />
       <StatsSection initialStats={initialSettings?.stats} />
-      <AboutSection initialSettings={initialSettings} />
+      <GoogleReviews initialData={initialReviewsData} />
       <BlogPreview initialBlogs={initialBlogs} />
       <FaqSection initialFaqs={initialFaqs} />
+      <CorporateBanner />
     </>
   );
 }

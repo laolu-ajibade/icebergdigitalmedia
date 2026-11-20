@@ -3,9 +3,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-type Theme = "iceberg" | "wise" | "brand";
+type Theme = "iceberg" | "wise" | "brand" | "editorial";
 
-const VALID_THEMES: Theme[] = ["iceberg", "wise", "brand"];
+const VALID_THEMES: Theme[] = ["iceberg", "wise", "brand", "editorial"];
 const isValidTheme = (value: unknown): value is Theme =>
   typeof value === "string" && VALID_THEMES.includes(value as Theme);
 
@@ -19,7 +19,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const settings = useSiteSettings();
-  const [theme, setThemeState] = useState<Theme>("iceberg");
+  const [theme, setThemeState] = useState<Theme>("editorial");
   const [userOverrode, setUserOverrode] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -29,7 +29,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(saved);
       document.documentElement.setAttribute("data-theme", saved);
     } else {
-      document.documentElement.setAttribute("data-theme", "iceberg");
+      document.documentElement.setAttribute("data-theme", "editorial");
     }
     setMounted(true);
   }, []);
@@ -43,17 +43,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [settings?.defaultTheme, userOverrode]);
 
-  useEffect(() => {
-    if (theme !== "brand") return;
-    if (document.getElementById("montserrat-brand-font")) return;
-    const link = document.createElement("link");
-    link.id = "montserrat-brand-font";
-    link.rel = "stylesheet";
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap";
-    document.head.appendChild(link);
-  }, [theme]);
-
   const setTheme = (newTheme: Theme) => {
     setUserOverrode(true);
     setThemeState(newTheme);
@@ -62,7 +51,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleTheme = () => {
-    const order: Theme[] = ["iceberg", "brand", "wise"];
+    const order: Theme[] = ["editorial", "iceberg", "brand", "wise"];
     const nextTheme = order[(order.indexOf(theme) + 1) % order.length];
     setTheme(nextTheme);
   };

@@ -38,9 +38,9 @@ export function Footer() {
     "We Create Experiences ThatInspire, Impact And Transform!";
   const footerMotto =
     settings?.footerMotto ?? "Creativity as it speaks excellence!";
-  const address =
-    settings?.address ||
-    "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria.";
+  const address = settings?.address || "Somolu, Lagos";
+  const address2 =
+    settings?.address2 || "14/17 Lateef Eletu Street, Awoyaya, Lagos";
   const phone = settings?.phone || CONTACT_PHONE;
   const whatsapp =
     (settings?.whatsappRouting || "").replace(/[^0-9]/g, "") || WHATSAPP_NUMBER;
@@ -105,23 +105,17 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-white/10">
           {/* Column 1: Brand Identity */}
           <div className="space-y-3.5">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-theme bg-white p-0.5 overflow-hidden flex items-center justify-center shrink-0">
-                <Image
-                  src="/logo-icon.jpg"
-                  alt={companyName}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-display font-black text-base sm:text-lg text-white leading-tight">
-                  {companyName}
-                </span>
-                <span className="text-[10px] text-primary uppercase font-bold tracking-wider mt-0.5 truncate">
-                  {tagline}
-                </span>
-              </div>
+            <Link
+              href="/"
+              className="inline-flex items-center bg-white rounded-theme px-3 py-1.5 shadow-soft"
+            >
+              <Image
+                src="/logo.png?v=2"
+                alt={companyName}
+                width={200}
+                height={64}
+                className="h-11 sm:h-12 w-auto object-contain"
+              />
             </Link>
 
             {footerSummary && (
@@ -150,7 +144,10 @@ export function Footer() {
               <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0 mt-0.5">
                 <MapPin className="w-3.5 h-3.5" />
               </div>
-              <span className="leading-relaxed">{address}</span>
+              <div className="space-y-1.5 leading-relaxed">
+                <p>{address}</p>
+                {address2 && <p>{address2}</p>}
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0">
@@ -308,10 +305,17 @@ export function Footer() {
                       href={tiktokUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-9 h-9 rounded-theme bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors font-bold text-[10px]"
+                      className="w-9 h-9 rounded-theme bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
                       aria-label="TikTok"
                     >
-                      TT
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        className="w-4 h-4"
+                      >
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.76a8.26 8.26 0 0 0 4.76 1.5v-3.4a4.85 4.85 0 0 1-1-.17z" />
+                      </svg>
                     </a>
                   )}
                 </div>

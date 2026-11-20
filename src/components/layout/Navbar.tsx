@@ -19,6 +19,8 @@ import {
   Menu,
   X,
   ArrowRight,
+  Instagram,
+  Facebook,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getWhatsAppLink } from "@/lib/constants";
@@ -74,60 +76,66 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const resolveSocialUrl = (val: string | undefined, prefix: string) => {
+    const trimmed = (val ?? "").trim();
+    if (!trimmed) return "";
+    const handle = trimmed
+      .replace(/^https?:\/\/(www\.)?[^/]+\/(company\/|in\/)?/i, "")
+      .replace(/^@+/, "")
+      .replace(/\/+$/, "");
+    return handle ? `${prefix}${handle}` : "";
+  };
+
+  const instagramUrl = resolveSocialUrl(settings?.instagramUrl, "https://instagram.com/");
+  const facebookUrl = resolveSocialUrl(settings?.facebookUrl, "https://facebook.com/");
+  const twitterUrl = resolveSocialUrl(settings?.twitterUrl, "https://x.com/");
+
+  const navLinkClass = (active: boolean) =>
+    `text-[11px] font-bold tracking-[0.08em] uppercase transition-colors ${
+      active ? "text-primary" : "text-ink hover:text-primary"
+    }`;
+
   if (pathname?.startsWith("/admin")) {
     return null;
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-canvas/95 backdrop-blur-md border-b border-border transition-colors">
+    <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-xl border-b border-border/80 transition-colors">
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-20 sm:h-24">
           {/* Logo & Brand Identity */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3.5 group min-w-0">
-            <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-theme overflow-hidden bg-white shadow-soft flex items-center justify-center p-0.5 border border-border/40 shrink-0">
+          <Link href="/" className="flex items-center group min-w-0 shrink-0 py-1">
+            <div className="relative h-16 sm:h-[72px] lg:h-20 w-52 sm:w-60 lg:w-64 shrink-0">
               <Image
-                src="/logo-icon.jpg"
-                alt="Iceberg Print Studio Mark"
+                src="/logo.png?v=2"
+                alt="Iceberg Creative Print Studio"
                 fill
-                className="object-contain"
+                sizes="(max-width: 640px) 208px, (max-width: 1024px) 240px, 256px"
+                className="object-contain object-left"
                 priority
               />
             </div>
-            <div className="flex flex-col min-w-0">
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-display font-black text-lg sm:text-xl tracking-tight text-ink">
-                  Iceberg
-                </span>
-                <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase text-primary">
-                  Studio
-                </span>
-              </div>
-              <span className="text-[10px] text-ink-muted truncate italic font-serif max-w-[170px] sm:max-w-none">
-                {settings?.tagline || "Turning Ideas Into Impressions...."}
-              </span>
-            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            <Link
-              href="/"
-              className="text-sm font-semibold text-ink hover:text-primary transition-colors"
-            >
+          {/* Desktop Navigation (Exact Template Order: HOME, ALL PRODUCTS, BLOG, PORTFOLIO, ABOUT, CONTACT) */}
+          <nav className="hidden lg:flex items-center gap-7">
+            <Link href="/" className={navLinkClass(pathname === "/")}>
               Home
             </Link>
 
-            {/* Categories Dropdown with 10+ items */}
+            {/* All Products Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 onMouseEnter={() => setIsDropdownOpen(true)}
-                className="flex items-center gap-1.5 text-sm font-semibold text-ink hover:text-primary transition-colors cursor-pointer py-2"
+                className={`flex items-center gap-1 cursor-pointer py-2 ${navLinkClass(
+                  pathname?.startsWith("/categories") || pathname?.startsWith("/category") || pathname?.startsWith("/product"),
+                )}`}
                 aria-expanded={isDropdownOpen}
               >
-                <span>Print Categories</span>
+                <span>All Products</span>
                 <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
                     isDropdownOpen
                       ? "rotate-180 text-primary"
                       : "text-ink-muted"
@@ -190,61 +198,86 @@ export function Navbar() {
             </div>
 
             <Link
-              href="/categories"
-              className="text-sm font-semibold text-ink hover:text-primary transition-colors"
-            >
-              Categories
-            </Link>
-
-            <Link
               href="/blog"
-              className="text-sm font-semibold text-ink hover:text-primary transition-colors"
+              className={navLinkClass(pathname?.startsWith("/blog"))}
             >
               Blog
             </Link>
 
             <Link
-              href="/#about-studio"
-              className="text-sm font-semibold text-ink hover:text-primary transition-colors"
+              href="/portfolio"
+              className={navLinkClass(pathname?.startsWith("/portfolio"))}
+            >
+              Portfolio
+            </Link>
+
+            <Link
+              href="/about"
+              className={navLinkClass(pathname?.startsWith("/about"))}
             >
               About
             </Link>
 
             <Link
-              href="/#faq-section"
-              className="text-sm font-semibold text-ink hover:text-primary transition-colors"
+              href="/contact"
+              className={navLinkClass(pathname?.startsWith("/contact"))}
             >
-              FAQ
+              Contact
             </Link>
           </nav>
 
-          {/* Right Action Buttons */}
-          <div className="flex items-center gap-3">
+          {/* Right Socials + Cart Trigger */}
+          <div className="flex items-center gap-2.5">
+            {/* Social Icons matching template */}
+            <div className="hidden sm:flex items-center gap-2 mr-1">
+              {instagramUrl && (
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="p-1.5 text-ink-muted hover:text-primary transition-colors"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {facebookUrl && (
+                <a
+                  href={facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="p-1.5 text-ink-muted hover:text-primary transition-colors"
+                >
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
+              {twitterUrl && (
+                <a
+                  href={twitterUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="X / Twitter"
+                  className="p-1.5 text-ink-muted hover:text-primary transition-colors font-bold text-xs leading-none"
+                >
+                  𝕏
+                </a>
+              )}
+            </div>
+
             {/* Cart Trigger */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2.5 rounded-button bg-canvas-muted hover:bg-border/60 text-ink transition-colors cursor-pointer flex items-center gap-2"
+              className="relative p-2 rounded-button hover:bg-canvas-soft text-ink transition-colors cursor-pointer flex items-center gap-1.5"
               aria-label="Open shopping cart"
             >
-              <ShoppingBag className="w-5 h-5 text-ink" />
+              <ShoppingBag className="w-4 h-4 text-ink" />
               {totalItemCount > 0 && (
-                <span className="bg-primary text-primary-foreground font-bold text-xs px-2 py-0.5 rounded-button">
+                <span className="bg-primary text-primary-foreground font-bold text-[10px] px-1.5 py-0.5 rounded-button leading-none">
                   {totalItemCount}
                 </span>
               )}
             </button>
-
-            {/* Direct WhatsApp Quote CTA */}
-            <a
-              href={getWhatsAppLink(
-                "Hello Iceberg Studio, I would like to request a commercial print quote.",
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center px-4 py-2.5 rounded-button bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary-hover transition-colors shadow-soft"
-            >
-              Request a Quote
-            </a>
 
             {/* Mobile menu toggle */}
             <button
@@ -294,6 +327,27 @@ export function Navbar() {
               </Link>
             ))}
           </div>
+          <Link
+            href="/portfolio"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+          >
+            Portfolio
+          </Link>
+          <Link
+            href="/about"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+          >
+            About
+          </Link>
+          <Link
+            href="/contact"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+          >
+            Contact
+          </Link>
           <Link
             href="/blog"
             onClick={() => setIsMobileMenuOpen(false)}

@@ -6,12 +6,13 @@ export interface ISiteSettings extends Document {
   footerSummary: string;
   footerDescription: string;
   footerMotto: string;
-  defaultTheme: "wise" | "iceberg" | "brand";
+  defaultTheme: "wise" | "iceberg" | "brand" | "editorial";
   topBarHoursText: string;
   topBarTagline: string;
   reviewsTrustedCount: string;
   reviewsOverallRating: number;
   address: string;
+  address2: string;
   phone: string;
   whatsappRouting: string;
   email: string;
@@ -33,6 +34,41 @@ export interface ISiteSettings extends Document {
   heroPrimaryCtaLink: string;
   heroSecondaryCtaText: string;
   heroSecondaryCtaLink: string;
+  heroImage: string;
+  heroImageFocusDesktop: string;
+  heroImageFocusMobile: string;
+  servicesIntroHeadline: string;
+  servicesIntroSubtext: string;
+  servicesCards: Array<{
+    iconName: string;
+    title: string;
+    description: string;
+    isDark?: boolean;
+    href?: string;
+  }>;
+  collageStatTitle: string;
+  collageStatSubtext: string;
+  collageImages: string[];
+  inquiryHeadline: string;
+  inquirySubtext: string;
+  portfolioHeadline: string;
+  portfolioSubtext: string;
+  portfolioPageHeadline: string;
+  portfolioPageSubtext: string;
+  portfolioProjectTitle: string;
+  portfolioProjectDesc: string;
+  portfolioProjectChecks: string[];
+  portfolioSolutionTitle: string;
+  portfolioSolutionDesc: string;
+  portfolioSolutionChecks: string[];
+  portfolioImages: string[];
+  aboutFounderName: string;
+  aboutFounderBio: string;
+  aboutSkills: Array<{ label: string; percentage: number }>;
+  contactHeadline: string;
+  contactSubtext: string;
+  contactFormHeadline: string;
+  contactFormSubtext: string;
   stats: Array<{ value: string; label: string }>;
   corporateHeadline: string;
   corporateSubtext: string;
@@ -41,6 +77,10 @@ export interface ISiteSettings extends Document {
   aboutStory: string;
   aboutChecks: string[];
   aboutImage: string;
+  teamImage: string;
+  teamPillars: Array<{ title: string; description: string }>;
+  teamCtaText: string;
+  clientBrands: string[];
   faqs: Array<{ question: string; answer: string }>;
   processSteps: Array<{
     stepNumber: string;
@@ -77,8 +117,8 @@ const SiteSettingsSchema: Schema = new Schema(
     },
     defaultTheme: {
       type: String,
-      enum: ["wise", "iceberg", "brand"],
-      default: "iceberg",
+      enum: ["wise", "iceberg", "brand", "editorial"],
+      default: "editorial",
     },
     topBarHoursText: {
       type: String,
@@ -92,7 +132,11 @@ const SiteSettingsSchema: Schema = new Schema(
     reviewsOverallRating: { type: Number, default: 0 },
     address: {
       type: String,
-      default: "25, Akeju Street, Off Apata Street, Shomolu, Lagos Nigeria",
+      default: "Somolu, Lagos",
+    },
+    address2: {
+      type: String,
+      default: "14/17 Lateef Eletu Street, Awoyaya, Lagos",
     },
     phone: { type: String, default: "+234 802 309 3704" },
     whatsappRouting: { type: String, default: "+2348023093704" },
@@ -119,10 +163,211 @@ const SiteSettingsSchema: Schema = new Schema(
     heroSubtext: {
       type: String,
       default:
-        "Custom rigid boxes, 600gsm foil cards, and heavyweight apparel—crafted in Lagos for brands that refuse to look ordinary.",
+        "All Types of Printing | Corporate Branding | Custom Packaging | Signage | Promotional Products | Large-Scale Branding & Production.",
     },
     heroPrimaryCtaText: { type: String, default: "Explore Products" },
-    heroPrimaryCtaLink: { type: String, default: "#top-selling" },
+    heroPrimaryCtaLink: { type: String, default: "/products" },
+    heroImage: {
+      type: String,
+      default:
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/hero/reel-packaging.jpg",
+    },
+    heroImageFocusDesktop: {
+      type: String,
+      default: "50% 50%",
+    },
+    heroImageFocusMobile: {
+      type: String,
+      default: "50% 50%",
+    },
+    servicesIntroHeadline: {
+      type: String,
+      default:
+        "Brand Identity, Graphic Design, Digital Printing & Bespoke Packaging.",
+    },
+    servicesIntroSubtext: {
+      type: String,
+      default:
+        "We combine precision commercial press engineering with studio-grade design direction for brands across Nigeria.",
+    },
+    servicesCards: {
+      type: [
+        {
+          iconName: { type: String },
+          title: { type: String },
+          description: { type: String },
+          isDark: { type: Boolean, default: false },
+          href: { type: String, default: "/categories" },
+        },
+      ],
+      default: [
+        {
+          iconName: "Printer",
+          title: "Digital & Offset Printing",
+          description:
+            "Calibrated CMYK commercial press runs for 600gsm cotton cards, brochures, and executive stationery.",
+          isDark: false,
+          href: "/categories",
+        },
+        {
+          iconName: "Package",
+          title: "Bespoke Rigid Packaging",
+          description:
+            "Custom die-cut boxes, magnetic gift packaging, and soft-touch matte lamination with hot-foil.",
+          isDark: true,
+          href: "/category/packaging-boxes",
+        },
+        {
+          iconName: "Palette",
+          title: "Brand Identity & Design",
+          description:
+            "Complete visual identity systems, print-ready artwork calibration, and corporate brand guidelines.",
+          isDark: false,
+          href: "/categories",
+        },
+        {
+          iconName: "Shirt",
+          title: "Apparel & Merch",
+          description:
+            "420gsm brushed fleece hoodies, screen-printed tees, embroidered caps, and glazed ceramic mugs.",
+          isDark: false,
+          href: "/category/branded-apparel",
+        },
+        {
+          iconName: "Flag",
+          title: "Signage & Exhibitions",
+          description:
+            "Wide-format roll-up banners, acrylic lightboxes, vehicle branding, and event backdrops.",
+          isDark: false,
+          href: "/categories",
+        },
+      ],
+    },
+    collageStatTitle: {
+      type: String,
+      default: "We Complete More Than 1,000+ Print Runs Every Year",
+    },
+    collageStatSubtext: {
+      type: String,
+      default: "Shomolu central press serving brands across 36 states.",
+    },
+    collageImages: {
+      type: [String],
+      default: [
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/hero/reel-apparel.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/hero/reel-cards.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/hero/reel-stationery.jpg",
+      ],
+    },
+    inquiryHeadline: {
+      type: String,
+      default: "For Your Print Quotes & Studio Updates",
+    },
+    inquirySubtext: {
+      type: String,
+      default:
+        "Drop your email or project brief to receive our corporate rate card, sample kit availability, and instant press desk response.",
+    },
+    portfolioHeadline: {
+      type: String,
+      default: "Our Portfolio, Quality Results",
+    },
+    portfolioSubtext: {
+      type: String,
+      default:
+        "Explore commercial print runs, rigid packaging, and branded collateral produced in our Shomolu studio.",
+    },
+    portfolioPageHeadline: {
+      type: String,
+      default: "Creativity as it speaks excellence!",
+    },
+    portfolioPageSubtext: {
+      type: String,
+      default:
+        "We transform your perception into remarkable Creative Branding, Graphic Design, Packaging, and Commercial Digital Printing.",
+    },
+    portfolioProjectTitle: {
+      type: String,
+      default: "Start a new project with us and build something iconic together!",
+    },
+    portfolioProjectDesc: {
+      type: String,
+      default:
+        "Digital Printing Press, Bespoke Packaging, Creative Branding, and Brand Identity in Shomolu, Lagos Nigeria.",
+    },
+    portfolioProjectChecks: {
+      type: [String],
+      default: [
+        "Bespoke Rigid Packaging",
+        "600gsm Foil Business Cards",
+        "Brand Identity & Guidelines",
+        "Commercial Digital Printing",
+      ],
+    },
+    portfolioSolutionTitle: {
+      type: String,
+      default: "Our Solution",
+    },
+    portfolioSolutionDesc: {
+      type: String,
+      default:
+        "We craft tactile brand collateral, commercial packaging, and studio-grade print systems that command attention.",
+    },
+    portfolioSolutionChecks: {
+      type: [String],
+      default: [
+        "Proven results & calibrated CMYK print precision",
+        "Deep expertise in paper stocks, foil & finishing",
+        "Dedicated creative direction & pre-press proofing",
+        "Same-day Lagos dispatch & 36-state delivery",
+      ],
+    },
+    portfolioImages: {
+      type: [String],
+      default: [
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/stationery-set.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/custom-packaging.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/cups.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/clothes.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/stickers-labels.jpg",
+      ],
+    },
+    aboutFounderName: {
+      type: String,
+      default: "Iceberg Creative Print Studio",
+    },
+    aboutFounderBio: {
+      type: String,
+      default:
+        "Founded in Shomolu, Lagos — blending mechanical press craftsmanship with modern design direction.",
+    },
+    aboutSkills: {
+      type: [{ label: { type: String }, percentage: { type: Number } }],
+      default: [
+        { label: "Commercial Digital & Offset Printing", percentage: 96 },
+        { label: "Bespoke Rigid Packaging & Foil", percentage: 94 },
+        { label: "Brand Identity & Graphic Design", percentage: 92 },
+        { label: "Heavyweight Apparel & Merch", percentage: 95 },
+      ],
+    },
+    contactHeadline: {
+      type: String,
+      default: "We're Here to Help.",
+    },
+    contactSubtext: {
+      type: String,
+      default:
+        "We always want to hear from you! Let us know how we can help with your next print run or brand rollout.",
+    },
+    contactFormHeadline: {
+      type: String,
+      default: "Have a project? Let's make something great together!",
+    },
+    contactFormSubtext: {
+      type: String,
+      default:
+        "Get in touch with our Shomolu production desk to see how we can bring your print project to life.",
+    },
     marqueeItems: {
       type: [String],
       default: [
@@ -159,7 +404,40 @@ const SiteSettingsSchema: Schema = new Schema(
     aboutImage: {
       type: String,
       default:
-        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/products/boxes.jpg",
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/founder-portrait.jpg",
+    },
+    teamImage: {
+      type: String,
+      default:
+        "https://pub-744e3954979f4d3a86f110dff22f7d4e.r2.dev/iceberg/images/team-studio.jpg",
+    },
+    teamPillars: {
+      type: [{ title: { type: String }, description: { type: String } }],
+      default: [
+        {
+          title: "Our Mission",
+          description:
+            "Deliver innovative designs and quality print solutions that help your brand stand out.",
+        },
+        {
+          title: "Fast Support",
+          description:
+            "Quick help with your artwork, paper choices, and order updates.",
+        },
+        {
+          title: "Client Satisfaction",
+          description:
+            "Clean, reliable prints for your business, brand, or upcoming event.",
+        },
+      ],
+    },
+    teamCtaText: {
+      type: String,
+      default: "View other feature",
+    },
+    clientBrands: {
+      type: [String],
+      default: [],
     },
     faqs: {
       type: [{ question: { type: String }, answer: { type: String } }],

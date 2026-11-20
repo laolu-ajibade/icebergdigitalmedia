@@ -56,8 +56,8 @@ const config: Config = {
         soft: "0 4px 20px -2px rgba(0, 0, 0, 0.04)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Plus Jakarta Sans", "sans-serif"],
-        display: ["var(--font-display)", "Syne", "sans-serif"],
+        sans: ["var(--font-sans)", "Inter", "sans-serif"],
+        display: ["var(--font-display)", "Montserrat", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
     },

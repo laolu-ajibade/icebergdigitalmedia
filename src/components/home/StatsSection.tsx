@@ -18,16 +18,16 @@ export function StatsSection({
   if (stats.length === 0) return null;
 
   return (
-    <section className="py-14 sm:py-16 bg-ink text-canvas border-y border-white/10">
+    <section className="py-12 sm:py-16 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-white/15 border border-white/15 rounded-card bg-white/[0.02] backdrop-blur-sm">
+        <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
           {stats.map((s, idx) => (
             <StaggerItem key={idx}>
-              <div className="p-6 sm:p-8 flex flex-col justify-center min-h-[128px] sm:min-h-[144px]">
-                <div className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-none tabular-nums">
+              <div className="py-4 px-3 flex flex-col items-center justify-center">
+                <div className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-primary-foreground tracking-tight leading-none tabular-nums">
                   {s.value}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-white/75 mt-2.5 leading-snug">
+                <div className="text-xs sm:text-sm font-medium text-primary-foreground/85 mt-2.5 leading-snug">
                   {s.label}
                 </div>
               </div>
