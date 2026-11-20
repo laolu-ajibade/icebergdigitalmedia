@@ -107,14 +107,14 @@ export function Footer() {
           <div className="space-y-3.5">
             <Link
               href="/"
-              className="inline-flex items-center bg-white rounded-theme px-3 py-1.5 shadow-soft"
+              className="inline-flex items-center"
             >
               <Image
                 src="/logo.png?v=3"
                 alt={companyName}
-                width={200}
-                height={64}
-                className="h-11 sm:h-12 w-auto object-contain"
+                width={260}
+                height={84}
+                className="h-14 sm:h-16 w-auto object-contain"
               />
             </Link>
 
