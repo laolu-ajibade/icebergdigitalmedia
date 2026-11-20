@@ -14,6 +14,7 @@ import {
   HelpCircle as FaqIcon,
   ListOrdered,
   KeyRound,
+  Plus,
   Trash2,
   Loader2,
   ChevronDown,
@@ -197,8 +198,16 @@ export default function AdminSettingsPage() {
     heroSubtext: "",
     heroPrimaryCtaText: "",
     heroPrimaryCtaLink: "",
-    heroSecondaryCtaText: "",
-    heroSecondaryCtaLink: "",
+    marqueeItems: [
+      "600GSM COTTON BOARDS",
+      "METALLIC FOIL STAMPING",
+      "BESPOKE RIGID PACKAGING",
+      "CALIBRATED CMYK PRESS",
+      "DIRECT-TO-GARMENT FLEECE",
+      "24–48HR LAGOS DISPATCH",
+      "36 STATES DELIVERY",
+      "SHOMOLU ATELIER",
+    ],
     stats: [],
     corporateHeadline: "",
     corporateSubtext: "",
@@ -827,44 +836,70 @@ export default function AdminSettingsPage() {
                   className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
                 />
               </div>
-              <div>
-                <label className="block font-bold text-ink mb-1.5">
-                  Secondary CTA Button Label
-                </label>
-                <input
-                  type="text"
-                  value={settings.heroSecondaryCtaText || ""}
-                  onChange={e =>
+            </div>
+
+            {/* Marquee Ticker Items */}
+            <div className="pt-6 border-t border-border/60 space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-display font-bold text-base text-ink">
+                    Scrolling Capability Strip (Marquee)
+                  </h3>
+                  <p className="text-xs text-ink-muted mt-0.5">
+                    Add, edit, or remove individual phrases shown in the scrolling dark banner below the Hero.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
                     setSettings({
                       ...settings,
-                      heroSecondaryCtaText: e.target.value,
+                      marqueeItems: [...(settings.marqueeItems || []), "NEW CAPABILITY"],
                     })
                   }
-                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                />
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-button bg-primary text-primary-foreground text-xs font-bold hover:bg-primary-hover transition-colors shrink-0 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Word</span>
+                </button>
               </div>
-              <div>
-                <label className="block font-bold text-ink mb-1.5">
-                  Secondary CTA Button Link
-                </label>
-                <input
-                  type="text"
-                  value={settings.heroSecondaryCtaLink || ""}
-                  onChange={e =>
-                    setSettings({
-                      ...settings,
-                      heroSecondaryCtaLink: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink"
-                />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {(settings.marqueeItems || []).map((item: string, idx: number) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={item}
+                      onChange={e => {
+                        const next = [...(settings.marqueeItems || [])];
+                        next[idx] = e.target.value;
+                        setSettings({ ...settings, marqueeItems: next });
+                      }}
+                      placeholder="e.g. 600GSM COTTON BOARDS"
+                      className="flex-1 px-3 py-2 bg-canvas-soft border border-border rounded-button text-ink text-xs font-mono uppercase"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = (settings.marqueeItems || []).filter(
+                          (_: string, i: number) => i !== idx,
+                        );
+                        setSettings({ ...settings, marqueeItems: next });
+                      }}
+                      aria-label={`Remove marquee item ${idx + 1}`}
+                      className="p-2 rounded-button border border-border text-ink-muted hover:text-red-600 hover:border-red-300 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
 
             <div className="pt-6 border-t border-border/60 space-y-4">
               <div>
                 <h3 className="font-display font-bold text-base text-ink">
-                  3D Print Studio Canvas Pricing (Interactive Hero Mockup Stage)
+                  3D Print Studio Canvas Pricing (Interactive Customizer Section)
                 </h3>
                 <p className="text-xs text-ink-muted mt-0.5">
                   Configure the dynamic starting run price (₦), minimum quantity

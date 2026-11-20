@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Syne, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
@@ -11,17 +11,24 @@ import { VisitTracker } from "@/components/analytics/VisitTracker";
 import { SITE_URL, R2_IMAGES } from "@/lib/constants";
 import "@/styles/globals.css";
 
-const displayFont = Inter({
+const displayFont = Syne({
   subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
+  weight: ["600", "700", "800"],
   variable: "--font-display",
   display: "swap",
 });
 
-const sansFont = Inter({
+const sansFont = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const monoFont = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-sans",
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -89,7 +96,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="iceberg"
-      className={`${displayFont.variable} ${sansFont.variable}`}
+      className={`${displayFont.variable} ${sansFont.variable} ${monoFont.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>

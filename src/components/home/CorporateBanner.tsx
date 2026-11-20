@@ -4,6 +4,7 @@ import React from "react";
 import { Check, MessageSquare, Phone } from "lucide-react";
 import { CONTACT_PHONE, WHATSAPP_NUMBER } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { RegistrationMarks, RevealBlock } from "@/components/ui/MotionPrimitives";
 
 export function CorporateBanner() {
   const settings = useSiteSettings();
@@ -20,10 +21,11 @@ export function CorporateBanner() {
     (settings?.whatsappRouting || "").replace(/[^0-9]/g, "") || WHATSAPP_NUMBER;
 
   return (
-    <section className="py-10 sm:py-12 bg-canvas">
+    <section className="py-12 sm:py-16 bg-canvas">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-ink text-canvas-soft rounded-card p-5 sm:p-8 md:p-12 relative overflow-hidden shadow-elevation">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center relative z-10">
+        <RevealBlock>
+          <div className="bg-ink text-canvas-soft rounded-card p-6 sm:p-10 md:p-14 relative overflow-hidden shadow-elevation border border-white/10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
             <div>
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary block mb-2">
                 B2B & Enterprise Print Procurement
@@ -79,7 +81,8 @@ export function CorporateBanner() {
               </div>
             )}
           </div>
-        </div>
+          </div>
+        </RevealBlock>
       </div>
     </section>
   );

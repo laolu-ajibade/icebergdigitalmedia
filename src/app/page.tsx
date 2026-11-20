@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { TopSellingProducts } from "@/components/home/TopSellingProducts";
+import { LiveStudioSection } from "@/components/home/LiveStudioSection";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { HowOrderingWorks } from "@/components/home/HowOrderingWorks";
 import { GoogleReviews } from "@/components/home/GoogleReviews";
@@ -199,6 +200,7 @@ export default async function HomePage() {
       )}
       <Hero initialSettings={initialSettings} />
       <TopSellingProducts initialProducts={initialProducts} />
+      <LiveStudioSection />
       <CategoryGrid initialCategories={initialCategories} />
       <HowOrderingWorks initialSteps={initialSettings?.processSteps} />
       <GoogleReviews initialData={initialReviewsData} />

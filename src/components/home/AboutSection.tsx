@@ -5,6 +5,7 @@ import Image from "next/image";
 import { MapPin, Award, CheckCircle2 } from "lucide-react";
 import { R2_IMAGES } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { RegistrationMarks, RevealBlock } from "@/components/ui/MotionPrimitives";
 
 export function AboutSection({ initialSettings }: { initialSettings?: any }) {
   const clientSettings = useSiteSettings();
@@ -28,9 +29,9 @@ export function AboutSection({ initialSettings }: { initialSettings?: any }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Content Column */}
-          <div className="lg:col-span-7 space-y-5">
+          <RevealBlock className="lg:col-span-7 space-y-5">
             <div>
-              <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight leading-tight">
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-[1.06]">
                 {headline}
               </h2>
             </div>
@@ -74,10 +75,10 @@ export function AboutSection({ initialSettings }: { initialSettings?: any }) {
                 </span>
               </div>
             </div>
-          </div>
+          </RevealBlock>
 
           {/* Visual Showcase Column */}
-          <div className="lg:col-span-5 relative">
+          <RevealBlock delay={0.12} className="lg:col-span-5 relative">
             <div className="relative h-72 sm:h-96 w-full rounded-card overflow-hidden shadow-elevation border border-card-border">
               <Image
                 src={image}
@@ -109,7 +110,7 @@ export function AboutSection({ initialSettings }: { initialSettings?: any }) {
                 master hot-stamp foil artisans under one roof.
               </p>
             </div>
-          </div>
+          </RevealBlock>
         </div>
       </div>
     </section>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
+import { StaggerGrid, StaggerItem } from "@/components/ui/MotionPrimitives";
 
 export function StatsSection({
   initialStats,
@@ -17,23 +18,22 @@ export function StatsSection({
   if (stats.length === 0) return null;
 
   return (
-    <section className="py-10 sm:py-12 bg-canvas-soft border-b border-border/40">
+    <section className="py-14 sm:py-16 bg-ink text-canvas border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6 md:gap-8">
+        <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-white/15 border border-white/15 rounded-card bg-white/[0.02] backdrop-blur-sm">
           {stats.map((s, idx) => (
-            <div
-              key={idx}
-              className="p-4 sm:p-6 rounded-card bg-card border border-card-border shadow-soft text-center antigravity-card flex flex-col items-center justify-center min-h-[112px] sm:min-h-[132px]"
-            >
-              <div className="font-display font-black text-2xl sm:text-3xl md:text-4xl text-ink tracking-tight leading-none">
-                {s.value}
+            <StaggerItem key={idx}>
+              <div className="p-6 sm:p-8 flex flex-col justify-center min-h-[128px] sm:min-h-[144px]">
+                <div className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-none tabular-nums">
+                  {s.value}
+                </div>
+                <div className="text-xs sm:text-sm font-medium text-white/75 mt-2.5 leading-snug">
+                  {s.label}
+                </div>
               </div>
-              <div className="text-[11px] sm:text-xs font-bold text-ink-body mt-2 leading-snug max-w-[150px] sm:max-w-none">
-                {s.label}
-              </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

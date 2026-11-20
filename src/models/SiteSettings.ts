@@ -114,19 +114,27 @@ const SiteSettingsSchema: Schema = new Schema(
     },
     heroHeadline: {
       type: String,
-      default: "Commercial Precision Printing & Bespoke Packaging",
+      default: "Print That Commands Attention.",
     },
     heroSubtext: {
       type: String,
       default:
-        "High-definition digital press, bespoke rigid boxes, and luxury brand collateral produced in Shomolu, Lagos. Delivered nationwide across Nigeria.",
+        "Custom rigid boxes, 600gsm foil cards, and heavyweight apparel—crafted in Lagos for brands that refuse to look ordinary.",
     },
     heroPrimaryCtaText: { type: String, default: "Explore Products" },
     heroPrimaryCtaLink: { type: String, default: "#top-selling" },
-    heroSecondaryCtaText: { type: String, default: "Instant WhatsApp Quote" },
-    heroSecondaryCtaLink: {
-      type: String,
-      default: "https://wa.me/2348023093704",
+    marqueeItems: {
+      type: [String],
+      default: [
+        "600GSM COTTON BOARDS",
+        "METALLIC FOIL STAMPING",
+        "BESPOKE RIGID PACKAGING",
+        "CALIBRATED CMYK PRESS",
+        "DIRECT-TO-GARMENT FLEECE",
+        "24–48HR LAGOS DISPATCH",
+        "36 STATES DELIVERY",
+        "SHOMOLU ATELIER",
+      ],
     },
     stats: {
       type: [{ value: { type: String }, label: { type: String } }],
