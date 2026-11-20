@@ -144,11 +144,16 @@ export function Footer() {
               <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0 mt-0.5">
                 <MapPin className="w-3.5 h-3.5" />
               </div>
-              <div className="space-y-1.5 leading-relaxed">
-                <p>{address}</p>
-                {address2 && <p>{address2}</p>}
-              </div>
+              <p className="leading-relaxed">{address}</p>
             </div>
+            {address2 && (
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                </div>
+                <p className="leading-relaxed">{address2}</p>
+              </div>
+            )}
             <div className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-theme bg-primary/15 text-primary flex items-center justify-center shrink-0">
                 <Phone className="w-3.5 h-3.5" />

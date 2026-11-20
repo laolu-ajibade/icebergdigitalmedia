@@ -310,35 +310,44 @@ export default function AdminReviewsPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+          <div className="flex flex-col justify-between">
             <label className="block text-xs font-bold text-ink mb-1.5">
-              Trusted Brands / Clients Count (Headline Figure)
+              Trusted Brands / Clients Count
             </label>
-            <input
-              type="text"
-              value={trustedCount}
-              onChange={(e) => setTrustedCount(e.target.value)}
-              placeholder="e.g. 500+, 1,000+"
-              className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink focus:outline-none focus:border-primary"
-            />
+            <div>
+              <input
+                type="text"
+                value={trustedCount}
+                onChange={(e) => setTrustedCount(e.target.value)}
+                placeholder="e.g. 500+, 1,000+"
+                className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink focus:outline-none focus:border-primary"
+              />
+              <p className="text-[11px] text-ink-muted mt-1.5">
+                Shown in the homepage headline (e.g. &ldquo;500+&rdquo;).
+              </p>
+            </div>
           </div>
 
-          <div>
+          <div className="flex flex-col justify-between">
             <label className="block text-xs font-bold text-ink mb-1.5">
-              Overall Rating Score (Out of 5.0 · Leave empty for live average:{" "}
-              {calculatedRating.toFixed(1)} / 5.0)
+              Overall Rating Score (Out of 5.0)
             </label>
-            <input
-              type="number"
-              step="0.1"
-              min="0"
-              max="5"
-              value={customRating}
-              onChange={(e) => setCustomRating(e.target.value)}
-              placeholder={`Auto (${calculatedRating.toFixed(1)})`}
-              className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink focus:outline-none focus:border-primary"
-            />
+            <div>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="5"
+                value={customRating}
+                onChange={(e) => setCustomRating(e.target.value)}
+                placeholder={`Auto (${calculatedRating.toFixed(1)})`}
+                className="w-full px-3.5 py-2.5 min-h-[44px] bg-canvas-soft border border-border rounded-button text-xs font-semibold text-ink focus:outline-none focus:border-primary"
+              />
+              <p className="text-[11px] text-ink-muted mt-1.5">
+                Leave empty for live average ({calculatedRating.toFixed(1)} / 5.0).
+              </p>
+            </div>
           </div>
         </div>
       </form>
