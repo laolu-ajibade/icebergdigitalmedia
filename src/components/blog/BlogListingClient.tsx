@@ -62,6 +62,15 @@ export default function BlogListingClient({
   return (
     <div className="bg-canvas min-h-screen py-12 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-ink-muted">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <span className="text-ink font-semibold">Blog</span>
+        </div>
+
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <h1 className="font-display font-black text-3xl sm:text-5xl text-ink tracking-tight">
             Print &amp; Design Guides

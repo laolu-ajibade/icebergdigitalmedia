@@ -110,7 +110,7 @@ export function Footer() {
               className="inline-flex items-center bg-white rounded-theme px-3 py-1.5 shadow-soft"
             >
               <Image
-                src="/logo.png?v=2"
+                src="/logo.png?v=3"
                 alt={companyName}
                 width={200}
                 height={64}

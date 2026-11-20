@@ -57,7 +57,15 @@ export default async function AboutPage() {
   return (
     <div className="bg-canvas">
       {/* Split Studio Showcase (Sticky Portrait Left + Content Right) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-ink-muted mb-6">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <span className="text-ink font-semibold">About Us</span>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
           {/* Left Sticky Portrait */}
           <div className="lg:col-span-5 lg:sticky lg:top-24">

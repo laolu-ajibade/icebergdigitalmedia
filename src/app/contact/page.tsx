@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { MapPin, Mail, Phone, MessageSquare, ExternalLink } from "lucide-react";
 import { connectDB } from "@/lib/db";
 import { SiteSettings } from "@/models/SiteSettings";
@@ -68,6 +69,17 @@ export default async function ContactPage() {
           </h1>
         </div>
       </section>
+
+      {/* Breadcrumb */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="flex items-center gap-2 text-xs text-ink-muted">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <span className="text-ink font-semibold">Contact</span>
+        </div>
+      </div>
 
       {/* Centered Intro */}
       <section className="pt-12 pb-8 px-4 text-center max-w-2xl mx-auto space-y-2.5">

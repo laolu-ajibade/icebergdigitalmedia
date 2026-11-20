@@ -116,6 +116,17 @@ export default async function PortfolioPage() {
 
   return (
     <div className="bg-canvas">
+      {/* Breadcrumb */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="flex items-center gap-2 text-xs text-ink-muted">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <span className="text-ink font-semibold">Portfolio</span>
+        </div>
+      </div>
+
       {/* Centered Editorial Intro */}
       <section className="py-12 sm:py-16 border-b border-border/50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">

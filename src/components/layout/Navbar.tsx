@@ -102,15 +102,15 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-xl border-b border-border/80 transition-colors">
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 sm:h-24">
+        <div className="flex items-center justify-between h-20 sm:h-24 gap-2">
           {/* Logo & Brand Identity */}
           <Link href="/" className="flex items-center group min-w-0 shrink-0 py-1">
-            <div className="relative h-16 sm:h-[72px] lg:h-20 w-52 sm:w-60 lg:w-64 shrink-0">
+            <div className="relative h-16 sm:h-[72px] lg:h-20 w-[230px] sm:w-[270px] lg:w-[280px] shrink-0">
               <Image
-                src="/logo.png?v=2"
+                src="/logo.png?v=3"
                 alt="Iceberg Creative Print Studio"
                 fill
-                sizes="(max-width: 640px) 208px, (max-width: 1024px) 240px, 256px"
+                sizes="(max-width: 640px) 230px, (max-width: 1024px) 270px, 280px"
                 className="object-contain object-left"
                 priority
               />
@@ -228,17 +228,17 @@ export function Navbar() {
 
           {/* Right Socials + Cart Trigger */}
           <div className="flex items-center gap-2.5">
-            {/* Social Icons matching template */}
-            <div className="hidden sm:flex items-center gap-2 mr-1">
+            {/* Social Icons matching Footer */}
+            <div className="hidden sm:flex items-center gap-1.5 mr-1">
               {instagramUrl && (
                 <a
                   href={instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="p-1.5 text-ink-muted hover:text-primary transition-colors"
+                  className="w-7 h-7 rounded-theme bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <Instagram className="w-3.5 h-3.5" />
                 </a>
               )}
               {facebookUrl && (
@@ -247,9 +247,9 @@ export function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="p-1.5 text-ink-muted hover:text-primary transition-colors"
+                  className="w-7 h-7 rounded-theme bg-[#3b5998] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
                 >
-                  <Facebook className="w-4 h-4" />
+                  <Facebook className="w-3.5 h-3.5" />
                 </a>
               )}
               {twitterUrl && (
@@ -257,8 +257,8 @@ export function Navbar() {
                   href={twitterUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="X / Twitter"
-                  className="p-1.5 text-ink-muted hover:text-primary transition-colors font-bold text-xs leading-none"
+                  aria-label="X (Twitter)"
+                  className="w-7 h-7 rounded-theme bg-ink text-canvas flex items-center justify-center hover:opacity-90 transition-opacity font-bold text-[11px] leading-none"
                 >
                   𝕏
                 </a>
