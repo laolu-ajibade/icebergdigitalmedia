@@ -1154,23 +1154,26 @@ export default function AdminSettingsPage() {
                     key={idx}
                     className="p-4 rounded-theme bg-canvas-soft border border-border/70 grid grid-cols-1 sm:grid-cols-12 gap-3 items-center"
                   >
-                    <select
-                      value={card.iconName || "Printer"}
-                      onChange={e => {
-                        const updated = [...(settings.servicesCards || [])];
-                        updated[idx] = { ...card, iconName: e.target.value };
-                        setSettings({ ...settings, servicesCards: updated });
-                      }}
-                      className="sm:col-span-2 px-2.5 py-2 bg-card border border-border rounded-button text-ink text-xs font-semibold"
-                    >
-                      {["Printer", "Package", "Palette", "Shirt", "Flag", "Layers", "Sparkles"].map(
-                        icon => (
-                          <option key={icon} value={icon}>
-                            {icon}
-                          </option>
-                        )
-                      )}
-                    </select>
+                    <div className="relative sm:col-span-2">
+                      <select
+                        value={card.iconName || "Printer"}
+                        onChange={e => {
+                          const updated = [...(settings.servicesCards || [])];
+                          updated[idx] = { ...card, iconName: e.target.value };
+                          setSettings({ ...settings, servicesCards: updated });
+                        }}
+                        className="w-full px-3 py-2 pr-9 appearance-none bg-card border border-border rounded-button text-ink text-xs font-semibold cursor-pointer focus:outline-none focus:border-primary"
+                      >
+                        {["Printer", "Package", "Palette", "Shirt", "Flag", "Layers", "Sparkles"].map(
+                          icon => (
+                            <option key={icon} value={icon}>
+                              {icon}
+                            </option>
+                          )
+                        )}
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
                     <input
                       type="text"
                       value={card.title || ""}
