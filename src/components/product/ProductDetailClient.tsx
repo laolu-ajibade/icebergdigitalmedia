@@ -18,6 +18,7 @@ import { useCart } from "@/context/CartContext";
 import { WHATSAPP_NUMBER } from "@/lib/constants";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { ProductImageCarousel } from "@/components/ui/ProductImageCarousel";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export default function ProductDetailClient({
   slug,
@@ -357,20 +358,11 @@ export default function ProductDetailClient({
                 <label className="block text-xs font-bold text-ink">
                   2. Select Paper Stock / Material Specification
                 </label>
-                <div className="relative">
-                  <select
-                    value={selectedStock}
-                    onChange={e => setSelectedStock(e.target.value)}
-                    className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer"
-                  >
-                    {product.paperStocks.map((stock: string) => (
-                      <option key={stock} value={stock}>
-                        {stock}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
+                <CustomSelect
+                  value={selectedStock}
+                  options={product.paperStocks}
+                  onChange={setSelectedStock}
+                />
               </div>
             )}
 
@@ -380,20 +372,11 @@ export default function ProductDetailClient({
                 <label className="block text-xs font-bold text-ink">
                   3. Select Lamination / Finishing Option
                 </label>
-                <div className="relative">
-                  <select
-                    value={selectedFinish}
-                    onChange={e => setSelectedFinish(e.target.value)}
-                    className="w-full px-4 py-3 pr-10 min-h-[44px] appearance-none rounded-button bg-canvas-soft border border-border text-xs font-semibold text-ink focus:outline-none focus:border-primary cursor-pointer"
-                  >
-                    {product.finishes.map((finish: string) => (
-                      <option key={finish} value={finish}>
-                        {finish}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                </div>
+                <CustomSelect
+                  value={selectedFinish}
+                  options={product.finishes}
+                  onChange={setSelectedFinish}
+                />
               </div>
             )}
 
