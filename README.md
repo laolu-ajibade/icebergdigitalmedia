@@ -133,12 +133,3 @@ Theme selection is persisted in `localStorage` without layout shifts or flashes.
 - **Prefers Reduced Motion:** Full compliance with accessibility standards.
 
 ---
-
-## ✅ Post-Domain Launch TODO
-
-Once the custom domain name is connected and `NEXT_PUBLIC_SITE_URL` is set in production:
-
-- [x] **Google Search Console & Bing Webmaster Tools:**
-  - Verify your live domain ownership.
-  - Submit `${SITE_URL}/sitemap.xml`.
-  - Run **URL Inspection** on `/`, `/categories`, `/blog`, and a `/product/[slug]` page to verify live crawl & indexing.
