@@ -120,7 +120,7 @@ const SiteSettingsSchema: Schema = new Schema(
     defaultTheme: {
       type: String,
       enum: ["wise", "iceberg", "brand", "editorial"],
-      default: "editorial",
+      default: "brand",
     },
     topBarHoursText: {
       type: String,

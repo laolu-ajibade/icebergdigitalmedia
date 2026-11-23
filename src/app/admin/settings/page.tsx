@@ -176,7 +176,7 @@ export default function AdminSettingsPage() {
     footerSummary: "",
     footerDescription: "",
     footerMotto: "",
-    defaultTheme: "editorial",
+    defaultTheme: "brand",
     topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
     topBarTagline: "Commercial Grade Print Press & Packaging Studio",
     address: "",
@@ -500,7 +500,7 @@ export default function AdminSettingsPage() {
                   </label>
                   <div className="relative">
                     <select
-                      value={settings.defaultTheme || "editorial"}
+                      value={settings.defaultTheme || "brand"}
                       onChange={e => {
                         const chosen = e.target.value as
                           | "wise"

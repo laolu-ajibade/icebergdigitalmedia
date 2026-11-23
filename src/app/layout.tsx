@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { unstable_noStore as noStore } from "next/cache";
 import { Montserrat, Inter, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeProvider, type Theme } from "@/context/ThemeContext";
+import { connectDB } from "@/lib/db";
+import { SiteSettings } from "@/models/SiteSettings";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { TopBanner } from "@/components/layout/TopBanner";
@@ -87,20 +90,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+const VALID_THEMES: Theme[] = ["iceberg", "wise", "brand", "editorial"];
+
+async function getInitialTheme(): Promise<Theme> {
+  noStore();
+  try {
+    await connectDB();
+    const settings = (await SiteSettings.findOne({}, { defaultTheme: 1 }).lean()) as {
+      defaultTheme?: string;
+    } | null;
+    if (settings?.defaultTheme && VALID_THEMES.includes(settings.defaultTheme as Theme)) {
+      return settings.defaultTheme as Theme;
+    }
+  } catch {
+    // Fall back to Iceberg Brand Manual when DB is unavailable
+  }
+  return "brand";
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialTheme = await getInitialTheme();
+
   return (
     <html
       lang="en"
-      data-theme="editorial"
+      data-theme={initialTheme}
       className={`${displayFont.variable} ${sansFont.variable} ${monoFont.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
-        <ThemeProvider>
+        <ThemeProvider initialTheme={initialTheme}>
           <ToastProvider>
             <CartProvider>
               <VisitTracker />

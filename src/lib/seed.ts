@@ -1196,7 +1196,7 @@ export const initialSiteSettings = {
   footerDescription:
     "Full Responsive Websites and Application, Creative Branding, Graphic Design for Business Advertisement and High-quality Printing.",
   footerMotto: "Creativity as it speaks excellence!",
-  defaultTheme: "editorial",
+  defaultTheme: "brand",
   topBarHoursText: "Mon - Sat: 09:00 - 18:00 (Shomolu, Lagos)",
   topBarTagline: "Commercial Grade Print Press & Packaging Studio",
   reviewsTrustedCount: "500+",

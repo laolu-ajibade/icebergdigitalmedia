@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 
-type Theme = "iceberg" | "wise" | "brand" | "editorial";
+export type Theme = "iceberg" | "wise" | "brand" | "editorial";
 
 const VALID_THEMES: Theme[] = ["iceberg", "wise", "brand", "editorial"];
 const isValidTheme = (value: unknown): value is Theme =>
@@ -17,48 +17,42 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({
+  children,
+  initialTheme = "brand",
+}: {
+  children: React.ReactNode;
+  initialTheme?: Theme;
+}) {
   const settings = useSiteSettings();
-  const [theme, setThemeState] = useState<Theme>("editorial");
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
   const [userOverrode, setUserOverrode] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("iceberg-theme");
-    if (isValidTheme(saved)) {
-      setThemeState(saved);
-      document.documentElement.setAttribute("data-theme", saved);
-    } else {
-      document.documentElement.setAttribute("data-theme", "editorial");
-    }
-    setMounted(true);
-  }, []);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!userOverrode && isValidTheme(settings?.defaultTheme)) {
-      const dbTheme = settings.defaultTheme;
-      setThemeState(dbTheme);
-      localStorage.setItem("iceberg-theme", dbTheme);
-      document.documentElement.setAttribute("data-theme", dbTheme);
+      setThemeState(settings.defaultTheme);
     }
   }, [settings?.defaultTheme, userOverrode]);
 
   const setTheme = (newTheme: Theme) => {
     setUserOverrode(true);
     setThemeState(newTheme);
-    localStorage.setItem("iceberg-theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
   };
 
   const toggleTheme = () => {
-    const order: Theme[] = ["editorial", "iceberg", "brand", "wise"];
+    const order: Theme[] = ["brand", "iceberg", "editorial", "wise"];
     const nextTheme = order[(order.indexOf(theme) + 1) % order.length];
     setTheme(nextTheme);
   };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      <div className={!mounted ? "invisible" : ""}>{children}</div>
+      {children}
     </ThemeContext.Provider>
   );
 }
