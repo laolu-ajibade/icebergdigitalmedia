@@ -59,9 +59,9 @@ export function Hero({ initialSettings }: { initialSettings?: any }) {
         className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/65 to-black/45 md:bg-gradient-to-r md:from-black/85 md:via-black/65 md:to-black/40 pointer-events-none"
       />
 
-      {/* Left-Aligned Editorial Content */}
+      {/* Editorial Content (centered on mobile, left-aligned on desktop) */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-14 sm:py-24">
-        <div className="max-w-2xl space-y-5 sm:space-y-6">
+        <div className="max-w-2xl mx-auto md:mx-0 text-center md:text-left space-y-5 sm:space-y-6">
           <motion.h1
             initial={prefersReduced ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -75,7 +75,7 @@ export function Hero({ initialSettings }: { initialSettings?: any }) {
             initial={prefersReduced ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.08, ease: EASE_ATELIER }}
-            className="text-[13px] sm:text-base lg:text-lg text-white/85 font-normal leading-relaxed max-w-xl"
+            className="text-[13px] sm:text-base lg:text-lg text-white/85 font-normal leading-relaxed max-w-xl mx-auto md:mx-0"
           >
             {subtext}
           </motion.p>
@@ -84,7 +84,7 @@ export function Hero({ initialSettings }: { initialSettings?: any }) {
             initial={prefersReduced ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.16, ease: EASE_ATELIER }}
-            className="flex flex-wrap items-center gap-3.5 pt-1"
+            className="flex flex-wrap items-center justify-center md:justify-start gap-3.5 pt-1"
           >
             <Link
               href={primaryCtaLink}
