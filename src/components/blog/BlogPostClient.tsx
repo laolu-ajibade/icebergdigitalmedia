@@ -6,6 +6,114 @@ import Link from "next/link";
 import { ArrowLeft, Clock, User, MessageSquare } from "lucide-react";
 import { getWhatsAppLink } from "@/lib/constants";
 
+function renderInlineMarkdown(text: string): React.ReactNode[] {
+  const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  const parts = text.split(tokenRegex);
+
+  return parts.map((part, idx) => {
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (linkMatch) {
+      const [, label, href] = linkMatch;
+      const isInternal = href.startsWith("/");
+      if (isInternal) {
+        return (
+          <Link
+            key={idx}
+            href={href}
+            className="text-primary font-semibold underline underline-offset-4 hover:text-primary/80 transition-colors"
+          >
+            {label}
+          </Link>
+        );
+      }
+      return (
+        <a
+          key={idx}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary font-semibold underline underline-offset-4 hover:text-primary/80 transition-colors"
+        >
+          {label}
+        </a>
+      );
+    }
+
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return (
+        <strong key={idx} className="font-semibold text-ink">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 2) {
+      return <em key={idx}>{part.slice(1, -1)}</em>;
+    }
+
+    return <React.Fragment key={idx}>{part}</React.Fragment>;
+  });
+}
+
+function renderMarkdownBlock(block: string, idx: number): React.ReactNode {
+  const trimmed = block.trim();
+  if (!trimmed) return null;
+
+  if (/^(-{3,}|\*{3,})$/.test(trimmed)) {
+    return <hr key={idx} className="border-border/60 my-6" />;
+  }
+
+  // Handle heading followed by a body line without a blank line (e.g. "### Question?\nAnswer")
+  const headingMatch = trimmed.match(/^(#{1,4})\s+(.+?)(?:\n([\s\S]+))?$/);
+  if (headingMatch) {
+    const [, hashes, headingText, rest] = headingMatch;
+    const headingNode =
+      hashes.length <= 3 ? (
+        <h2 className="font-display font-bold text-xl sm:text-2xl text-ink pt-4 tracking-tight">
+          {renderInlineMarkdown(headingText)}
+        </h2>
+      ) : (
+        <h3 className="font-display font-bold text-lg sm:text-xl text-ink pt-3 tracking-tight">
+          {renderInlineMarkdown(headingText)}
+        </h3>
+      );
+
+    if (rest && rest.trim()) {
+      return (
+        <React.Fragment key={idx}>
+          {headingNode}
+          {renderMarkdownBlock(rest, idx * 1000 + 1)}
+        </React.Fragment>
+      );
+    }
+    return <React.Fragment key={idx}>{headingNode}</React.Fragment>;
+  }
+
+  if (/^[-*]\s+/.test(trimmed)) {
+    const items = trimmed.split(/\n[-*]\s+/);
+    return (
+      <ul key={idx} className="space-y-2 list-disc pl-5 text-sm sm:text-base">
+        {items.map((item, i) => (
+          <li key={i}>{renderInlineMarkdown(item.replace(/^[-*]\s+/, ""))}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (/^\d+\.\s+/.test(trimmed)) {
+    const items = trimmed.split(/\n\d+\.\s+/);
+    return (
+      <ol key={idx} className="space-y-2.5 list-decimal pl-5 text-sm sm:text-base">
+        {items.map((item, i) => (
+          <li key={i}>{renderInlineMarkdown(item.replace(/^\d+\.\s+/, ""))}</li>
+        ))}
+      </ol>
+    );
+  }
+
+  return <p key={idx}>{renderInlineMarkdown(trimmed)}</p>;
+}
+
 export default function BlogPostClient({
   slug,
   initialBlog,
@@ -87,39 +195,10 @@ export default function BlogPostClient({
 
         {/* Article Body */}
         <div className="bg-card rounded-card border border-border/80 p-8 md:p-12 shadow-soft space-y-6 text-ink-body leading-relaxed text-sm sm:text-base">
-          {blog.content.split("\n\n").map((block: string, idx: number) => {
-            if (block.startsWith("### ")) {
-              return (
-                <h2
-                  key={idx}
-                  className="font-display font-bold text-xl sm:text-2xl text-ink pt-4 tracking-tight"
-                >
-                  {block.replace("### ", "")}
-                </h2>
-              );
-            }
-            if (block.startsWith("- ")) {
-              const items = block.split("\n- ");
-              return (
-                <ul key={idx} className="space-y-2 list-disc pl-5 text-sm">
-                  {items.map((item, i) => (
-                    <li key={i}>{item.replace("- ", "")}</li>
-                  ))}
-                </ul>
-              );
-            }
-            if (block.startsWith("1. ")) {
-              const items = block.split(/\n\d+\.\s/);
-              return (
-                <ol key={idx} className="space-y-2.5 list-decimal pl-5 text-sm">
-                  {items.map((item, i) => (
-                    <li key={i}>{item.replace(/^\d+\.\s/, "")}</li>
-                  ))}
-                </ol>
-              );
-            }
-            return <p key={idx}>{block}</p>;
-          })}
+          {blog.content
+            .replace(/\r\n/g, "\n")
+            .split(/\n{2,}/)
+            .map((block: string, idx: number) => renderMarkdownBlock(block, idx))}
 
           {/* Callout Card */}
           <div className="mt-10 p-6 md:p-8 rounded-theme bg-primary-pale/40 border border-primary/30 flex flex-col sm:flex-row items-center justify-between gap-6">
