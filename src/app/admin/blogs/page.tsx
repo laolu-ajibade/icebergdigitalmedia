@@ -174,7 +174,7 @@ export default function AdminBlogsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display font-black text-2xl text-ink">
-            Blogs ({blogs.length})
+            Blogs
           </h1>
           <p className="text-xs text-ink-muted mt-1">
             Author and publish educational printing guides, paper stock
