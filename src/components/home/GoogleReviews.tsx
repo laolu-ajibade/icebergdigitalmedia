@@ -13,7 +13,7 @@ import {
 import { Pagination } from "@/components/ui/Pagination";
 
 const MOBILE_PAGE_SIZE = 1;
-const DESKTOP_PAGE_SIZE = 6;
+const DESKTOP_PAGE_SIZE = 3;
 
 export function GoogleReviews({ initialData }: { initialData?: any }) {
   const [currentPage, setCurrentPage] = useState(1);

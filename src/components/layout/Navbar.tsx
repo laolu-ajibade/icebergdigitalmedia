@@ -49,6 +49,7 @@ export function Navbar() {
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
   const { totalItemCount, setIsCartOpen } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   const printCategories = categories.filter(c =>
     c.tags ? c.tags.some((t: string) => t.toLowerCase() === "print") : true,
@@ -65,16 +66,24 @@ export function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: PointerEvent) {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsDropdownOpen(false);
       }
+      if (
+        headerRef.current &&
+        !headerRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
+        setIsMobileCategoriesOpen(false);
+      }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () =>
+      document.removeEventListener("pointerdown", handleClickOutside);
   }, []);
 
   const resolveSocialUrl = (val: string | undefined, prefix: string) => {
@@ -107,7 +116,10 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-xl border-b border-border/80 transition-colors">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-xl border-b border-border/80 transition-colors"
+    >
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 sm:h-24 gap-2">
           {/* Logo & Brand Identity */}
