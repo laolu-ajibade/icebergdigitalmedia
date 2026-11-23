@@ -7,10 +7,12 @@ import {
   MessageSquarePlus,
   ExternalLink,
   CheckCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 
-const MOBILE_PAGE_SIZE = 3;
+const MOBILE_PAGE_SIZE = 1;
 const DESKTOP_PAGE_SIZE = 6;
 
 export function GoogleReviews({ initialData }: { initialData?: any }) {
@@ -223,12 +225,47 @@ export function GoogleReviews({ initialData }: { initialData?: any }) {
                 ))}
             </div>
 
-            <Pagination
-              currentPage={safePage}
-              totalItems={reviewsData.reviews.length}
-              pageSize={pageSize}
-              onPageChange={setCurrentPage}
-            />
+            {/* Mobile: compact counter + Next button (no overflowing page numbers) */}
+            {maxPage > 1 && (
+              <div className="flex md:hidden items-center justify-between gap-3 pt-4 border-t border-border/60">
+                <span className="text-xs text-ink-muted">
+                  Review <strong className="text-ink">{safePage}</strong> of{" "}
+                  <strong className="text-ink">{totalItems}</strong>
+                </span>
+                <div className="flex items-center gap-2">
+                  {safePage > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(safePage - 1)}
+                      aria-label="Previous review"
+                      className="min-h-[44px] min-w-[44px] rounded-button bg-card border border-border text-ink hover:bg-canvas-soft flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage(safePage >= maxPage ? 1 : safePage + 1)
+                    }
+                    className="inline-flex items-center justify-center gap-1.5 px-5 min-h-[44px] rounded-button bg-primary text-primary-foreground font-bold text-xs shadow-soft hover:bg-primary-hover cursor-pointer transition-colors"
+                  >
+                    <span>Next</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Desktop: full pagination */}
+            <div className="hidden md:block">
+              <Pagination
+                currentPage={safePage}
+                totalItems={reviewsData.reviews.length}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
         ) : (
           <div className="bg-card rounded-card border border-border/80 p-8 text-center max-w-xl mx-auto shadow-soft space-y-3">

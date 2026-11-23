@@ -212,9 +212,11 @@ export default async function HomePage() {
       <TeamSection initialSettings={initialSettings} />
       <StatsSection initialStats={initialSettings?.stats} />
       <GoogleReviews initialData={initialReviewsData} />
-      <BlogPreview initialBlogs={initialBlogs} />
-      <FaqSection initialFaqs={initialFaqs} />
-      <CorporateBanner />
+      <div className="hidden md:block">
+        <BlogPreview initialBlogs={initialBlogs} />
+        <FaqSection initialFaqs={initialFaqs} />
+        <CorporateBanner />
+      </div>
     </>
   );
 }

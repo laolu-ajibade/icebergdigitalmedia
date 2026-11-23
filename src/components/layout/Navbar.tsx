@@ -46,6 +46,7 @@ export function Navbar() {
   const [categories, setCategories] = useState<any[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
   const { totalItemCount, setIsCartOpen } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -315,81 +316,113 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-border bg-canvas px-4 pt-3 pb-6 space-y-3">
+        <div className="lg:hidden border-t border-border bg-canvas px-4 pt-3 pb-6 space-y-1 max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain">
           <Link
             href="/"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
             Home
           </Link>
-          <Link
-            href="/categories"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
-          >
-            Categories
-          </Link>
-          <div className="pl-3 py-1 space-y-1.5 border-l-2 border-primary/30 my-1">
-            <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider block mb-1">
-              Categories
-            </span>
-            {printCategories.slice(0, 10).map(cat => (
-              <Link
-                key={cat.slug}
-                href={`/category/${cat.slug}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-xs py-1 text-ink-body hover:text-primary"
-              >
-                {cat.name}
-              </Link>
-            ))}
+
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsMobileCategoriesOpen(prev => !prev)}
+              aria-expanded={isMobileCategoriesOpen}
+              className="w-full flex items-center justify-between min-h-[44px] text-sm font-semibold text-ink hover:text-primary cursor-pointer"
+            >
+              <span>Categories</span>
+              <ChevronDown
+                className={`w-4 h-4 text-ink-muted transition-transform duration-200 ${
+                  isMobileCategoriesOpen ? "rotate-180 text-primary" : ""
+                }`}
+              />
+            </button>
+
+            {isMobileCategoriesOpen && (
+              <div className="pl-3 py-1.5 space-y-1 border-l-2 border-primary/30 my-1">
+                <Link
+                  href="/categories"
+                  onClick={() => {
+                    setIsMobileCategoriesOpen(false);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block text-xs font-semibold py-1.5 text-primary hover:underline"
+                >
+                  All Categories
+                </Link>
+                {printCategories.slice(0, 10).map(cat => (
+                  <Link
+                    key={cat.slug}
+                    href={`/category/${cat.slug}`}
+                    onClick={() => {
+                      setIsMobileCategoriesOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block text-xs py-1.5 text-ink-body hover:text-primary"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
+
           <Link
             href="/brand-studio"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
             Brand Studio
           </Link>
           <Link
             href="/portfolio"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
             Portfolio
           </Link>
           <Link
             href="/about"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
             About
           </Link>
           <Link
             href="/contact"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
             Contact
           </Link>
           <Link
             href="/blog"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="block py-2 text-sm font-semibold text-ink hover:text-primary"
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
             Blog
           </Link>
-          <a
-            href={getWhatsAppLink(
-              "Hello Iceberg Studio, I would like to request a commercial print quote.",
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-center w-full py-2.5 rounded-button bg-primary text-primary-foreground font-semibold text-sm"
+          <Link
+            href="/faq"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center min-h-[44px] text-sm font-semibold text-ink hover:text-primary"
           >
-            Request a Quote on WhatsApp
-          </a>
+            FAQ
+          </Link>
+          <div className="pt-2">
+            <a
+              href={getWhatsAppLink(
+                "Hello Iceberg Studio, I would like to request a commercial print quote.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-full min-h-[44px] rounded-button bg-primary text-primary-foreground font-semibold text-sm"
+            >
+              Request a Quote on WhatsApp
+            </a>
+          </div>
         </div>
       )}
     </header>

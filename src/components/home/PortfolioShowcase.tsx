@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSiteSettings } from "@/lib/useSiteSettings";
 import { RevealBlock } from "@/components/ui/MotionPrimitives";
 
@@ -170,7 +170,7 @@ export function PortfolioShowcase({
       className="py-16 md:py-24 bg-canvas-soft border-b border-border/60"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <RevealBlock className="text-center max-w-2xl mx-auto mb-10">
+        <RevealBlock className="text-center max-w-2xl mx-auto mb-6 md:mb-10">
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-tight">
             {headline}
           </h2>
@@ -179,8 +179,28 @@ export function PortfolioShowcase({
           </p>
         </RevealBlock>
 
-        {/* Clean Category Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+        {/* Mobile Category Filter Dropdown */}
+        <div className="md:hidden max-w-xs mx-auto mb-8 relative">
+          <label htmlFor="portfolio-category-filter" className="sr-only">
+            Filter portfolio by category
+          </label>
+          <select
+            id="portfolio-category-filter"
+            value={activeFilter}
+            onChange={(e) => setActiveFilter(e.target.value)}
+            className="w-full appearance-none px-4 py-3 pr-10 min-h-[44px] rounded-button bg-card border border-border text-ink font-semibold text-sm shadow-soft cursor-pointer focus:outline-none focus:border-primary"
+          >
+            {filterTabs.map((tab) => (
+              <option key={tab} value={tab}>
+                {tab === "all" ? "All Work" : tab}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="w-4 h-4 text-ink-muted absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        </div>
+
+        {/* Desktop Category Filter Tabs */}
+        <div className="hidden md:flex flex-wrap items-center justify-center gap-2 mb-10">
           {filterTabs.map((tab) => {
             const isActive = activeFilter === tab;
             return (
