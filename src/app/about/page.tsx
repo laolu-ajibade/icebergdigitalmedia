@@ -6,6 +6,8 @@ import { connectDB } from "@/lib/db";
 import { SiteSettings } from "@/models/SiteSettings";
 import { Product } from "@/models/Product";
 import { R2_IMAGES } from "@/lib/constants";
+import { TeamSection } from "@/components/home/TeamSection";
+import { CollageInquirySection } from "@/components/home/CollageInquirySection";
 
 export const dynamic = "force-dynamic";
 
@@ -173,6 +175,9 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      <TeamSection initialSettings={settings} />
+      <CollageInquirySection initialSettings={settings} />
     </div>
   );
 }

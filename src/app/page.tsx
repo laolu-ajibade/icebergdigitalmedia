@@ -2,13 +2,10 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/home/Hero";
 import { ClientBrandsStrip } from "@/components/home/ClientBrandsStrip";
 import { ServicesBentoSection } from "@/components/home/ServicesBentoSection";
-import { CollageInquirySection } from "@/components/home/CollageInquirySection";
 import { PortfolioShowcase } from "@/components/home/PortfolioShowcase";
-import { HowOrderingWorks } from "@/components/home/HowOrderingWorks";
 import { GoogleReviews } from "@/components/home/GoogleReviews";
 import { CorporateBanner } from "@/components/home/CorporateBanner";
 import { StatsSection } from "@/components/home/StatsSection";
-import { TeamSection } from "@/components/home/TeamSection";
 import { BlogPreview } from "@/components/home/BlogPreview";
 import { FaqSection } from "@/components/home/FaqSection";
 import { connectDB } from "@/lib/db";
@@ -202,14 +199,11 @@ export default async function HomePage() {
       <Hero initialSettings={initialSettings} />
       <ClientBrandsStrip initialSettings={initialSettings} />
       <ServicesBentoSection initialSettings={initialSettings} />
-      <CollageInquirySection initialSettings={initialSettings} />
-      <HowOrderingWorks initialSteps={initialSettings?.processSteps} />
       <PortfolioShowcase
         initialProducts={initialProducts}
         initialCategories={initialCategories}
         initialSettings={initialSettings}
       />
-      <TeamSection initialSettings={initialSettings} />
       <StatsSection initialStats={initialSettings?.stats} />
       <GoogleReviews initialData={initialReviewsData} />
       <div className="hidden md:block">

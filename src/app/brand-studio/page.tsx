@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LivePrintCanvas } from "@/components/home/LivePrintCanvas";
+import { HowOrderingWorks } from "@/components/home/HowOrderingWorks";
 import { RevealBlock } from "@/components/ui/MotionPrimitives";
+import { connectDB } from "@/lib/db";
+import { SiteSettings } from "@/models/SiteSettings";
+import { initialSiteSettings } from "@/lib/seed";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Brand Studio",
@@ -12,7 +18,33 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BrandStudioPage() {
+export default async function BrandStudioPage() {
+  let initialSteps = initialSiteSettings.processSteps || [];
+
+  try {
+    await connectDB();
+    const settings = (await SiteSettings.findOne(
+      {},
+      { processSteps: 1 },
+    ).lean()) as {
+      processSteps?: Array<{
+        stepNumber: string;
+        title: string;
+        description: string;
+      }>;
+    } | null;
+
+    if (Array.isArray(settings?.processSteps) && settings.processSteps.length > 0) {
+      initialSteps = settings.processSteps.map(step => ({
+        stepNumber: String(step.stepNumber || ""),
+        title: String(step.title || ""),
+        description: String(step.description || ""),
+      }));
+    }
+  } catch {
+    // Fall back to seeded steps when DB is unavailable
+  }
+
   return (
     <div className="bg-canvas min-h-screen">
       <section className="py-10 md:py-16 bg-canvas-soft atelier-grid-bg border-b border-border/60">
@@ -39,6 +71,8 @@ export default function BrandStudioPage() {
           </RevealBlock>
         </div>
       </section>
+
+      <HowOrderingWorks initialSteps={initialSteps} />
     </div>
   );
 }

@@ -33,11 +33,6 @@ export function TeamSection({ initialSettings }: { initialSettings?: any }) {
   const settings = clientSettings || initialSettings;
 
   const companyName = settings?.companyName || "Iceberg Studio";
-  const headline =
-    settings?.aboutHeadline || "Engaging, purposeful, and creative.";
-  const story =
-    settings?.aboutStory ||
-    `${companyName} delivers quality printing, custom packaging, branded apparel, and design for your business or event—with fast turnaround in Lagos and nationwide delivery.`;
   const image = settings?.teamImage || R2_IMAGES.teamStudio;
   const ctaText = settings?.teamCtaText || "View other feature";
   const pillars =
@@ -68,17 +63,9 @@ export function TeamSection({ initialSettings }: { initialSettings?: any }) {
             </div>
           </div>
 
-          {/* Right: Editorial Copy + 3 Icon Pillars + CTA */}
+          {/* Right: 3 Icon Pillars + CTA */}
           <div className="lg:col-span-7 space-y-6 lg:pl-4">
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-ink tracking-tight leading-[1.1]">
-              {headline}
-            </h2>
-
-            <p className="text-sm text-ink-body leading-relaxed max-w-xl">
-              {story}
-            </p>
-
-            <div className="space-y-5 pt-2">
+            <div className="space-y-5">
               {pillars.map((pillar: any, idx: number) => {
                 const Icon = pillar.icon;
                 return (
