@@ -32,11 +32,11 @@ export function TopSellingProducts({
         <RevealBlock className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-8 border-b border-border/60">
           <div>
             <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-[1.05]">
-              Top Selling Products
+              Most-Ordered by Growing Brands
             </h2>
             <p className="text-sm md:text-base text-ink-muted mt-3 max-w-xl leading-relaxed">
-              Our most requested products and print runs by corporate brands, creative
-              agencies, and luxury retailers across Nigeria.
+              Client-favorite packaging, stationery, and branded merch trusted by
+              startups and retailers across Nigeria.
             </p>
           </div>
           <Link

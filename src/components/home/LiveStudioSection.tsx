@@ -13,10 +13,11 @@ export function LiveStudioSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <RevealBlock className="mb-8 md:mb-10">
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-[1.05]">
-            Customize Your Brand Live
+            See Your Logo on Real Products Before You Order
           </h2>
           <p className="text-sm md:text-base text-ink-muted mt-2.5 max-w-xl leading-relaxed">
-            Upload your logo, test colors, and preview your print run in real time.
+            Drop in your logo, test your brand colors, and preview your packaging
+            or merch in seconds.
           </p>
         </RevealBlock>
 

@@ -59,11 +59,11 @@ export function CategoryGrid({
         <RevealBlock className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-8 border-b border-border/60">
           <div>
             <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-ink tracking-tight leading-[1.05]">
-              Shop by Commercial Print Category
+              Design, Print &amp; Packaging Built for Your Brand
             </h2>
             <p className="text-sm md:text-base text-ink-muted mt-3 max-w-xl leading-relaxed">
-              From bespoke packaging and luxury apparel to executive stationery
-              and wide-format displays.
+              Pick a category to explore finishes, turnaround times, and pricing
+              for your business.
             </p>
           </div>
           <Link
